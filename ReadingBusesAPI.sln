@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadingBusesAPI", "ReadingBusesAPI\ReadingBusesAPI.csproj", "{07FE7193-78B2-43D4-833D-06B93CE02652}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReadingBusesAPI", "ReadingBusesAPI\ReadingBusesAPI.csproj", "{07FE7193-78B2-43D4-833D-06B93CE02652}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example Project", "Example Project\Example Project.csproj", "{ADE78DEE-CACB-47AC-94F8-DAFF6201C191}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadingBuses API Tests", "ReadingBuses API Tests\ReadingBuses API Tests.csproj", "{B8C1F0E9-D5A6-4F6A-9A26-E89D7AEA30D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{07FE7193-78B2-43D4-833D-06B93CE02652}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07FE7193-78B2-43D4-833D-06B93CE02652}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07FE7193-78B2-43D4-833D-06B93CE02652}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADE78DEE-CACB-47AC-94F8-DAFF6201C191}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADE78DEE-CACB-47AC-94F8-DAFF6201C191}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADE78DEE-CACB-47AC-94F8-DAFF6201C191}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADE78DEE-CACB-47AC-94F8-DAFF6201C191}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8C1F0E9-D5A6-4F6A-9A26-E89D7AEA30D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8C1F0E9-D5A6-4F6A-9A26-E89D7AEA30D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8C1F0E9-D5A6-4F6A-9A26-E89D7AEA30D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8C1F0E9-D5A6-4F6A-9A26-E89D7AEA30D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -17,6 +17,9 @@
     <PackageProjectUrl>https://github.com/jfoot/Reading-Buses-API</PackageProjectUrl>
     <Description>A C# Library for the Reading Buses API (http://rtl2.ods-live.co.uk/cms/apiservice), available to use in your C# console, WPF or Win Form Applications.</Description>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <AssemblyVersion>0.0.1.0</AssemblyVersion>
+    <FileVersion>0.0.1.0</FileVersion>
+    <Version>0.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +31,10 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
 </Project>
