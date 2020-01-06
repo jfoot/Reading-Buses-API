@@ -6,18 +6,23 @@ using System.Xml.Linq;
 
 namespace ReadingBusesAPI
 {
-    public class LiveRecord
+    public sealed class LiveRecord
     {
-        public string ServiceNumber { get; set; }
-        public string Destination { get; set; }
-        public DateTime SchArrival { get; set; }
-        public DateTime? ExptArrival { get; set; }
+        public string ServiceNumber { get; internal set; }
+        public string Destination { get; internal set; }
+        public DateTime SchArrival { get; internal set; }
+        public DateTime? ExptArrival { get; internal set; }
+
+        public BusService Service()
+        {
+            return ReadingBuses.getInstance().getService(ServiceNumber);
+        }
 
         internal LiveRecord() { }
 
-        public static List<LiveRecord> GetLiveData(string actoCode, string APIKEY)
+        public static List<LiveRecord> GetLiveData(string actoCode)
         {
-            XDocument doc = XDocument.Load("https://rtl2.ods-live.co.uk/api/siri/sm?key=" + APIKEY + "&location=" + actoCode);
+            XDocument doc = XDocument.Load("https://rtl2.ods-live.co.uk/api/siri/sm?key=" + ReadingBuses.APIKey + "&location=" + actoCode);
             XNamespace ns = doc.Root.GetDefaultNamespace();
             List<LiveRecord> Arrivals = new List<LiveRecord>();
             Arrivals = doc.Descendants(ns + "MonitoredStopVisit").Select(x => new LiveRecord()

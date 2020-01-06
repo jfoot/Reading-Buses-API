@@ -13,6 +13,9 @@ namespace ReadingBusesAPI
         internal static Dictionary<string, BusStop> Locations { get; set; }
         internal List<BusService> Services { get; set; }
 
+        private LivePosition[] livePositionCache;
+       
+
         private static ReadingBuses instance;
 
 
@@ -79,7 +82,7 @@ namespace ReadingBusesAPI
             Locations = new Dictionary<string, BusStop>();
 
             foreach (var location in locations)
-                if (!Locations.ContainsKey(location.ActoCode))
+                if (!isLocation(location.ActoCode))
                     Locations.Add(location.ActoCode, location);
         }
 
@@ -91,7 +94,7 @@ namespace ReadingBusesAPI
         /// <returns>A Bus Stop object for the Acto Code specifed.</returns>
         public BusStop getLocation(string actoCode)
         {
-            if (Locations.ContainsKey(actoCode))
+            if (isLocation(actoCode))
                return Locations[actoCode];
             else
                 throw new Exception("A bus stop of that Acto Code can not be found, please make sure you have a valid Bus Stop Code.");
@@ -105,6 +108,17 @@ namespace ReadingBusesAPI
         {
             return Locations.Values.ToArray();
         }
+
+        /// <summary>
+        /// Checks to see if the acto code for the bus stop exists in the API feed or not.
+        /// </summary>
+        /// <param name="actoCode">The ID Code for a bus stop.</param>
+        /// <returns>True or False depending on if the stop is in the API feed or not.</returns>
+        public bool isLocation(string actoCode)
+        {
+            return Locations.ContainsKey(actoCode);
+        }
+
         #endregion
 
         #region Services
@@ -134,7 +148,20 @@ namespace ReadingBusesAPI
         /// <returns>The service matching the ID.</returns>
         public BusService getService(string ServiceNumber)
         {
-            return Services.Single(o => o.ServiceId.ToUpper() == ServiceNumber.ToUpper());
+            if (isService(ServiceNumber))
+                return Services.Single(o => o.ServiceId.ToUpper() == ServiceNumber.ToUpper());
+            else
+                throw new Exception("The service number provided does not exist.");
+        }
+
+        /// <summary>
+        /// Checks to see if a service of that number exists or not in the API feed.
+        /// </summary>
+        /// <param name="ServiceNumber">The service number to find.</param>
+        /// <returns>True or False for if a service is the API feed or not.</returns>
+        public bool isService(string ServiceNumber)
+        {
+            return Services.Any(o => o.ServiceId.ToUpper() == ServiceNumber.ToUpper());
         }
 
         /// <summary>
@@ -146,6 +173,38 @@ namespace ReadingBusesAPI
                 Console.WriteLine(service.BrandName + " " + service.ServiceId);
         }
 
+        /// <summary>
+        /// Gets live GPS data for all buses currently operating.
+        /// </summary>
+        /// <returns>An array of GPS locations for all buses operating by Reading Buses currently</returns>
+        public LivePosition[] getLiveVehiclePositions()
+        {
+            if (LivePosition.refreshCahce() || livePositionCache == null)
+            {
+                livePositionCache = JsonConvert.DeserializeObject<LivePosition[]>(
+                      new System.Net.WebClient().DownloadString("https://rtl2.ods-live.co.uk/api/vehiclePositions?key=" + APIKey))
+                          .ToArray();
+            }
+            return livePositionCache;
+        }
+
+        /// <summary>
+        /// Gets live GPS data for a single buses matching Vehicle ID number.
+        /// </summary>
+        /// <returns>The GPS point of Vehicle matching your ID provided.</returns>
+        public LivePosition getLiveVehiclePosition(string Vehicle)
+        {
+            if (isVehicle(Vehicle))
+                return getLiveVehiclePositions().Single(o => o.Vehicle.ToUpper() == Vehicle.ToUpper());
+            else
+                throw new Exception("A Vehicle of that ID can not be found currently operating.");
+        }
+
+        public bool isVehicle(string Vehicle)
+        {
+            return getLiveVehiclePositions().Any(o => o.Vehicle.ToUpper() == Vehicle.ToUpper());
+        }
+       
         #endregion
     }
 }

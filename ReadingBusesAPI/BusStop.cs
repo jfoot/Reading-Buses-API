@@ -5,29 +5,34 @@ using System.Text;
 
 namespace ReadingBusesAPI
 {
-    public class BusStop
+    public sealed class BusStop
     {
         [JsonProperty("location_code")]
-        public string ActoCode { get; set; }
+        public string ActoCode { get; internal set; }
 
         [JsonProperty("description")]
-        public string CommonName { get; set; }
+        public string CommonName { get; internal set; }
 
         [JsonProperty("latitude")]
-        public string Latitude { get; set; }
+        public string Latitude { get; internal set; }
 
         [JsonProperty("longitude")]
-        public string longitude { get; set; }
+        public string longitude { get; internal set; }
 
         [JsonProperty("bearing")]
-        public string bearing { get; set; }
+        public string bearing { get; internal set; }
 
         [JsonProperty("routes")]
-        public string Services { get; set; }
+        public string Services { get; internal set; }
 
         [JsonProperty("group_name")]
-        public string group_name { get; set; }
+        public string group_name { get; internal set; }
 
         internal BusStop() { }
+
+        public List<LiveRecord> getLiveData()
+        {
+            return LiveRecord.GetLiveData(ActoCode);
+        }
     }
 }
