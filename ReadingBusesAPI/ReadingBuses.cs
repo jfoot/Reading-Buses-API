@@ -34,6 +34,7 @@ namespace ReadingBusesAPI
             }
             catch (Exception)
             {
+                instance = null;
                 throw new Exception("The API Key Entered is incorrect, please check you have a valid Reading Buses API Key.");
             }
         }
@@ -200,6 +201,11 @@ namespace ReadingBusesAPI
                 throw new Exception("A Vehicle of that ID can not be found currently operating.");
         }
 
+        /// <summary>
+        /// Checks if the Vehicle ID Number is currently in service right now.
+        /// </summary>
+        /// <param name="Vehicle">Vehicle ID Number eg 414</param>
+        /// <returns>True or False for if the buses GPS can be found or not currently.</returns>
         public bool isVehicle(string Vehicle)
         {
             return getLiveVehiclePositions().Any(o => o.Vehicle.ToUpper() == Vehicle.ToUpper());

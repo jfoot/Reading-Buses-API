@@ -26,6 +26,7 @@ namespace ReadingBusesAPI
             get {
                 if (stops == null)
                 {
+                    stops = new List<string>();
                     stops = JsonConvert.DeserializeObject<List<BusStop>>(
                          new System.Net.WebClient().DownloadString("https://rtl2.ods-live.co.uk/api/linePatterns?key=" + ReadingBuses.APIKey + "&service=" + ServiceId))
                              .Select(p => p.ActoCode).ToList();
@@ -53,7 +54,7 @@ namespace ReadingBusesAPI
         {
             if(stopsObjects == null)
             {
-                BusStop[] temp = new BusStop[stops.Count];
+                BusStop[] temp = new BusStop[Stops.Count];
                 for (int i = 0; i < temp.Length; i++)
                     if (ReadingBuses.getInstance().isLocation(Stops[i]))
                         temp[i] = ReadingBuses.getInstance().getLocation(Stops[i]);
