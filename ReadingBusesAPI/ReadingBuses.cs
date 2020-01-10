@@ -1,9 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace ReadingBusesAPI
 {
@@ -17,38 +20,108 @@ namespace ReadingBusesAPI
        
 
         private static ReadingBuses instance;
+        private static bool Cache = true;
+        private static bool Warning = true;
+        private static int CacheVadilityLength = 7;
+       
 
+        private ReadingBuses(string APIkey)
+        {
+            ReadingBuses.APIKey = APIkey;
+        }
 
         /// <summary>
         /// Create a new Reading Buses libary object, this is the main control. 
         /// </summary>
         /// <param name="APIKey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
-        private ReadingBuses(string APIKey)
+        private async Task setUp()
         {
-            ReadingBuses.APIKey = APIKey;
-
             try
             {
-                findServices();
-                findLocations();
+                if (!Directory.Exists("cache"))
+                {
+                    Directory.CreateDirectory("cache");
+                    DirectoryInfo ch = new DirectoryInfo("cache");
+                    ch.Attributes = FileAttributes.Hidden;  
+                }
+
+                Task<List<BusService>> servicesTask = findServices();
+                Task<Dictionary<string, BusStop>> locationsTask = findLocations();
+
+                Locations = await locationsTask;
+                Services = await servicesTask;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 instance = null;
+                Console.WriteLine(ex);
                 throw new Exception("The API Key Entered is incorrect, please check you have a valid Reading Buses API Key.");
             }
         }
 
         /// <summary>
+        /// Sets if you want to cache data into local files or always get new data from the API, which will take longer.
+        /// </summary>
+        /// <param name="value">True or False for if you want to get Cache or live data.</param>
+        public static void setCache(bool value)
+        {
+            if (instance == null)
+                Cache = value;
+            else
+                throw new Exception("Cache Storage Setting can not be changed once ReadingBuses Object is initialized.");
+
+        }
+
+        /// <summary>
+        /// Sets if you want to print out warning messages to the console screen or not.
+        /// </summary>
+        /// <param name="value">True or False for printing warning messages.</param>
+        public static void setWarning(bool value)
+        {
+            Warning = value;
+        }
+
+        /// <summary>
+        /// Sets how long to keep Cache data for before invalidating it and getting new data.
+        /// </summary>
+        /// <param name="Days">The number of days to store the cache data for before getting new data.</param>
+        public static void setCacheVadilityLength(int Days)
+        {
+            CacheVadilityLength = Days;
+        }
+
+        /// <summary>
+        /// Deletes any Cache data stored, Cache data is deleted automatically after a number of days, use this only if you need to force new data early.
+        /// </summary>
+        public static void deleteCahce()
+        {
+            Directory.Delete("cache", true);
+        }
+
+        /// <summary>
+        /// Internal method for printing warning messages to the console screen.
+        /// </summary>
+        /// <param name="Message">The message to print off to console.</param>
+        internal static void printWarning(string Message)
+        {
+            if(Warning)
+                Console.WriteLine(Message);
+        }
+
+     
+        /// <summary>
         /// Used to initially initialise the ReadingBuses Object 
         /// </summary>
         /// <param name="APIKey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
         /// <returns></returns>
-        public static ReadingBuses initialise(string APIKey)
+        public static async Task<ReadingBuses> initialise(string APIKey)
         {
             if (instance == null)
+            {
                 instance = new ReadingBuses(APIKey);
-            return instance;
+                await instance.setUp();
+            }
+            return instance; 
         }
 
         /// <summary>
@@ -66,25 +139,89 @@ namespace ReadingBusesAPI
         /// <summary>
         /// Finds all the services operated by Reading Buses.
         /// </summary>
-        private void findServices()
+        private async Task<List<BusService>> findServices()
         {
-            Services = JsonConvert.DeserializeObject<List<BusService>>(
-                   new System.Net.WebClient().DownloadString("https://rtl2.ods-live.co.uk/api/services?key=" + APIKey))
-                       .OrderBy(p => Convert.ToInt32(Regex.Replace(p.ServiceId, "[^0-9.]", ""))).ToList();
+            if (!File.Exists("cache\\Services.cache") || !Cache)
+            {
+                var temp  = JsonConvert.DeserializeObject<List<BusService>>(
+                   await new System.Net.WebClient().DownloadStringTaskAsync("https://rtl2.ods-live.co.uk/api/services?key=" + APIKey))
+                        .OrderBy(p => Convert.ToInt32(Regex.Replace(p.ServiceId, "[^0-9.]", ""))).ToList();
+
+
+                if (Cache)
+                    await File.WriteAllTextAsync("cache\\Services.cache", JsonConvert.SerializeObject(temp, Newtonsoft.Json.Formatting.Indented)); // Save the JSON file for later use. 
+
+                return temp;
+            }
+            else
+            {
+                DirectoryInfo ch = new DirectoryInfo("cache\\Services.cache");
+                if ((DateTime.Now - ch.CreationTime).TotalDays > CacheVadilityLength)
+                {
+                    File.Delete("cache\\Services.cache");
+                    printWarning("Warning: Cache data expired, downloading latest Services Data.");
+                    return await findServices();
+                }
+                else
+                {
+                    try
+                    {
+                        return JsonConvert.DeserializeObject<List<BusService>>(await File.ReadAllTextAsync("cache\\Services.cache"));
+                    }
+                    catch (Exception)
+                    {
+                        File.Delete("cache\\Services.cache");
+                        printWarning("Warning: Unable to read Services Cache File, deleting and regenerating cache.");
+                        return await findServices();
+                    }     
+                }
+            }
         }
 
         /// <summary>
         /// Finds all the bus stops visted by Reading Buses.
         /// </summary>
-        private void findLocations()
+        private async Task<Dictionary<string, BusStop>> findLocations()
         {
-            var locations = JsonConvert.DeserializeObject<List<BusStop>>(
-                new System.Net.WebClient().DownloadString("https://rtl2.ods-live.co.uk/api/busstops?key=" + APIKey));
-            Locations = new Dictionary<string, BusStop>();
+            if (!File.Exists("cache\\Locations.cache") || !Cache)
+            {
+                var locations = JsonConvert.DeserializeObject<List<BusStop>>(
+                   await new System.Net.WebClient().DownloadStringTaskAsync("https://rtl2.ods-live.co.uk/api/busstops?key=" + APIKey));
+                    
+                var locationsFiltered = new Dictionary<string, BusStop>();
 
-            foreach (var location in locations)
-                if (!isLocation(location.ActoCode))
-                    Locations.Add(location.ActoCode, location);
+                foreach (var location in locations)
+                    if (!locationsFiltered.ContainsKey(location.ActoCode))
+                        locationsFiltered.Add(location.ActoCode, location);
+
+                if (Cache)
+                    await File.WriteAllTextAsync("cache\\Locations.cache", JsonConvert.SerializeObject(locationsFiltered, Newtonsoft.Json.Formatting.Indented)); // Save the JSON file for later use.       
+
+                return locationsFiltered;
+            }
+            else
+            {
+                DirectoryInfo ch = new DirectoryInfo("cache\\Locations.cache");
+                if ((DateTime.Now - ch.CreationTime).TotalDays > CacheVadilityLength)
+                {
+                    File.Delete("cache\\Locations.cache");
+                    printWarning("Warning: Cache data expired, downloading latest Locations Data.");
+                    return await findLocations();
+                }
+                else
+                {
+                    try
+                    {
+                        return JsonConvert.DeserializeObject<Dictionary<string, BusStop>>(await File.ReadAllTextAsync("cache\\Locations.cache"));
+                    }
+                    catch (Exception)
+                    {
+                        File.Delete("cache\\Locations.cache");
+                        printWarning("Warning: Unable to read Locations Cache File, deleting and regenerating cache.");
+                        return await findLocations();
+                    }
+                }
+            }     
         }
 
         #region Locations
@@ -178,13 +315,12 @@ namespace ReadingBusesAPI
         /// Gets live GPS data for all buses currently operating.
         /// </summary>
         /// <returns>An array of GPS locations for all buses operating by Reading Buses currently</returns>
-        public LivePosition[] getLiveVehiclePositions()
-        {
+        public async Task<LivePosition[]> getLiveVehiclePositions()
+        {        
             if (LivePosition.refreshCahce() || livePositionCache == null)
             {
-                livePositionCache = JsonConvert.DeserializeObject<LivePosition[]>(
-                      new System.Net.WebClient().DownloadString("https://rtl2.ods-live.co.uk/api/vehiclePositions?key=" + APIKey))
-                          .ToArray();
+                var download = await new System.Net.WebClient().DownloadStringTaskAsync(new Uri("https://rtl2.ods-live.co.uk/api/vehiclePositions?key=" + APIKey));
+                livePositionCache = JsonConvert.DeserializeObject<LivePosition[]>(download).ToArray();
             }
             return livePositionCache;
         }
@@ -193,10 +329,10 @@ namespace ReadingBusesAPI
         /// Gets live GPS data for a single buses matching Vehicle ID number.
         /// </summary>
         /// <returns>The GPS point of Vehicle matching your ID provided.</returns>
-        public LivePosition getLiveVehiclePosition(string Vehicle)
+        public async Task<LivePosition> getLiveVehiclePosition(string Vehicle)
         {
-            if (isVehicle(Vehicle))
-                return getLiveVehiclePositions().Single(o => o.Vehicle.ToUpper() == Vehicle.ToUpper());
+            if (await isVehicle(Vehicle))
+                return (await getLiveVehiclePositions()).Single(o => o.Vehicle.ToUpper() == Vehicle.ToUpper());
             else
                 throw new Exception("A Vehicle of that ID can not be found currently operating.");
         }
@@ -206,9 +342,9 @@ namespace ReadingBusesAPI
         /// </summary>
         /// <param name="Vehicle">Vehicle ID Number eg 414</param>
         /// <returns>True or False for if the buses GPS can be found or not currently.</returns>
-        public bool isVehicle(string Vehicle)
+        public async Task<bool> isVehicle(string Vehicle)
         {
-            return getLiveVehiclePositions().Any(o => o.Vehicle.ToUpper() == Vehicle.ToUpper());
+            return (await getLiveVehiclePositions()).Any(o => o.Vehicle.ToUpper() == Vehicle.ToUpper());
         }
        
         #endregion

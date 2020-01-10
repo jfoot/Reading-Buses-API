@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ReadingBusesAPI
 {
@@ -30,9 +31,9 @@ namespace ReadingBusesAPI
 
         internal BusStop() { }
 
-        public List<LiveRecord> getLiveData()
+        public async Task<List<LiveRecord>> getLiveData()
         {
-            return LiveRecord.GetLiveData(ActoCode);
+            return await LiveRecord.GetLiveData(ActoCode);
         }
     }
 }

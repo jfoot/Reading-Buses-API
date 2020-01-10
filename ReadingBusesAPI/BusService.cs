@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ReadingBusesAPI
 {
@@ -20,19 +21,17 @@ namespace ReadingBusesAPI
         /// Gets a list of bus stops acto codes, if this is the first time it's asked for call upon the API
         /// This is delayed so only to call the API when needed.
         /// </summary>
-        private List<string> stops;
-        internal List<string> Stops
+        private List<string> stops; 
+        internal async Task<List<string>> getStops()
         {
-            get {
-                if (stops == null)
-                {
-                    stops = new List<string>();
-                    stops = JsonConvert.DeserializeObject<List<BusStop>>(
-                         new System.Net.WebClient().DownloadString("https://rtl2.ods-live.co.uk/api/linePatterns?key=" + ReadingBuses.APIKey + "&service=" + ServiceId))
-                             .Select(p => p.ActoCode).ToList();
-                }
-                return stops;
-            }  
+            if (stops == null)
+            {
+                stops = new List<string>();
+                stops = JsonConvert.DeserializeObject<List<BusStop>>(
+                      await new System.Net.WebClient().DownloadStringTaskAsync("https://rtl2.ods-live.co.uk/api/linePatterns?key=" + ReadingBuses.APIKey + "&service=" + ServiceId))
+                         .Select(p => p.ActoCode).ToList();
+            }
+            return stops;
         }
 
         internal BusService() {}
@@ -41,9 +40,9 @@ namespace ReadingBusesAPI
         /// Gets an array of stops the bus service travels too as an array of ActoCode
         /// </summary>
         /// <returns>An array of Acto-Codes for the stops visited by this services.</returns>
-        public string[] getLocationsActo()
+        public async Task<string[]> getLocationsActo()
         {
-            return Stops.ToArray();
+            return (await getStops()).ToArray();
         }
 
         /// <summary>
@@ -54,10 +53,10 @@ namespace ReadingBusesAPI
         {
             if(stopsObjects == null)
             {
-                BusStop[] temp = new BusStop[Stops.Count];
+                BusStop[] temp = new BusStop[getStops().Result.Count];
                 for (int i = 0; i < temp.Length; i++)
-                    if (ReadingBuses.getInstance().isLocation(Stops[i]))
-                        temp[i] = ReadingBuses.getInstance().getLocation(Stops[i]);
+                    if (ReadingBuses.getInstance().isLocation(getStops().Result[i]))
+                        temp[i] = ReadingBuses.getInstance().getLocation(getStops().Result[i]);
                 stopsObjects = temp;
             } 
             return stopsObjects;
@@ -67,9 +66,9 @@ namespace ReadingBusesAPI
         /// Gets the Live GPS positions for all Vehicles operating on this service.
         /// </summary>
         /// <returns>An array of GPS data points for all vehicles currently operating on this service.</returns>
-        public LivePosition[] GetLivePositions()
+        public async Task<LivePosition[]> GetLivePositions()
         {
-            return ReadingBuses.getInstance().getLiveVehiclePositions().Where(o => o.ServiceId.ToUpper() == ServiceId.ToUpper()).ToArray();
+            return (await ReadingBuses.getInstance().getLiveVehiclePositions()).Where(o => o.ServiceId.ToUpper() == ServiceId.ToUpper()).ToArray();
         }
 
         /// <summary>
@@ -77,7 +76,7 @@ namespace ReadingBusesAPI
         /// </summary>
         public void printLocationsActo()
         {
-            foreach(var stop in Stops)
+            foreach(var stop in getStops().Result)
                 Console.WriteLine(stop);
         }
 
