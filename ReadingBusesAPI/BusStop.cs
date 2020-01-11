@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ReadingBusesAPI
 {
@@ -18,22 +16,23 @@ namespace ReadingBusesAPI
         public string Latitude { get; internal set; }
 
         [JsonProperty("longitude")]
-        public string longitude { get; internal set; }
+        public string Longitude { get; internal set; }
 
         [JsonProperty("bearing")]
-        public string bearing { get; internal set; }
+        public string Bearing { get; internal set; }
 
         [JsonProperty("routes")]
         public string Services { get; internal set; }
 
         [JsonProperty("group_name")]
-        public string group_name { get; internal set; }
+        public string GroupName { get; internal set; }
 
         internal BusStop() { }
 
-        public async Task<List<LiveRecord>> getLiveData()
-        {
-            return await LiveRecord.GetLiveData(ActoCode);
-        }
+        /// <summary>
+        /// Gets live data from a bus stop.
+        /// </summary>
+        /// <returns>Returns a list of Live Records, which are individual buses due to arrive at the bus stop.</returns>
+        public List<LiveRecord> GetLiveData() => LiveRecord.GetLiveData(ActoCode);
     }
 }

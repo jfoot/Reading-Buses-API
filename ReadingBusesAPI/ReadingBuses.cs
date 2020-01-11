@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -23,30 +21,29 @@ namespace ReadingBusesAPI
         private static bool Cache = true;
         private static bool Warning = true;
         private static int CacheVadilityLength = 7;
-       
 
-        private ReadingBuses(string APIkey)
-        {
-            ReadingBuses.APIKey = APIkey;
-        }
+
+        private ReadingBuses(string APIkey) => ReadingBuses.APIKey = APIkey;
 
         /// <summary>
-        /// Create a new Reading Buses libary object, this is the main control. 
+        /// Create a new Reading Buses library object, this is the main control. 
         /// </summary>
         /// <param name="APIKey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
-        private async Task setUp()
+        private async Task SetUp()
         {
             try
             {
                 if (!Directory.Exists("cache"))
                 {
                     Directory.CreateDirectory("cache");
-                    DirectoryInfo ch = new DirectoryInfo("cache");
-                    ch.Attributes = FileAttributes.Hidden;  
+                    DirectoryInfo ch = new DirectoryInfo("cache")
+                    {
+                        Attributes = FileAttributes.Hidden
+                    };
                 }
 
-                Task<List<BusService>> servicesTask = findServices();
-                Task<Dictionary<string, BusStop>> locationsTask = findLocations();
+                Task<List<BusService>> servicesTask = FindServices();
+                Task<Dictionary<string, BusStop>> locationsTask = FindLocations();
 
                 Locations = await locationsTask;
                 Services = await servicesTask;
@@ -63,7 +60,7 @@ namespace ReadingBusesAPI
         /// Sets if you want to cache data into local files or always get new data from the API, which will take longer.
         /// </summary>
         /// <param name="value">True or False for if you want to get Cache or live data.</param>
-        public static void setCache(bool value)
+        public static void SetCache(bool value)
         {
             if (instance == null)
                 Cache = value;
@@ -76,33 +73,24 @@ namespace ReadingBusesAPI
         /// Sets if you want to print out warning messages to the console screen or not.
         /// </summary>
         /// <param name="value">True or False for printing warning messages.</param>
-        public static void setWarning(bool value)
-        {
-            Warning = value;
-        }
+        public static void SetWarning(bool value) => Warning = value;
 
         /// <summary>
         /// Sets how long to keep Cache data for before invalidating it and getting new data.
         /// </summary>
         /// <param name="Days">The number of days to store the cache data for before getting new data.</param>
-        public static void setCacheVadilityLength(int Days)
-        {
-            CacheVadilityLength = Days;
-        }
+        public static void SetCacheVadilityLength(int Days) => CacheVadilityLength = Days;
 
         /// <summary>
         /// Deletes any Cache data stored, Cache data is deleted automatically after a number of days, use this only if you need to force new data early.
         /// </summary>
-        public static void deleteCahce()
-        {
-            Directory.Delete("cache", true);
-        }
+        public static void DeleteCahce() => Directory.Delete("cache", true);
 
         /// <summary>
         /// Internal method for printing warning messages to the console screen.
         /// </summary>
         /// <param name="Message">The message to print off to console.</param>
-        internal static void printWarning(string Message)
+        internal static void PrintWarning(string Message)
         {
             if(Warning)
                 Console.WriteLine(Message);
@@ -114,12 +102,12 @@ namespace ReadingBusesAPI
         /// </summary>
         /// <param name="APIKey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
         /// <returns></returns>
-        public static async Task<ReadingBuses> initialise(string APIKey)
+        public static async Task<ReadingBuses> Initialise(string APIKey)
         {
             if (instance == null)
             {
                 instance = new ReadingBuses(APIKey);
-                await instance.setUp();
+                await instance.SetUp();
             }
             return instance; 
         }
@@ -128,7 +116,7 @@ namespace ReadingBusesAPI
         /// You will never need more than one ReadingBuses object, a singelton is used to ensure you always get the same instance.
         /// </summary>
         /// <returns>Returns the ReadingBuses object to be used throughout your program.</returns>
-        public static ReadingBuses getInstance()
+        public static ReadingBuses GetInstance()
         {
             if(instance == null)
                 throw new Exception("You must first initialise the object before usage, call the 'initialise' function passing your API Key.");
@@ -139,7 +127,7 @@ namespace ReadingBusesAPI
         /// <summary>
         /// Finds all the services operated by Reading Buses.
         /// </summary>
-        private async Task<List<BusService>> findServices()
+        private async Task<List<BusService>> FindServices()
         {
             if (!File.Exists("cache\\Services.cache") || !Cache)
             {
@@ -159,8 +147,8 @@ namespace ReadingBusesAPI
                 if ((DateTime.Now - ch.CreationTime).TotalDays > CacheVadilityLength)
                 {
                     File.Delete("cache\\Services.cache");
-                    printWarning("Warning: Cache data expired, downloading latest Services Data.");
-                    return await findServices();
+                    PrintWarning("Warning: Cache data expired, downloading latest Services Data.");
+                    return await FindServices();
                 }
                 else
                 {
@@ -171,8 +159,8 @@ namespace ReadingBusesAPI
                     catch (Exception)
                     {
                         File.Delete("cache\\Services.cache");
-                        printWarning("Warning: Unable to read Services Cache File, deleting and regenerating cache.");
-                        return await findServices();
+                        PrintWarning("Warning: Unable to read Services Cache File, deleting and regenerating cache.");
+                        return await FindServices();
                     }     
                 }
             }
@@ -181,7 +169,7 @@ namespace ReadingBusesAPI
         /// <summary>
         /// Finds all the bus stops visted by Reading Buses.
         /// </summary>
-        private async Task<Dictionary<string, BusStop>> findLocations()
+        private async Task<Dictionary<string, BusStop>> FindLocations()
         {
             if (!File.Exists("cache\\Locations.cache") || !Cache)
             {
@@ -205,8 +193,8 @@ namespace ReadingBusesAPI
                 if ((DateTime.Now - ch.CreationTime).TotalDays > CacheVadilityLength)
                 {
                     File.Delete("cache\\Locations.cache");
-                    printWarning("Warning: Cache data expired, downloading latest Locations Data.");
-                    return await findLocations();
+                    PrintWarning("Warning: Cache data expired, downloading latest Locations Data.");
+                    return await FindLocations();
                 }
                 else
                 {
@@ -217,8 +205,8 @@ namespace ReadingBusesAPI
                     catch (Exception)
                     {
                         File.Delete("cache\\Locations.cache");
-                        printWarning("Warning: Unable to read Locations Cache File, deleting and regenerating cache.");
-                        return await findLocations();
+                        PrintWarning("Warning: Unable to read Locations Cache File, deleting and regenerating cache.");
+                        return await FindLocations();
                     }
                 }
             }     
@@ -229,10 +217,10 @@ namespace ReadingBusesAPI
         /// Get a bus stop location based upon a bus stops location code
         /// </summary>
         /// <param name="actoCode">The code of the bus stop</param>
-        /// <returns>A Bus Stop object for the Acto Code specifed.</returns>
-        public BusStop getLocation(string actoCode)
+        /// <returns>A Bus Stop object for the Acto Code specified.</returns>
+        public BusStop GetLocation(string actoCode)
         {
-            if (isLocation(actoCode))
+            if (IsLocation(actoCode))
                return Locations[actoCode];
             else
                 throw new Exception("A bus stop of that Acto Code can not be found, please make sure you have a valid Bus Stop Code.");
@@ -242,20 +230,14 @@ namespace ReadingBusesAPI
         /// All the bus stop locations that Reading Buses Visits
         /// </summary>
         /// <returns>All the bus stops Reading Buses visits</returns>
-        public BusStop[] getLocations()
-        {
-            return Locations.Values.ToArray();
-        }
+        public BusStop[] GetGetLocations() => Locations.Values.ToArray();
 
         /// <summary>
         /// Checks to see if the acto code for the bus stop exists in the API feed or not.
         /// </summary>
         /// <param name="actoCode">The ID Code for a bus stop.</param>
         /// <returns>True or False depending on if the stop is in the API feed or not.</returns>
-        public bool isLocation(string actoCode)
-        {
-            return Locations.ContainsKey(actoCode);
-        }
+        public bool IsLocation(string actoCode) => Locations.ContainsKey(actoCode);
 
         #endregion
 
@@ -264,29 +246,23 @@ namespace ReadingBusesAPI
         /// All the Services Reading Buses Operates 
         /// </summary>
         /// <returns>All the Services Reading Buses Operates</returns>
-        public BusService[] getServices()
-        {
-            return Services.ToArray();
-        }
+        public BusService[] GetServices() => Services.ToArray();
 
         /// <summary>
         /// Returns all services Reading Buses Operates under a brand name, for example "pink" would return "22,25,27,29" services.
         /// </summary>
         /// <param name="BrandName">The brand name for the services you wish to find, eg "pink" or "sky blue".</param>
         /// <returns>An array of Bus Services which are of the brand name specifed.</returns>
-        public BusService[] getServices(string BrandName)
-        {
-            return Services.Where(o => o.BrandName.ToUpper() == BrandName.ToUpper()).ToArray();
-        }
+        public BusService[] GetServices(string BrandName) => Services.Where(o => o.BrandName.ToUpper() == BrandName.ToUpper()).ToArray();
 
         /// <summary>
         /// Returns a single service which matches the Service Number passed,
         /// </summary>
         /// <param name="ServiceNumber">The service number/ID for the service you wish to be returned eg: 17 or 22.</param>
         /// <returns>The service matching the ID.</returns>
-        public BusService getService(string ServiceNumber)
+        public BusService GetService(string ServiceNumber)
         {
-            if (isService(ServiceNumber))
+            if (IsService(ServiceNumber))
                 return Services.Single(o => o.ServiceId.ToUpper() == ServiceNumber.ToUpper());
             else
                 throw new Exception("The service number provided does not exist.");
@@ -297,15 +273,12 @@ namespace ReadingBusesAPI
         /// </summary>
         /// <param name="ServiceNumber">The service number to find.</param>
         /// <returns>True or False for if a service is the API feed or not.</returns>
-        public bool isService(string ServiceNumber)
-        {
-            return Services.Any(o => o.ServiceId.ToUpper() == ServiceNumber.ToUpper());
-        }
+        public bool IsService(string ServiceNumber) => Services.Any(o => o.ServiceId.ToUpper() == ServiceNumber.ToUpper());
 
         /// <summary>
         /// Prints off all the services found by the API which Reading Buses Operates
         /// </summary>
-        public void printServices()
+        public void PrintServices()
         {
             foreach (var service in Services)
                 Console.WriteLine(service.BrandName + " " + service.ServiceId);
@@ -315,9 +288,9 @@ namespace ReadingBusesAPI
         /// Gets live GPS data for all buses currently operating.
         /// </summary>
         /// <returns>An array of GPS locations for all buses operating by Reading Buses currently</returns>
-        public async Task<LivePosition[]> getLiveVehiclePositions()
+        public async Task<LivePosition[]> GetLiveVehiclePositions()
         {        
-            if (LivePosition.refreshCahce() || livePositionCache == null)
+            if (LivePosition.RefreshCahce() || livePositionCache == null)
             {
                 var download = await new System.Net.WebClient().DownloadStringTaskAsync(new Uri("https://rtl2.ods-live.co.uk/api/vehiclePositions?key=" + APIKey));
                 livePositionCache = JsonConvert.DeserializeObject<LivePosition[]>(download).ToArray();
@@ -329,10 +302,10 @@ namespace ReadingBusesAPI
         /// Gets live GPS data for a single buses matching Vehicle ID number.
         /// </summary>
         /// <returns>The GPS point of Vehicle matching your ID provided.</returns>
-        public async Task<LivePosition> getLiveVehiclePosition(string Vehicle)
+        public async Task<LivePosition> GetLiveVehiclePosition(string Vehicle)
         {
-            if (await isVehicle(Vehicle))
-                return (await getLiveVehiclePositions()).Single(o => o.Vehicle.ToUpper() == Vehicle.ToUpper());
+            if (await IsVehicle(Vehicle))
+                return (await GetLiveVehiclePositions()).Single(o => o.Vehicle.ToUpper() == Vehicle.ToUpper());
             else
                 throw new Exception("A Vehicle of that ID can not be found currently operating.");
         }
@@ -342,11 +315,8 @@ namespace ReadingBusesAPI
         /// </summary>
         /// <param name="Vehicle">Vehicle ID Number eg 414</param>
         /// <returns>True or False for if the buses GPS can be found or not currently.</returns>
-        public async Task<bool> isVehicle(string Vehicle)
-        {
-            return (await getLiveVehiclePositions()).Any(o => o.Vehicle.ToUpper() == Vehicle.ToUpper());
-        }
-       
+        public async Task<bool> IsVehicle(string Vehicle) => (await GetLiveVehiclePositions()).Any(o => o.Vehicle.ToUpper() == Vehicle.ToUpper());
+
         #endregion
     }
 }

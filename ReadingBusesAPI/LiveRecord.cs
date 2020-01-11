@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace ReadingBusesAPI
@@ -20,7 +18,7 @@ namespace ReadingBusesAPI
         /// <returns></returns>
         public BusService Service()
         {
-            return ReadingBuses.getInstance().getService(ServiceNumber);
+            return ReadingBuses.GetInstance().GetService(ServiceNumber);
         }
 
         /// <summary>
@@ -48,7 +46,7 @@ namespace ReadingBusesAPI
         /// </summary>
         /// <param name="actoCode">The Acto-code ID for a specific bus stop.</param>
         /// <returns>A list of Live Records containing details about upcoming buses.</returns>
-        public static async Task<List<LiveRecord>> GetLiveData(string actoCode)
+        public static List<LiveRecord> GetLiveData(string actoCode)
         {
             XDocument doc = XDocument.Load("https://rtl2.ods-live.co.uk/api/siri/sm?key=" + ReadingBuses.APIKey + "&location=" + actoCode);
             XNamespace ns = doc.Root.GetDefaultNamespace();

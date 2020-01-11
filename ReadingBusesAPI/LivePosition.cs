@@ -30,28 +30,31 @@ namespace ReadingBusesAPI
 
         internal static DateTime lastReterival;
 
-        internal LivePosition() {
-            lastReterival = DateTime.Now;
-        }
+        internal LivePosition() => lastReterival = DateTime.Now;
 
-        internal static bool refreshCahce()
-        {
-            return (DateTime.Now- lastReterival).TotalSeconds > 15;
-        }
+        /// <summary>
+        /// GPS data only updates every 30 seconds, so on average you will need to wait 15s for new data.
+        /// This is used to check how long it was since last requesting GPS data. If it was recently
+        /// there  is no point making another request to the API as you will get the same data and take longer.
+        /// </summary>
+        /// <returns>Returns if it has been less than 15 seconds from last asking for GPS data.</returns>
+        internal static bool RefreshCahce() => (DateTime.Now - lastReterival).TotalSeconds > 15;
 
-        public string Point()
-        {
-            return Latitude + ", " + Longitude;
-        }
+        /// <summary>
+        /// Returns the coordinate for a vehicle. 
+        /// </summary>
+        /// <returns> Returns the coordinate for a vehicle. </returns>
+        public string Point() => Latitude + ", " + Longitude;
 
-        public string BrandName()
-        {
-            return ReadingBuses.getInstance().getService(ServiceId).BrandName;
-        }
+        /// <summary>
+        /// Finds the Brand name of the service, eg "pink".
+        /// </summary>
+        /// <returns>The brand name for the service.</returns>
+        public string BrandName() => ReadingBuses.GetInstance().GetService(ServiceId).BrandName;
 
-        public void printPoint()
-        {
-            Console.WriteLine(Point());
-        }
+        /// <summary>
+        /// Prints off the coordinate of the vehicle.
+        /// </summary>
+        public void PrintPoint() => Console.WriteLine(Point());
     }
 }
