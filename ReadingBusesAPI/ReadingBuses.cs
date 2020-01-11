@@ -167,7 +167,7 @@ namespace ReadingBusesAPI
         }
 
         /// <summary>
-        /// Finds all the bus stops visted by Reading Buses.
+        /// Finds all the bus stops visited by Reading Buses.
         /// </summary>
         private async Task<Dictionary<string, BusStop>> FindLocations()
         {
