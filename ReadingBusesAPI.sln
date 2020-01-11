@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReadingBusesAPI", "ReadingBusesAPI\ReadingBusesAPI.csproj", "{07FE7193-78B2-43D4-833D-06B93CE02652}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example Project", "Example Project\Example Project.csproj", "{ADE78DEE-CACB-47AC-94F8-DAFF6201C191}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadingBuses API Tests", "ReadingBuses API Tests\ReadingBuses API Tests.csproj", "{B8C1F0E9-D5A6-4F6A-9A26-E89D7AEA30D1}"
 EndProject
 Global
