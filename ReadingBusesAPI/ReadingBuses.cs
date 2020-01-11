@@ -230,7 +230,7 @@ namespace ReadingBusesAPI
         /// All the bus stop locations that Reading Buses Visits
         /// </summary>
         /// <returns>All the bus stops Reading Buses visits</returns>
-        public BusStop[] GetGetLocations() => Locations.Values.ToArray();
+        public BusStop[] GetLocations() => Locations.Values.ToArray();
 
         /// <summary>
         /// Checks to see if the acto code for the bus stop exists in the API feed or not.
