@@ -24,7 +24,10 @@ Supports : List of Bus Stops, Live Vehicle Positions, Stop Predictions, List of 
     <Version>1.0.1</Version>
     <PackageReleaseNotes>Initial Public Release.</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
+
 
   <ItemGroup>
     <None Include="..\LICENSE.txt">

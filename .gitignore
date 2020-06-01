@@ -6,6 +6,9 @@
 #Nuget Package
 nuget.config
 
+#Demo Project
+Demo/
+
 # User-specific files
 *.rsuser
 *.suo
