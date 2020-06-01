@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ReadingBusesAPI
+﻿namespace ReadingBusesAPI
 {
-    class BusTimeTable
+    internal class BusTimeTable
     {
     }
 }

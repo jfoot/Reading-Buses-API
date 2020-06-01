@@ -3,41 +3,41 @@
 namespace ReadingBusesAPI
 {
     /// <summary>
-    /// Stores an X and Y Position simply.
+    ///     Stores an X and Y Position simply.
     /// </summary>
     public struct Point
     {
         /// <value>The X value.</value>
         public readonly double X { get; }
+
         /// <value>The Y Value.</value>
         public readonly double Y { get; }
 
         /// <summary>
-        /// Default constructor
+        ///     Default constructor
         /// </summary>
         /// <param name="x">X value of Point.</param>
         /// <param name="y">Y value of Point.</param>
         public Point(double x, double y) : this()
         {
-            this.X = x;
-            this.Y = y;
+            X = x;
+            Y = y;
         }
 
 
         #region isEqualsOrNot
-       
 
         /// <summary>
-        /// Generates a unique number for each Point Object.
+        ///     Generates a unique number for each Point Object.
         /// </summary>
         /// <returns>Int value of object.</returns>
         public override int GetHashCode()
         {
-            return (int)Math.Pow(X, Y);
+            return (int) Math.Pow(X, Y);
         }
-        
+
         /// <summary>
-        /// Checks if two point objects are the same or not.
+        ///     Checks if two point objects are the same or not.
         /// </summary>
         /// <param name="obj">Another object to compare against this object.</param>
         /// <returns>Is it the same object or not.</returns>
@@ -46,18 +46,18 @@ namespace ReadingBusesAPI
             if (!(obj is Point))
                 return false;
 
-            return Equals((Point)obj);
+            return Equals((Point) obj);
         }
 
         /// <summary>
-        /// Implements logic for checking if two objects are equal.
+        ///     Implements logic for checking if two objects are equal.
         /// </summary>
         /// <param name="other">The other object to check if equal.</param>
         /// <returns>True if equals else false.</returns>
         public bool Equals(Point other) => Y.Equals(other.Y) && X.Equals(other.X);
 
         /// <summary>
-        /// Checks if two objects are the same.
+        ///     Checks if two objects are the same.
         /// </summary>
         /// <param name="point1">First Point Object.</param>
         /// <param name="point2">Second Point Object.</param>
@@ -68,7 +68,7 @@ namespace ReadingBusesAPI
         }
 
         /// <summary>
-        /// Checks if two objects are the not the same.
+        ///     Checks if two objects are the not the same.
         /// </summary>
         /// <param name="point1">First Point Object.</param>
         /// <param name="point2">Second Point Object.</param>
@@ -77,7 +77,7 @@ namespace ReadingBusesAPI
         {
             return !point1.Equals(point2);
         }
+
         #endregion
     };
-
 }
