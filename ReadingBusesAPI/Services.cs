@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.ConstrainedExecution;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -15,13 +16,16 @@ namespace ReadingBusesAPI
     /// </summary>
     internal class Services
     {
+        /// <value>the location for the service cache file.</value>
+        private readonly string _cacheLocation = "cache\\Services.cache";
+
         /// <summary>
         ///     Finds all the services operated by Reading Buses.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown if an invalid or expired API Key is used.</exception>
         internal async Task<List<BusService>> FindServices()
         {
-            if (!File.Exists("cache\\Services.cache") || !ReadingBuses.Cache)
+            if (!File.Exists(_cacheLocation) || !ReadingBuses.Cache)
             {
                 var newServicesData = JsonConvert.DeserializeObject<List<BusService>>(
                         await new WebClient().DownloadStringTaskAsync(
@@ -30,35 +34,34 @@ namespace ReadingBusesAPI
 
                 // Save the JSON file for later use. 
                 if (ReadingBuses.Cache)
-                    await File.WriteAllTextAsync("cache\\Services.cache",
+                    await File.WriteAllTextAsync(_cacheLocation,
                         JsonConvert.SerializeObject(newServicesData, Formatting.Indented));
 
                 return newServicesData;
             }
             else
             {
-                DirectoryInfo ch = new DirectoryInfo("cache\\Services.cache");
+                DirectoryInfo ch = new DirectoryInfo(_cacheLocation);
                 if ((DateTime.Now - ch.CreationTime).TotalDays > ReadingBuses.CacheValidityLength)
                 {
-                    File.Delete("cache\\Services.cache");
+                    File.Delete(_cacheLocation);
                     ReadingBuses.PrintWarning("Warning: Cache data expired, downloading latest Services Data.");
                     return await FindServices();
                 }
-                else
+
+                try
                 {
-                    try
-                    {
-                        return JsonConvert.DeserializeObject<List<BusService>>(
-                            await File.ReadAllTextAsync("cache\\Services.cache"));
-                    }
-                    catch (Exception)
-                    {
-                        File.Delete("cache\\Services.cache");
-                        ReadingBuses.PrintWarning(
-                            "Warning: Unable to read Services Cache File, deleting and regenerating cache.");
-                        return await FindServices();
-                    }
+                    return JsonConvert.DeserializeObject<List<BusService>>(
+                        await File.ReadAllTextAsync(_cacheLocation));
                 }
+                catch (JsonException)
+                {
+                    File.Delete(_cacheLocation);
+                    ReadingBuses.PrintWarning(
+                        "Warning: Unable to read Services Cache File, deleting and regenerating cache.");
+                    return await FindServices();
+                }
+            
             }
         }
     }
