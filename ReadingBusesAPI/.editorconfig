@@ -1,0 +1,15 @@
+# To learn more about .editorconfig see https://aka.ms/editorconfigdocs
+root = true
+
+# All files
+[*]
+indent_style = space
+file_header_template = Copyright (c) Jonathan Foot. All Rights Reserved. \nLicensed under the GNU Affero General Public License, Version 3.0 \nSee the LICENSE file in the project root for more information.
+
+[*.cs]
+file_header_template = Copyright (c) Jonathan Foot. All Rights Reserved. \nLicensed under the GNU Affero General Public License, Version 3.0 \nSee the LICENSE file in the project root for more information.
+
+
+# Xml files
+[*.xml]
+indent_size = 2

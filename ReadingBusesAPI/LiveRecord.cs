@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) Jonathan Foot. All Rights Reserved. 
+// Licensed under the GNU Affero General Public License, Version 3.0 
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -87,13 +91,13 @@ namespace ReadingBusesAPI
             XNamespace ns = doc.Root.GetDefaultNamespace();
             var arrivals = doc.Descendants(ns + "MonitoredStopVisit").Select(x => new LiveRecord()
             {
-                ServiceNumber = (string) x.Descendants(ns + "LineRef").FirstOrDefault(),
-                Destination = (string) x.Descendants(ns + "DestinationName").FirstOrDefault(),
-                SchArrival = (DateTime) x.Descendants(ns + "AimedArrivalTime").FirstOrDefault(),
-                ExptArrival = (DateTime?) x.Descendants(ns + "ExpectedArrivalTime").FirstOrDefault(),
-                OperatorCode = ReadingBuses.GetOperatorE((string) x.Descendants(ns + "OperatorRef").FirstOrDefault()),
-                VehicleRef = (string) x.Descendants(ns + "VehicleRef").FirstOrDefault(),
-                ViaMessage = (string) x.Descendants(ns + "Via").FirstOrDefault()
+                ServiceNumber = (string)x.Descendants(ns + "LineRef").FirstOrDefault(),
+                Destination = (string)x.Descendants(ns + "DestinationName").FirstOrDefault(),
+                SchArrival = (DateTime)x.Descendants(ns + "AimedArrivalTime").FirstOrDefault(),
+                ExptArrival = (DateTime?)x.Descendants(ns + "ExpectedArrivalTime").FirstOrDefault(),
+                OperatorCode = ReadingBuses.GetOperatorE((string)x.Descendants(ns + "OperatorRef").FirstOrDefault()),
+                VehicleRef = (string)x.Descendants(ns + "VehicleRef").FirstOrDefault(),
+                ViaMessage = (string)x.Descendants(ns + "Via").FirstOrDefault()
             }).ToList();
 
             return arrivals;

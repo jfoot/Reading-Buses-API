@@ -1,5 +1,11 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Jonathan Foot. All Rights Reserved. 
+// Licensed under the GNU Affero General Public License, Version 3.0 
+// See the LICENSE file in the project root for more information.
+
+using System;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ReadingBusesAPI
 {
@@ -13,6 +19,18 @@ namespace ReadingBusesAPI
         /// </summary>
         internal BusStop()
         {
+        }
+
+        /// <summary>
+        /// Used to create a snub/ fake object for passing to function calls, if all you need to pass is an acto-code to the function.
+        /// </summary>
+        /// <param name="actoCode">ID of the bus stop.</param>
+        /// <remarks>
+        ///    Unless you are doing something very strange, you probably should not need to use this, it is more for testing purposes. 
+        /// </remarks>
+        public BusStop(string actoCode)
+        {
+            this.ActoCode = actoCode;
         }
 
         /// <value>The unique identifier for a bus stop.</value>
@@ -73,5 +91,16 @@ namespace ReadingBusesAPI
         /// </summary>
         /// <returns>A Point Object for the position of the bus stop.</returns>
         public Point GetPoint() => new Point(double.Parse(Longitude), double.Parse(Latitude));
+
+        /// <summary>
+        /// Gets time table data at this specific bus stop.
+        /// </summary>
+        /// <param name="date">The date you want time table data for.</param>
+        /// <param name="service">(optional) the service you want time table data for specifically. If null, you get time table data for all services at this stop.</param>
+        /// <returns></returns>
+        public Task<BusTimeTable[]> GetTimeTable(DateTime date, BusService service = null)
+        {
+            return BusTimeTable.GetAggregateTimeTable(service ?? new BusService(""), date, this);
+        }
     }
 }

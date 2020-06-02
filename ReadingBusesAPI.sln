@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReadingBusesAPI", "ReadingB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReadingBuses API Tests", "ReadingBuses API Tests\ReadingBuses API Tests.csproj", "{B8C1F0E9-D5A6-4F6A-9A26-E89D7AEA30D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{5200DB54-3453-4EEC-8E27-777917CE9ABE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo", "Demo\Demo.csproj", "{5200DB54-3453-4EEC-8E27-777917CE9ABE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{07FE7193-78B2-43D4-833D-06B93CE02652} = {07FE7193-78B2-43D4-833D-06B93CE02652}
 	EndProjectSection

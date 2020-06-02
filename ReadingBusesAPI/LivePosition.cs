@@ -1,5 +1,9 @@
-﻿using System;
+﻿// Copyright (c) Jonathan Foot. All Rights Reserved. 
+// Licensed under the GNU Affero General Public License, Version 3.0 
+// See the LICENSE file in the project root for more information.
+
 using Newtonsoft.Json;
+using System;
 
 namespace ReadingBusesAPI
 {

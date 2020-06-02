@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) Jonathan Foot. All Rights Reserved. 
+// Licensed under the GNU Affero General Public License, Version 3.0 
+// See the LICENSE file in the project root for more information.
+
+using System;
 
 namespace ReadingBusesAPI
 {
@@ -33,7 +37,7 @@ namespace ReadingBusesAPI
         /// <returns>Int value of object.</returns>
         public override int GetHashCode()
         {
-            return (int) Math.Pow(X, Y);
+            return (int)Math.Pow(X, Y);
         }
 
         /// <summary>
@@ -46,7 +50,7 @@ namespace ReadingBusesAPI
             if (!(obj is Point))
                 return false;
 
-            return Equals((Point) obj);
+            return Equals((Point)obj);
         }
 
         /// <summary>
