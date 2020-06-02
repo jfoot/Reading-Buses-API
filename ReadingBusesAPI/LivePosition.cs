@@ -8,17 +8,16 @@ using Newtonsoft.Json;
 namespace ReadingBusesAPI
 {
     /// <summary>
-    ///     Used to store information about a buses GPS position.
+    ///     Used to store information about a buses GPS position. Related to the "Live Vehicle Positions" API.
     /// </summary>
     public sealed class LivePosition
     {
-        /// <value>The last time a GPS request was made. This is used to prevent unnecessary API calls.</value>
-        internal static DateTime LastRetrieval;
-
         /// <summary>
         ///     The default constructor, which sets the 'LastRetrieval' to current time.
         /// </summary>
-        internal LivePosition() => LastRetrieval = DateTime.Now;
+        internal LivePosition()
+        {
+        }
 
         /// <value>Holds the Operator short code string value.</value>
         [JsonProperty("operator")]
@@ -51,13 +50,6 @@ namespace ReadingBusesAPI
         [JsonProperty("bearing")]
         public string Bearing { get; internal set; }
 
-        /// <summary>
-        ///     GPS data only updates every 30 seconds, so on average you will need to wait 15s for new data.
-        ///     This is used to check how long it was since last requesting GPS data. If it was recently
-        ///     there  is no point making another request to the API as you will get the same data and take longer.
-        /// </summary>
-        /// <returns>Returns if it has been less than 15 seconds from last asking for GPS data.</returns>
-        internal static bool RefreshCache() => (DateTime.Now - LastRetrieval).TotalSeconds > 15;
 
         /// <summary>
         ///     Returns the coordinate for a vehicle.

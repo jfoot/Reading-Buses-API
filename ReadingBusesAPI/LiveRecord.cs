@@ -10,7 +10,7 @@ using System.Xml.Linq;
 namespace ReadingBusesAPI
 {
     /// <summary>
-    ///     Used to store information about a buses arrival at a bus stop.
+    ///     Used to store information about a buses arrival at a bus stop. Mainly related to the "Stop Predictions" API.
     /// </summary>
     public sealed class LiveRecord
     {

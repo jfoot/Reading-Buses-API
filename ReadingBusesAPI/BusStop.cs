@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace ReadingBusesAPI
 {
     /// <summary>
-    ///     Stores information about a single bus stop.
+    ///     Stores information about a single bus stop. Related to the "List Of Bus Stops" API.
     /// </summary>
     public sealed class BusStop
     {

@@ -6,10 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace ReadingBusesAPI
 {
@@ -40,27 +37,28 @@ namespace ReadingBusesAPI
         /// <value>The singleton instance</value>
         private static ReadingBuses _instance;
 
-        /// <value>Keeps track of if cache data is being used or not</value>
-        private static bool _cache = true;
-
-        /// <value>Keeps track of if warnings are being outputted to console or not.</value>
-        private static bool _warning = true;
-
-        /// <value>Keeps track of if full error logs are being outputted to console or not.</value>
-        private static bool _fullError = false;
-
-        /// <value>Stores how many days cache data is valid for in days before being regenerated</value>
-        private static int _cacheValidityLength = 7;
-
-        /// <value>Holds the cache data for live GPS of vehicles.</value>
-        private LivePosition[] _livePositionCache;
-
 
         /// <summary>
         ///     Create a new Reading Buses library object, this is the main control.
         /// </summary>
         /// <param name="APIkey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
-        private ReadingBuses(string APIkey) => APIKey = APIkey;
+        private ReadingBuses(string APIkey)
+        {
+            APIKey = APIkey;
+            GPSController = new GPSController();
+        }
+
+        /// <value>Keeps track of if cache data is being used or not</value>
+        internal static bool Cache { get; set; } = true;
+
+        /// <value>Keeps track of if warnings are being outputted to console or not.</value>
+        internal static bool Warning { get; set; } = true;
+
+        /// <value>Keeps track of if full error logs are being outputted to console or not.</value>
+        internal static bool FullError { get; set; } = false;
+
+        /// <value>Stores how many days cache data is valid for in days before being regenerated</value>
+        internal static int CacheValidityLength { get; set; } = 7;
 
         /// <value>Holds the users API Key.</value>
         internal static string APIKey { get; private set; }
@@ -71,6 +69,8 @@ namespace ReadingBusesAPI
         /// <value>Holds information on all the services operated by Reading Buses</value>
         internal List<BusService> Services { get; set; }
 
+        /// <value>Stores the GPS controller, which can help get vehicle GPS data.</value>
+        public GPSController GPSController { get; }
 
         /// <summary>
         ///     Creates cache data and retrieves bus services and bus stop data.
@@ -89,8 +89,9 @@ namespace ReadingBusesAPI
                     };
                 }
 
-                Task<List<BusService>> servicesTask = FindServices();
-                Task<Dictionary<string, BusStop>> locationsTask = FindLocations();
+                Task<List<BusService>> servicesTask = new Services().FindServices();
+                Task<Dictionary<string, BusStop>> locationsTask = new Locations().FindLocations();
+
 
                 Locations = await locationsTask;
                 Services = await servicesTask;
@@ -115,7 +116,7 @@ namespace ReadingBusesAPI
         public static void SetCache(bool value)
         {
             if (_instance == null)
-                _cache = value;
+                Cache = value;
             else
                 throw new InvalidOperationException(
                     "Cache Storage Setting can not be changed once ReadingBuses Object is initialized.");
@@ -126,19 +127,19 @@ namespace ReadingBusesAPI
         ///     Sets if you want to print out warning messages to the console screen or not.
         /// </summary>
         /// <param name="value">True or False for printing warning messages.</param>
-        public static void SetWarning(bool value) => _warning = value;
+        public static void SetWarning(bool value) => Warning = value;
 
         /// <summary>
         ///     Sets if you want to print out the full error logs to console, only needed for debugging library errors.
         /// </summary>
         /// <param name="value">True or False for printing full error logs to console.</param>
-        public static void SetFullError(bool value) => _fullError = value;
+        public static void SetFullError(bool value) => FullError = value;
 
         /// <summary>
         ///     Sets how long to keep Cache data for before invalidating it and getting new data.
         /// </summary>
         /// <param name="days">The number of days to store the cache data for before getting new data.</param>
-        public static void SetCacheVadilityLength(int days) => _cacheValidityLength = days;
+        public static void SetCacheVadilityLength(int days) => CacheValidityLength = days;
 
         /// <summary>
         ///     Deletes any Cache data stored, Cache data is deleted automatically after a number of days, use this only if you
@@ -152,7 +153,7 @@ namespace ReadingBusesAPI
         /// <param name="message">The message to print off to console.</param>
         internal static void PrintWarning(string message)
         {
-            if (_warning)
+            if (Warning)
                 Console.WriteLine(message);
         }
 
@@ -162,7 +163,7 @@ namespace ReadingBusesAPI
         /// <param name="message">The message to print off to console.</param>
         internal static void PrintFullErrorLogs(string message)
         {
-            if (_fullError)
+            if (FullError)
                 Console.WriteLine(message);
         }
 
@@ -205,104 +206,6 @@ namespace ReadingBusesAPI
                 throw new InvalidOperationException(
                     "You must first initialise the object before usage, call the 'Initialise' function passing your API Key.");
             return _instance;
-        }
-
-
-        /// <summary>
-        ///     Finds all the services operated by Reading Buses.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">Thrown if an invalid or expired API Key is used.</exception>
-        private async Task<List<BusService>> FindServices()
-        {
-            if (!File.Exists("cache\\Services.cache") || !_cache)
-            {
-                var newServicesData = JsonConvert.DeserializeObject<List<BusService>>(
-                        await new WebClient().DownloadStringTaskAsync(
-                            "https://rtl2.ods-live.co.uk/api/services?key=" + APIKey))
-                    .OrderBy(p => Convert.ToInt32(Regex.Replace(p.ServiceId, "[^0-9.]", ""))).ToList();
-
-                // Save the JSON file for later use. 
-                if (_cache)
-                    await File.WriteAllTextAsync("cache\\Services.cache",
-                        JsonConvert.SerializeObject(newServicesData, Formatting.Indented));
-
-                return newServicesData;
-            }
-            else
-            {
-                DirectoryInfo ch = new DirectoryInfo("cache\\Services.cache");
-                if ((DateTime.Now - ch.CreationTime).TotalDays > _cacheValidityLength)
-                {
-                    File.Delete("cache\\Services.cache");
-                    PrintWarning("Warning: Cache data expired, downloading latest Services Data.");
-                    return await FindServices();
-                }
-                else
-                {
-                    try
-                    {
-                        return JsonConvert.DeserializeObject<List<BusService>>(
-                            await File.ReadAllTextAsync("cache\\Services.cache"));
-                    }
-                    catch (Exception)
-                    {
-                        File.Delete("cache\\Services.cache");
-                        PrintWarning("Warning: Unable to read Services Cache File, deleting and regenerating cache.");
-                        return await FindServices();
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        ///     Finds all the bus stops visited by Reading Buses.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">Thrown if an invalid or expired API Key is used.</exception>
-        private async Task<Dictionary<string, BusStop>> FindLocations()
-        {
-            if (!File.Exists("cache\\Locations.cache") || !_cache)
-            {
-                var locations = JsonConvert.DeserializeObject<List<BusStop>>(
-                    await new WebClient().DownloadStringTaskAsync(
-                        "https://rtl2.ods-live.co.uk/api/busstops?key=" + APIKey));
-
-                var locationsFiltered = new Dictionary<string, BusStop>();
-
-                foreach (var location in locations)
-                    if (!locationsFiltered.ContainsKey(location.ActoCode))
-                        locationsFiltered.Add(location.ActoCode, location);
-
-                if (_cache)
-                    await File.WriteAllTextAsync("cache\\Locations.cache",
-                        JsonConvert.SerializeObject(locationsFiltered,
-                            Formatting.Indented)); // Save the JSON file for later use.       
-
-                return locationsFiltered;
-            }
-            else
-            {
-                DirectoryInfo ch = new DirectoryInfo("cache\\Locations.cache");
-                if ((DateTime.Now - ch.CreationTime).TotalDays > _cacheValidityLength)
-                {
-                    File.Delete("cache\\Locations.cache");
-                    PrintWarning("Warning: Cache data expired, downloading latest Locations Data.");
-                    return await FindLocations();
-                }
-                else
-                {
-                    try
-                    {
-                        return JsonConvert.DeserializeObject<Dictionary<string, BusStop>>(
-                            await File.ReadAllTextAsync("cache\\Locations.cache"));
-                    }
-                    catch (Exception)
-                    {
-                        File.Delete("cache\\Locations.cache");
-                        PrintWarning("Warning: Unable to read Locations Cache File, deleting and regenerating cache.");
-                        return await FindLocations();
-                    }
-                }
-            }
         }
 
 
@@ -363,7 +266,6 @@ namespace ReadingBusesAPI
         public bool IsLocation(string actoCode) => Locations.ContainsKey(actoCode);
 
         #endregion
-
 
         #region Services
 
@@ -461,50 +363,6 @@ namespace ReadingBusesAPI
             foreach (var service in Services)
                 Console.WriteLine(service.BrandName + " " + service.ServiceId);
         }
-
-        /// <summary>
-        ///     Gets live GPS data for all buses currently operating.
-        /// </summary>
-        /// <returns>An array of GPS locations for all buses operating by Reading Buses currently</returns>
-        /// <exception cref="InvalidOperationException">Thrown if the API key is invalid or expired.</exception>
-        public async Task<LivePosition[]> GetLiveVehiclePositions()
-        {
-            if (LivePosition.RefreshCache() || _livePositionCache == null)
-            {
-                var download =
-                    await new WebClient().DownloadStringTaskAsync(
-                        new Uri("https://rtl2.ods-live.co.uk/api/vehiclePositions?key=" + APIKey));
-                _livePositionCache = JsonConvert.DeserializeObject<LivePosition[]>(download).ToArray();
-            }
-
-            return _livePositionCache;
-        }
-
-        /// <summary>
-        ///     Gets live GPS data for a single buses matching Vehicle ID number.
-        /// </summary>
-        /// <returns>The GPS point of Vehicle matching your ID provided.</returns>
-        /// <exception cref="InvalidOperationException">
-        ///     Thrown if a vehicle of the ID does not exist or is not currently active.
-        ///     You can check by using the 'IsVehicle' function.
-        /// </exception>
-        public async Task<LivePosition> GetLiveVehiclePosition(string vehicle)
-        {
-            if (await IsVehicle(vehicle))
-                return (await GetLiveVehiclePositions()).Single(o =>
-                    string.Equals(o.Vehicle, vehicle, StringComparison.CurrentCultureIgnoreCase));
-
-            throw new InvalidOperationException(
-                "A Vehicle of that ID can not be found currently operating. You can first check with the 'IsVehicle' function.");
-        }
-
-        /// <summary>
-        ///     Checks if the Vehicle ID Number is currently in service right now.
-        /// </summary>
-        /// <param name="vehicle">Vehicle ID Number eg 414</param>
-        /// <returns>True or False for if the buses GPS can be found or not currently.</returns>
-        public async Task<bool> IsVehicle(string vehicle) => (await GetLiveVehiclePositions()).Any(o =>
-            string.Equals(o.Vehicle, vehicle, StringComparison.CurrentCultureIgnoreCase));
 
         #endregion
     }

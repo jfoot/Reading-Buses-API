@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace ReadingBusesAPI
 {
     /// <summary>
-    ///     Stores information about an individual bus services
+    ///     Stores information about an individual bus services. Related to the "List Of Services" API.
     /// </summary>
     public sealed class BusService
     {
@@ -130,7 +130,7 @@ namespace ReadingBusesAPI
         /// </summary>
         /// <returns>An array of GPS data points for all vehicles currently operating on this service.</returns>
         public async Task<LivePosition[]> GetLivePositions() =>
-            (await ReadingBuses.GetInstance().GetLiveVehiclePositions()).Where(o =>
+            (await ReadingBuses.GetInstance().GPSController.GetLiveVehiclePositions()).Where(o =>
                 string.Equals(o.ServiceId, ServiceId, StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
         /// <summary>
@@ -175,7 +175,7 @@ namespace ReadingBusesAPI
         ///     whole routes timetable.
         /// </param>
         /// <returns>A grouping of arrays of time table records based upon journey code.</returns>
-        public Task<IGrouping<long, BusTimeTable>[]> GetTimeTable(DateTime date, BusStop location = null)
+        public Task<IGrouping<string, BusTimeTable>[]> GetTimeTable(DateTime date, BusStop location = null)
         {
             return BusTimeTable.GetTimeTable(this, date, location ?? new BusStop(""));
         }

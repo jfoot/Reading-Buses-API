@@ -12,7 +12,8 @@ using Newtonsoft.Json;
 namespace ReadingBusesAPI
 {
     /// <summary>
-    ///     Contains information about a single time table record, which means information on one bus at one location.
+    ///     Contains information about a single time table record, which means information on one bus at one location. Related
+    ///     to the "Timetabled Journeys" API.
     /// </summary>
     public sealed class BusTimeTable
     {
@@ -57,7 +58,7 @@ namespace ReadingBusesAPI
         ///     timings.
         /// </remarks>
         [JsonProperty("TimingPoint")]
-        [JsonConverter(typeof(ParseTimmingPointConverter))]
+        [JsonConverter(typeof(ParseTimingPointConverter))]
         public bool IsTimingPoint { get; set; }
 
         /// <value>The scheduled arrival time for the bus. </value>
@@ -120,10 +121,10 @@ namespace ReadingBusesAPI
         ///     If you have not provided any date, and/or you have not provided at least
         ///     either the service or location.
         /// </exception>
-        internal static async Task<IGrouping<long, BusTimeTable>[]> GetTimeTable(BusService service, DateTime date,
+        internal static async Task<IGrouping<string, BusTimeTable>[]> GetTimeTable(BusService service, DateTime date,
             BusStop location)
         {
-            return (IGrouping<long, BusTimeTable>[]) (await GetAggregateTimeTable(service, date, location))
+            return (IGrouping<string, BusTimeTable>[]) (await GetAggregateTimeTable(service, date, location))
                 .GroupBy(x => x.JourneyCode).ToArray();
         }
 
@@ -238,9 +239,9 @@ namespace ReadingBusesAPI
         /// <summary>
         ///     Converts a string into a boolean and back again for the JSON converter.
         /// </summary>
-        internal class ParseTimmingPointConverter : JsonConverter
+        internal class ParseTimingPointConverter : JsonConverter
         {
-            public static readonly ParseTimmingPointConverter Singleton = new ParseTimmingPointConverter();
+            public static readonly ParseTimingPointConverter Singleton = new ParseTimingPointConverter();
             public override bool CanConvert(Type t) => t == typeof(bool) || t == typeof(bool?);
 
             public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
