@@ -8,10 +8,11 @@ using Newtonsoft.Json;
 namespace ReadingBusesAPI
 {
     /// <summary>
-    /// Converts a string short code for an Operator into an Operator Enum and back again for the JSON converter.
+    ///     Converts a string short code for an Operator into an Operator Enum and back again for the JSON converter.
     /// </summary>
     internal class ParseOperatorConverter : JsonConverter
     {
+        public static readonly ParseOperatorConverter Singleton = new ParseOperatorConverter();
         public override bool CanConvert(Type t) => t == typeof(Operators) || t == typeof(Operators?);
 
         public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
@@ -29,19 +30,28 @@ namespace ReadingBusesAPI
                 serializer.Serialize(writer, null);
                 return;
             }
-            var value = (Operators)untypedValue;
+
+            var value = (Operators) untypedValue;
 
             switch (value)
             {
-                case Operators.ReadingBuses: serializer.Serialize(writer, "RGB"); return;
-                case Operators.Kennections: serializer.Serialize(writer, "KC"); return;
-                case Operators.NewburyAndDistrict: serializer.Serialize(writer, "N&D"); return;
-                case Operators.Other: serializer.Serialize(writer, "OTH"); return;
-            };
+                case Operators.ReadingBuses:
+                    serializer.Serialize(writer, "RGB");
+                    return;
+                case Operators.Kennections:
+                    serializer.Serialize(writer, "KC");
+                    return;
+                case Operators.NewburyAndDistrict:
+                    serializer.Serialize(writer, "N&D");
+                    return;
+                case Operators.Other:
+                    serializer.Serialize(writer, "OTH");
+                    return;
+            }
+
+            ;
 
             throw new Exception("Cannot marshal type Operators");
         }
-
-        public static readonly ParseOperatorConverter Singleton = new ParseOperatorConverter();
     }
 }

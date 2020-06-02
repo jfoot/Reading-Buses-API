@@ -2,8 +2,8 @@
 // Licensed under the GNU Affero General Public License, Version 3.0 
 // See the LICENSE file in the project root for more information.
 
-using Newtonsoft.Json;
 using System;
+using Newtonsoft.Json;
 
 namespace ReadingBusesAPI
 {

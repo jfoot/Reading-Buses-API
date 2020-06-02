@@ -37,7 +37,7 @@ namespace ReadingBusesAPI
         /// <returns>Int value of object.</returns>
         public override int GetHashCode()
         {
-            return (int)Math.Pow(X, Y);
+            return (int) Math.Pow(X, Y);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace ReadingBusesAPI
             if (!(obj is Point))
                 return false;
 
-            return Equals((Point)obj);
+            return Equals((Point) obj);
         }
 
         /// <summary>

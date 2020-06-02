@@ -2,12 +2,12 @@
 // Licensed under the GNU Affero General Public License, Version 3.0 
 // See the LICENSE file in the project root for more information.
 
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ReadingBusesAPI
 {
@@ -30,11 +30,13 @@ namespace ReadingBusesAPI
         }
 
         /// <summary>
-        /// Used to create a snub/ fake object for passing to function calls, if all you need to pass is an service number to the function.
+        ///     Used to create a snub/ fake object for passing to function calls, if all you need to pass is an service number to
+        ///     the function.
         /// </summary>
         /// <param name="serviceNumber">ID of the bus service.</param>
         /// <remarks>
-        ///    Unless you are doing something very strange, you probably should not need to use this, it is more for testing purposes. 
+        ///     Unless you are doing something very strange, you probably should not need to use this, it is more for testing
+        ///     purposes.
         /// </remarks>
         public BusService(string serviceNumber)
         {
@@ -43,19 +45,20 @@ namespace ReadingBusesAPI
         }
 
         /// <summary>
-        /// Used to create a snub/ fake object for passing to function calls, if all you need to pass is an service number to the function.
+        ///     Used to create a snub/ fake object for passing to function calls, if all you need to pass is an service number to
+        ///     the function.
         /// </summary>
         /// <param name="serviceNumber">ID of the bus service.</param>
         /// <param name="operators">The operator who runs the service.</param>
         /// <remarks>
-        ///    Unless you are doing something very strange, you probably should not need to use this, it is more for testing purposes. 
+        ///     Unless you are doing something very strange, you probably should not need to use this, it is more for testing
+        ///     purposes.
         /// </remarks>
         public BusService(string serviceNumber, Operators operators)
         {
             ServiceId = serviceNumber;
             OperatorCode = operators;
         }
-
 
 
         /// <value>
@@ -74,7 +77,7 @@ namespace ReadingBusesAPI
         [JsonProperty("operator_code")]
         [JsonConverter(typeof(ParseOperatorConverter))]
         public Operators OperatorCode { get; set; }
-    
+
 
         /// <summary>
         ///     Gets a list of bus stops acto codes, if this is the first time it's asked for call upon the API
@@ -149,27 +152,32 @@ namespace ReadingBusesAPI
         }
 
         /// <summary>
-        /// Gets the full bus time table, for a specific date.
+        ///     Gets the full bus time table, for a specific date.
         /// </summary>
         /// <param name="date">the date on which you want a timetable for.</param>
-        /// <param name="location">(optional) a specific bus stop you want timetables for, if null it will get a timetable for every bus stop on route.</param>
+        /// <param name="location">
+        ///     (optional) a specific bus stop you want timetables for, if null it will get a timetable for
+        ///     every bus stop on route.
+        /// </param>
         /// <returns></returns>
         public Task<BusTimeTable[]> GetAggregateTimeTable(DateTime date, BusStop location = null)
         {
-            return BusTimeTable.GetAggregateTimeTable(this, date, (location ?? new BusStop("")));
+            return BusTimeTable.GetAggregateTimeTable(this, date, location ?? new BusStop(""));
         }
 
 
         /// <summary>
-        /// Gets the time table for this specific bus service, split into groups by the journey code.
+        ///     Gets the time table for this specific bus service, split into groups by the journey code.
         /// </summary>
         /// <param name="date">The date on which you want the time table for.</param>
-        /// <param name="location">(optional) The specific bus stop you want time table data for. Leave as null if you want the whole routes timetable.</param>
+        /// <param name="location">
+        ///     (optional) The specific bus stop you want time table data for. Leave as null if you want the
+        ///     whole routes timetable.
+        /// </param>
         /// <returns>A grouping of arrays of time table records based upon journey code.</returns>
         public Task<IGrouping<long, BusTimeTable>[]> GetTimeTable(DateTime date, BusStop location = null)
         {
-            return BusTimeTable.GetTimeTable(this, date, (location ?? new BusStop("")));
+            return BusTimeTable.GetTimeTable(this, date, location ?? new BusStop(""));
         }
-
     }
 }

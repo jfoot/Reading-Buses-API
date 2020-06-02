@@ -2,7 +2,6 @@
 // Licensed under the GNU Affero General Public License, Version 3.0 
 // See the LICENSE file in the project root for more information.
 
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ReadingBusesAPI
 {

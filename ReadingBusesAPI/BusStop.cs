@@ -3,9 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ReadingBusesAPI
 {
@@ -22,15 +22,17 @@ namespace ReadingBusesAPI
         }
 
         /// <summary>
-        /// Used to create a snub/ fake object for passing to function calls, if all you need to pass is an acto-code to the function.
+        ///     Used to create a snub/ fake object for passing to function calls, if all you need to pass is an acto-code to the
+        ///     function.
         /// </summary>
         /// <param name="actoCode">ID of the bus stop.</param>
         /// <remarks>
-        ///    Unless you are doing something very strange, you probably should not need to use this, it is more for testing purposes. 
+        ///     Unless you are doing something very strange, you probably should not need to use this, it is more for testing
+        ///     purposes.
         /// </remarks>
         public BusStop(string actoCode)
         {
-            this.ActoCode = actoCode;
+            ActoCode = actoCode;
         }
 
         /// <value>The unique identifier for a bus stop.</value>
@@ -93,10 +95,13 @@ namespace ReadingBusesAPI
         public Point GetPoint() => new Point(double.Parse(Longitude), double.Parse(Latitude));
 
         /// <summary>
-        /// Gets time table data at this specific bus stop.
+        ///     Gets time table data at this specific bus stop.
         /// </summary>
         /// <param name="date">The date you want time table data for.</param>
-        /// <param name="service">(optional) the service you want time table data for specifically. If null, you get time table data for all services at this stop.</param>
+        /// <param name="service">
+        ///     (optional) the service you want time table data for specifically. If null, you get time table
+        ///     data for all services at this stop.
+        /// </param>
         /// <returns></returns>
         public Task<BusTimeTable[]> GetTimeTable(DateTime date, BusService service = null)
         {
