@@ -33,7 +33,7 @@ namespace ReadingBusesAPI.Bus_Service
             {
                 var newServicesData = JsonConvert.DeserializeObject<List<BusService>>(
                         await new WebClient().DownloadStringTaskAsync(
-                            URLConstructor.ListOfServices()))
+                            UrlConstructor.ListOfServices()))
                     .OrderBy(p => Convert.ToInt32(Regex.Replace(p.ServiceId, "[^0-9.]", ""))).ToList();
 
                 // Save the JSON file for later use. 

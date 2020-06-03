@@ -74,13 +74,11 @@ namespace ReadingBusesAPI.Vehicle_Positions
 
             var data =
                 await new WebClient().DownloadStringTaskAsync(
-                    new Uri(URLConstructor.VehiclePositionHistory(dateStartTime,timeSpan,vehicle)));
+                    new Uri(UrlConstructor.VehiclePositionHistory(dateStartTime, timeSpan, vehicle)));
 
 
             return JsonConvert.DeserializeObject<ArchivedPositions[]>(data).ToArray();
         }
-
-        
 
 
         /// <summary>
@@ -94,7 +92,7 @@ namespace ReadingBusesAPI.Vehicle_Positions
             {
                 var download =
                     await new WebClient().DownloadStringTaskAsync(
-                        new Uri(URLConstructor.LiveVehiclePositions()));
+                        new Uri(UrlConstructor.LiveVehiclePositions()));
                 _livePositionCache = JsonConvert.DeserializeObject<LivePosition[]>(download).ToArray();
                 _lastRetrieval = DateTime.Now;
             }

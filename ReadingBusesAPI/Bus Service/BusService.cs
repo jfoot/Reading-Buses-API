@@ -9,9 +9,9 @@ using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ReadingBusesAPI.Bus_Stops;
-using ReadingBusesAPI.Vehicle_Positions;
 using ReadingBusesAPI.Shared;
 using ReadingBusesAPI.TimeTable;
+using ReadingBusesAPI.Vehicle_Positions;
 
 namespace ReadingBusesAPI.Bus_Service
 {
@@ -94,7 +94,7 @@ namespace ReadingBusesAPI.Bus_Service
                 _stops = new List<string>();
                 _stops = JsonConvert.DeserializeObject<List<BusStop>>(
                         await new WebClient().DownloadStringTaskAsync(
-                            URLConstructor.LinePatterns(this)))
+                            UrlConstructor.LinePatterns(this)))
                     .Select(p => p.ActoCode).ToList();
             }
 

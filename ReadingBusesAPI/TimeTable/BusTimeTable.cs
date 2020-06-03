@@ -49,7 +49,8 @@ namespace ReadingBusesAPI.TimeTable
 
 
             var timeTable = JsonConvert.DeserializeObject<List<BusTimeTable>>(
-                await new WebClient().DownloadStringTaskAsync(URLConstructor.TimetabledJourneys(service,location,date)));
+                await new WebClient().DownloadStringTaskAsync(
+                    UrlConstructor.TimetabledJourneys(service, location, date)));
 
             return timeTable.ToArray();
         }

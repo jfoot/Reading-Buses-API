@@ -9,9 +9,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using ReadingBusesAPI.Bus_Service;
 using ReadingBusesAPI.Bus_Stops;
-using ReadingBusesAPI.Vehicle_Positions;
 using ReadingBusesAPI.Shared;
 using ReadingBusesAPI.TimeTable;
+using ReadingBusesAPI.Vehicle_Positions;
 
 namespace ReadingBusesAPI
 {
@@ -132,7 +132,7 @@ namespace ReadingBusesAPI
 
 
         /// <summary>
-        ///     Sets if you want to debug the library by making requests to a dummy server instead of the real live sever. 
+        ///     Sets if you want to debug the library by making requests to a dummy server instead of the real live sever.
         /// </summary>
         /// <param name="value">True or False for if you want to debug or not.</param>
         /// <remarks>Unless you are developing or editing library in some way you should not need to use this.</remarks>
@@ -140,7 +140,6 @@ namespace ReadingBusesAPI
         {
             Debugging = value;
         }
-
 
 
         /// <summary>

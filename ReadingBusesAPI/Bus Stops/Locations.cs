@@ -31,7 +31,7 @@ namespace ReadingBusesAPI.Bus_Stops
             if (!File.Exists(_cacheLocation) || !ReadingBuses.Cache)
             {
                 var locations = JsonConvert.DeserializeObject<List<BusStop>>(
-                    await new WebClient().DownloadStringTaskAsync(URLConstructor.ListOfBusStops()));
+                    await new WebClient().DownloadStringTaskAsync(UrlConstructor.ListOfBusStops()));
 
                 var locationsFiltered = new Dictionary<string, BusStop>();
 

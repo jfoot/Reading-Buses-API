@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using ReadingBusesAPI;
 
 namespace ReadingBuses_API_Tests
@@ -10,9 +11,11 @@ namespace ReadingBuses_API_Tests
 		public void Setup()
 		{
 			ReadingBuses.SetCache(false);
-			//Initializes the controller, enter in your Reading Buses API - Get your own from https://rtl2.ods-live.co.uk/cms/apiservice
-			//Once Instantiated you can also use, "ReadingBuses.GetInstance();" to get future instances.
+			ReadingBuses.SetDebugging(true);
+			ReadingBuses.SetFullError(true);
+			ReadingBuses.SetWarning(true);
 			ReadingBuses controller = ReadingBuses.Initialise("").Result;
+			Console.WriteLine("Starting Unit Tests...");
 		}
 
 		[Test]

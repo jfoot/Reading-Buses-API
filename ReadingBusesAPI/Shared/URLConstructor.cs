@@ -5,8 +5,8 @@ using ReadingBusesAPI.Bus_Stops;
 namespace ReadingBusesAPI.Shared
 {
     /// <summary>
-    /// Returns back the URL needed to make a get command to the Reading Buses Open Data API.
-    /// You can use this for testing purposes to check the API is returning what you were expecting.
+    ///     Returns back the URL needed to make a get command to the Reading Buses Open Data API.
+    ///     You can use this for testing purposes to check the API is returning what you were expecting.
     /// </summary>
     public static class UrlConstructor
     {
@@ -15,39 +15,39 @@ namespace ReadingBusesAPI.Shared
 
 
         /// <summary>
-        ///  Returns back the URL needed for a get request to the 'List of Bus Stops' API.
+        ///     Returns back the URL needed for a get request to the 'List of Bus Stops' API.
         /// </summary>
         /// <returns> Returns back the URL needed for a get request to the 'List of Bus Stops' API.</returns>
         public static string ListOfBusStops()
         {
             if (ReadingBuses.Debugging)
                 return "";
-            
+
             return ReadingBuses.Debugging ? "" : _readingBusesAPI + "busstops?key=" + ReadingBuses.APIKey;
         }
 
         /// <summary>
-        ///  Returns back the URL needed for a get request to the 'Live Vehicle Positions' API.
+        ///     Returns back the URL needed for a get request to the 'Live Vehicle Positions' API.
         /// </summary>
         /// <returns> Returns back the URL needed for a get request to the 'Live Vehicle Positions' API.</returns>
         public static string LiveVehiclePositions()
         {
             if (ReadingBuses.Debugging)
                 return "";
-            
+
             return ReadingBuses.Debugging ? "" : _readingBusesAPI + "vehiclePositions?key=" + ReadingBuses.APIKey;
         }
 
 
         /// <summary>
-        /// Returns back the URL needed for a get request to the 'Live Journey Details' API.
+        ///     Returns back the URL needed for a get request to the 'Live Journey Details' API.
         /// </summary>
         /// <returns>Returns back the URL needed for a get request to the 'Live Journey Details' API.</returns>
         public static string LiveJourneyDetails() =>
             throw new NotImplementedException("This API feed is not yet implemented");
 
         /// <summary>
-        /// Returns back the URL needed for a get request to the 'Stop Predictions' API.
+        ///     Returns back the URL needed for a get request to the 'Stop Predictions' API.
         /// </summary>
         /// <param name="actoCode">The bus stop ID code.</param>
         /// <returns>Returns back the URL needed for a get request to the 'Stop Predictions' API.</returns>
@@ -55,25 +55,25 @@ namespace ReadingBusesAPI.Shared
         {
             if (ReadingBuses.Debugging)
                 return "";
-            
+
             return _readingBusesAPI + "siri/sm?key=" + ReadingBuses.APIKey +
-                       "&location=" + actoCode;
+                   "&location=" + actoCode;
         }
 
         /// <summary>
-        /// Returns back the URL needed for a get request to the 'List of Services' API.
+        ///     Returns back the URL needed for a get request to the 'List of Services' API.
         /// </summary>
         /// <returns>Returns back the URL needed for a get request to the 'List of Services' API.</returns>
         public static string ListOfServices()
         {
             if (ReadingBuses.Debugging)
                 return "";
-            
+
             return ReadingBuses.Debugging ? "" : _readingBusesAPI + "services?key=" + ReadingBuses.APIKey;
         }
 
         /// <summary>
-        /// Returns back the URL needed for a get request to the 'Line Patterns' API.
+        ///     Returns back the URL needed for a get request to the 'Line Patterns' API.
         /// </summary>
         /// <param name="service">The bus service to query for.</param>
         /// <returns>Returns back the URL needed for a get request to the 'Line Patterns' API.</returns>
@@ -81,12 +81,12 @@ namespace ReadingBusesAPI.Shared
         {
             if (ReadingBuses.Debugging)
                 return "";
-            
+
             return _readingBusesAPI + "linePatterns?key=" + ReadingBuses.APIKey + "&service=" + service.ServiceId;
         }
 
         /// <summary>
-        /// Returns back the URL needed for a get request to the 'Time Tabled Journeys' API.
+        ///     Returns back the URL needed for a get request to the 'Time Tabled Journeys' API.
         /// </summary>
         /// <param name="service">The bus service to query for.</param>
         /// <param name="location">The bus stop to query for.</param>
@@ -96,16 +96,16 @@ namespace ReadingBusesAPI.Shared
         {
             if (ReadingBuses.Debugging)
                 return "";
-            
+
             return _readingBusesAPI + "scheduledJourneys?key=" + ReadingBuses.APIKey +
-                       "&service=" + (service ?? new BusService("")).ServiceId +
-                       "&date=" +
-                       date.ToString("yyyy-MM-dd") + "&location=" +
-                       (location ?? new BusStop("")).ActoCode;
+                   "&service=" + (service ?? new BusService("")).ServiceId +
+                   "&date=" +
+                   date.ToString("yyyy-MM-dd") + "&location=" +
+                   (location ?? new BusStop("")).ActoCode;
         }
 
         /// <summary>
-        /// Returns back the URL needed for a get request to the 'Tracking History' API.
+        ///     Returns back the URL needed for a get request to the 'Tracking History' API.
         /// </summary>
         /// <param name="service">The bus service to query for.</param>
         /// <param name="location">The bus stop to query for.</param>
@@ -116,18 +116,18 @@ namespace ReadingBusesAPI.Shared
         {
             if (ReadingBuses.Debugging)
                 return "";
-            
+
             return _readingBusesAPI + "trackingHistory?key=" +
-                       ReadingBuses.APIKey +
-                       "&service=" + (service ?? new BusService("")).ServiceId +
-                       "&date=" +
-                       date.ToString("yyyy-MM-dd") + "&vehicle=" + vehicle +
-                       "&location=" +
-                       (location ?? new BusStop("")).ActoCode;
+                   ReadingBuses.APIKey +
+                   "&service=" + (service ?? new BusService("")).ServiceId +
+                   "&date=" +
+                   date.ToString("yyyy-MM-dd") + "&vehicle=" + vehicle +
+                   "&location=" +
+                   (location ?? new BusStop("")).ActoCode;
         }
 
         /// <summary>
-        /// Returns back the URL needed for a get request to the 'Vehicle Position History' API.
+        ///     Returns back the URL needed for a get request to the 'Vehicle Position History' API.
         /// </summary>
         /// <param name="dateStartTime">The date and time you want to query for.</param>
         /// <param name="timeSpan">The length of the time period to query for.</param>
@@ -138,11 +138,11 @@ namespace ReadingBusesAPI.Shared
         {
             if (ReadingBuses.Debugging)
                 return "";
-            
+
             return _readingBusesAPI + "vehiclePositionHistory?key=" + ReadingBuses.APIKey +
-                       "&date=" + dateStartTime.ToString("yyyy-MM-dd") + "&vehicle=" + vehicle + "&from=" +
-                       dateStartTime.TimeOfDay +
-                       "&to=" + AddTimeSpan(dateStartTime, timeSpan).TimeOfDay;
+                   "&date=" + dateStartTime.ToString("yyyy-MM-dd") + "&vehicle=" + vehicle + "&from=" +
+                   dateStartTime.TimeOfDay +
+                   "&to=" + AddTimeSpan(dateStartTime, timeSpan).TimeOfDay;
         }
 
 
@@ -151,7 +151,10 @@ namespace ReadingBusesAPI.Shared
         ///     today only. If no time span was given then assume they want a full day of data.
         /// </summary>
         /// <param name="start">The start date time, for what day and what time they want to get data from.</param>
-        /// <param name="timeSpan">The length of time you want data for. Must be a positive value. When added to 'start' it should not take you into the next day.</param>
+        /// <param name="timeSpan">
+        ///     The length of time you want data for. Must be a positive value. When added to 'start' it should
+        ///     not take you into the next day.
+        /// </param>
         /// <returns>The new DateTime object, which has the start date time object incremented by the time span safely.</returns>
         private static DateTime AddTimeSpan(DateTime start, TimeSpan? timeSpan)
         {
