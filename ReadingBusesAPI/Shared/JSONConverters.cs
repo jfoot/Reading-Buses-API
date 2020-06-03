@@ -49,8 +49,6 @@ namespace ReadingBusesAPI
                     return;
             }
 
-            ;
-
             throw new Exception("Cannot marshal type Operators");
         }
     }

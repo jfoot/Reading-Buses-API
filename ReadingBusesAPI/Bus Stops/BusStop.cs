@@ -105,7 +105,23 @@ namespace ReadingBusesAPI
         /// <returns></returns>
         public Task<BusTimeTable[]> GetTimeTable(DateTime date, BusService service = null)
         {
-            return BusTimeTable.GetAggregateTimeTable(service ?? new BusService(""), date, this);
+            return BusTimeTable.GetTimeTable(service, date, this);
+        }
+
+
+        /// <summary>
+        ///     Gets the archived real bus departure and arrival times along with their time table history at this specific bus
+        ///     stop.
+        /// </summary>
+        /// <param name="date">The date you want time table data for. This should be a date in the past.</param>
+        /// <param name="service">
+        ///     (optional) the service you want time table data for specifically. If null, you get time table
+        ///     data for all services at this stop.
+        /// </param>
+        /// <returns></returns>
+        public Task<ArchivedBusTimeTable[]> GetArchivedTimeTable(DateTime date, BusService service = null)
+        {
+            return ArchivedBusTimeTable.GetTimeTable(service, date, this, null);
         }
     }
 }

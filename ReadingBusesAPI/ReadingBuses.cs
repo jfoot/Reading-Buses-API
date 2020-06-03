@@ -41,10 +41,10 @@ namespace ReadingBusesAPI
         /// <summary>
         ///     Create a new Reading Buses library object, this is the main control.
         /// </summary>
-        /// <param name="APIkey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
-        private ReadingBuses(string APIkey)
+        /// <param name="apiKey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
+        private ReadingBuses(string apiKey)
         {
-            APIKey = APIkey;
+            APIKey = apiKey;
             GPSController = new GPSController();
         }
 
@@ -139,7 +139,7 @@ namespace ReadingBusesAPI
         ///     Sets how long to keep Cache data for before invalidating it and getting new data.
         /// </summary>
         /// <param name="days">The number of days to store the cache data for before getting new data.</param>
-        public static void SetCacheVadilityLength(int days) => CacheValidityLength = days;
+        public static void SetCacheValidityLength(int days) => CacheValidityLength = days;
 
         /// <summary>
         ///     Deletes any Cache data stored, Cache data is deleted automatically after a number of days, use this only if you
@@ -171,17 +171,17 @@ namespace ReadingBusesAPI
         /// <summary>
         ///     Used to initially initialise the ReadingBuses Object, it is recommended you do this in your programs start up.
         /// </summary>
-        /// <param name="APIKey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
+        /// <param name="apiKey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
         /// <returns>An instance of the library controller. This same instance can be got by calling the "GetInstance" method.</returns>
         /// <exception cref="InvalidOperationException">Can throw an exception if you pass an invalid or expired API Key.</exception>
         /// See
         /// <see cref="ReadingBuses.GetInstance()" />
         /// to get any future instances afterwards.
-        public static async Task<ReadingBuses> Initialise(string APIKey)
+        public static async Task<ReadingBuses> Initialise(string apiKey)
         {
             if (_instance == null)
             {
-                _instance = new ReadingBuses(APIKey);
+                _instance = new ReadingBuses(apiKey);
                 await _instance.SetUp();
             }
 
@@ -199,7 +199,7 @@ namespace ReadingBusesAPI
         /// </exception>
         /// See
         /// <see cref="ReadingBuses.Initialise(string)" />
-        /// to initially initialise the ReadingBuses Object singelton.
+        /// to initially initialise the ReadingBuses Object singleton.
         public static ReadingBuses GetInstance()
         {
             if (_instance == null)
@@ -362,6 +362,20 @@ namespace ReadingBusesAPI
         {
             foreach (var service in Services)
                 Console.WriteLine(service.BrandName + " " + service.ServiceId);
+        }
+
+
+        /// <summary>
+        ///     Gets the archived real bus departure and arrival times along with their time table history for a specific vehicle,
+        ///     on a specific date.
+        ///     This can be used to find how late a vehicle was throughout that day.
+        /// </summary>
+        /// <param name="date">The date you want a report for, must be in the past.</param>
+        /// <param name="vehicle">The vehicle ID number </param>
+        /// <returns>An array of Archived Bus Departure and arrival times with their timetabled data.</returns>
+        public Task<ArchivedBusTimeTable[]> GetVehicleTrackingHistory(DateTime date, string vehicle)
+        {
+            return ArchivedBusTimeTable.GetTimeTable(null, date, null, vehicle);
         }
 
         #endregion

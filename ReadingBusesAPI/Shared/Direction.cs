@@ -5,7 +5,7 @@
 namespace ReadingBusesAPI
 {
     /// <summary>
-    ///     The direction in which a bus is traverling.
+    ///     The direction in which a bus is traveling.
     /// </summary>
     public enum Direction
     {

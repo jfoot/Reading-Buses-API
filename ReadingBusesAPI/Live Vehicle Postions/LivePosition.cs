@@ -19,15 +19,14 @@ namespace ReadingBusesAPI
         {
         }
 
-        /// <value>Holds the Operator short code string value.</value>
-        [JsonProperty("operator")]
-        internal string OperatorCodeS { get; set; }
 
         /// <value>Holds the operators enum value.</value>
-        public Operators OperatorCode => ReadingBuses.GetOperatorE(OperatorCodeS);
+        [JsonProperty("operator")]
+        public Operators OperatorCode { get; internal set; }
 
         /// <value>Holds the reference/identifier for the vehicle</value>
         [JsonProperty("vehicle")]
+        [JsonConverter(typeof(ParseOperatorConverter))]
         public string Vehicle { get; internal set; }
 
         /// <value>Holds the Service Number for the bus route.</value>

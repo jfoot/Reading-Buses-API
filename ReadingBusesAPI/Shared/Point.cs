@@ -12,10 +12,10 @@ namespace ReadingBusesAPI
     public struct Point
     {
         /// <value>The X value.</value>
-        public readonly double X { get; }
+        public double X { get; }
 
         /// <value>The Y Value.</value>
-        public readonly double Y { get; }
+        public double Y { get; }
 
         /// <summary>
         ///     Default constructor

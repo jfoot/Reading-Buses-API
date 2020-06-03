@@ -76,7 +76,7 @@ namespace ReadingBusesAPI
         /// <value>The operator enum value.</value>
         [JsonProperty("operator_code")]
         [JsonConverter(typeof(ParseOperatorConverter))]
-        public Operators OperatorCode { get; set; }
+        public Operators OperatorCode { get; internal set; }
 
 
         /// <summary>
@@ -151,6 +151,8 @@ namespace ReadingBusesAPI
                 Console.WriteLine(stop.CommonName);
         }
 
+        #region BusTimeTable
+
         /// <summary>
         ///     Gets the full bus time table, for a specific date.
         /// </summary>
@@ -160,9 +162,9 @@ namespace ReadingBusesAPI
         ///     every bus stop on route.
         /// </param>
         /// <returns></returns>
-        public Task<BusTimeTable[]> GetAggregateTimeTable(DateTime date, BusStop location = null)
+        public Task<BusTimeTable[]> GetTimeTable(DateTime date, BusStop location = null)
         {
-            return BusTimeTable.GetAggregateTimeTable(this, date, location ?? new BusStop(""));
+            return BusTimeTable.GetTimeTable(this, date, location);
         }
 
 
@@ -175,9 +177,47 @@ namespace ReadingBusesAPI
         ///     whole routes timetable.
         /// </param>
         /// <returns>A grouping of arrays of time table records based upon journey code.</returns>
-        public Task<IGrouping<string, BusTimeTable>[]> GetTimeTable(DateTime date, BusStop location = null)
+        public Task<IGrouping<string, BusTimeTable>[]> GetGroupedTimeTable(DateTime date, BusStop location = null)
         {
-            return BusTimeTable.GetTimeTable(this, date, location ?? new BusStop(""));
+            return BusTimeTable.GetGroupedTimeTable(this, date, location);
         }
+
+        #endregion
+
+        #region ArchivedBusTimeTable
+
+        /// <summary>
+        ///     Gets the archived real bus departure and arrival times along with their time table history for this service on a
+        ///     specific date.
+        /// </summary>
+        /// <param name="date">the date on which you want a archived timetable data for. This should be a date in the past.</param>
+        /// <param name="location">
+        ///     (optional) a specific bus stop you want archived timetables for, if null it will get a timetable for
+        ///     every bus stop on route.
+        /// </param>
+        /// <returns></returns>
+        public Task<ArchivedBusTimeTable[]> GetArchivedTimeTable(DateTime date, BusStop location = null)
+        {
+            return ArchivedBusTimeTable.GetTimeTable(this, date, location, null);
+        }
+
+
+        /// <summary>
+        ///     Gets the archived real bus departure and arrival times along with their time table history for this service on a
+        ///     specific date, split into groups by the journey code.
+        /// </summary>
+        /// <param name="date">The date on which you want the time table for.  This should be a date in the past.</param>
+        /// <param name="location">
+        ///     (optional) The specific bus stop you want time table data for. Leave as null if you want the
+        ///     whole routes timetable.
+        /// </param>
+        /// <returns>A grouping of arrays of time table records based upon journey code.</returns>
+        public Task<IGrouping<string, ArchivedBusTimeTable>[]> GetGroupedArchivedTimeTable(DateTime date,
+            BusStop location = null)
+        {
+            return ArchivedBusTimeTable.GetGroupedTimeTable(this, date, location, null);
+        }
+
+        #endregion
     }
 }

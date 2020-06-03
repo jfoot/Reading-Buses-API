@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) Jonathan Foot. All Rights Reserved. 
+// Licensed under the GNU Affero General Public License, Version 3.0 
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -9,7 +13,7 @@ namespace ReadingBusesAPI
     /// <summary>
     ///     Helps get live and historical GPS data on vehicles by accessing the "Live Vehicle Positions" API.
     /// </summary>
-    public class GPSController
+    public sealed class GPSController
     {
         /// <value>The last time a GPS request was made. This is used to prevent unnecessary API calls.</value>
         private static DateTime _lastRetrieval;

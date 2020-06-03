@@ -1,9 +1,12 @@
-﻿using System;
+﻿// Copyright (c) Jonathan Foot. All Rights Reserved. 
+// Licensed under the GNU Affero General Public License, Version 3.0 
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.ConstrainedExecution;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -61,7 +64,6 @@ namespace ReadingBusesAPI
                         "Warning: Unable to read Services Cache File, deleting and regenerating cache.");
                     return await FindServices();
                 }
-            
             }
         }
     }
