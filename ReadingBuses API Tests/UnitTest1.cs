@@ -11,11 +11,11 @@ namespace ReadingBuses_API_Tests
 		public void Setup()
 		{
 			ReadingBuses.SetCache(false);
-			ReadingBuses.SetDebugging(true);
+			ReadingBuses.SetDebugging(false);
 			ReadingBuses.SetFullError(true);
 			ReadingBuses.SetWarning(true);
-			ReadingBuses controller = ReadingBuses.Initialise("").Result;
 			Console.WriteLine("Starting Unit Tests...");
+			ReadingBuses controller = ReadingBuses.Initialise(Environment.GetEnvironmentVariable("API_KEY")).Result;
 		}
 
 		[Test]

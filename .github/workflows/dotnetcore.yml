@@ -16,4 +16,6 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release
     - name: Test with dotnet
+      env: 
+          API_KEY:  ${{ secrets.RB_API_KEY }}
       run: dotnet test --configuration Release
