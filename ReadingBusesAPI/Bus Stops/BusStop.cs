@@ -6,8 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using ReadingBusesAPI.Bus_Service;
+using ReadingBusesAPI.Live_Journey_Details;
+using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.TimeTable;
 
-namespace ReadingBusesAPI
+namespace ReadingBusesAPI.Bus_Stops
 {
     /// <summary>
     ///     Stores information about a single bus stop. Related to the "List Of Bus Stops" API.

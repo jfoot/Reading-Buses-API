@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ReadingBusesAPI
+namespace ReadingBusesAPI.Bus_Service
 {
     /// <summary>
     ///     This classes simply gets all the bus services operated by Reading Buses, by interfacing with the "List Of Services"

@@ -8,13 +8,14 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using ReadingBusesAPI.Bus_Service;
+using ReadingBusesAPI.Bus_Stops;
 
-namespace ReadingBusesAPI
+namespace ReadingBusesAPI.TimeTable
 {
     /// <summary>
     ///     Represents and retrieves information  about a actual single time table record, which means information on one bus
-    ///     at one location. Related
-    ///     to the "Tracking History" API.
+    ///     at one location. Related to the "Tracking History" API.
     /// </summary>
     public class ArchivedBusTimeTable : TimeTableRecord
     {
@@ -75,14 +76,17 @@ namespace ReadingBusesAPI
         ///     provided at least
         ///     either the service or location or vehicle.
         /// </exception>
+        ///  See also
+        /// <see cref="BusTimeTable.GetTimeTable(BusService , DateTime ,BusStop)" />
+        /// to get future time table data instead.
         internal static async Task<ArchivedBusTimeTable[]> GetTimeTable(BusService service, DateTime date,
             BusStop location, string vehicle)
         {
-            if (date > DateTime.Now)
+            if (date == null || date > DateTime.Now)
                 throw new InvalidOperationException(
                     "You can not get past data for a date in the future, if you want time table data use the 'BusTimeTable' objects and functions instead.");
 
-            if (date == null || service == null && location == null && string.IsNullOrEmpty(vehicle))
+            if (service == null && location == null && string.IsNullOrEmpty(vehicle))
                 throw new InvalidOperationException(
                     "You must provide a date and a service and/or location for a valid query.");
 

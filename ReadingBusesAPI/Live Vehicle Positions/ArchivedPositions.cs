@@ -4,34 +4,31 @@
 
 using System;
 using Newtonsoft.Json;
+using ReadingBusesAPI.Shared;
 
-namespace ReadingBusesAPI
+namespace ReadingBusesAPI.Live_Vehicle_Positions
 {
     /// <summary>
-    ///     Used to store information about a buses GPS position. Related to the "Live Vehicle Positions" API.
+    /// Stores information about previous/ archived GPS data on vehicles. 
     /// </summary>
-    public sealed class LivePosition
+    public class ArchivedPositions
     {
         /// <summary>
         ///     The default constructor, which sets the 'LastRetrieval' to current time.
         /// </summary>
-        internal LivePosition()
+        internal ArchivedPositions()
         {
         }
 
 
         /// <value>Holds the operators enum value.</value>
         [JsonProperty("operator")]
+        [JsonConverter(typeof(ParseOperatorConverter))]
         public Operators OperatorCode { get; internal set; }
 
         /// <value>Holds the reference/identifier for the vehicle</value>
         [JsonProperty("vehicle")]
-        [JsonConverter(typeof(ParseOperatorConverter))]
         public string Vehicle { get; internal set; }
-
-        /// <value>Holds the Service Number for the bus route.</value>
-        [JsonProperty("service")]
-        public string ServiceId { get; internal set; }
 
         /// <value>Holds the time it was last seen/ new data was retrieved.</value>
         [JsonProperty("observed")]
@@ -44,28 +41,6 @@ namespace ReadingBusesAPI
         /// <value>longitude position of the bus</value>
         [JsonProperty("longitude")]
         public string Longitude { get; internal set; }
-
-        /// <value>bearing direction of the bus</value>
-        [JsonProperty("bearing")]
-        public string Bearing { get; internal set; }
-
-
-        /// <summary>
-        ///     Returns the coordinate for a vehicle.
-        /// </summary>
-        /// <returns> Returns the coordinate for a vehicle. </returns>
-        public string Point() => Latitude + ", " + Longitude;
-
-        /// <summary>
-        ///     Finds the Brand name of the service, eg "pink".
-        /// </summary>
-        /// <returns>The brand name for the service.</returns>
-        public string BrandName() => ReadingBuses.GetInstance().GetService(ServiceId, OperatorCode).BrandName;
-
-        /// <summary>
-        ///     Prints off the coordinate of the vehicle.
-        /// </summary>
-        public void PrintPoint() => Console.WriteLine(Point());
 
 
         /// <summary>

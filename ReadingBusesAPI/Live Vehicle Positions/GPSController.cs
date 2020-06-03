@@ -8,7 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ReadingBusesAPI
+namespace ReadingBusesAPI.Live_Vehicle_Positions
 {
     /// <summary>
     ///     Helps get live and historical GPS data on vehicles by accessing the "Live Vehicle Positions" API.
@@ -36,7 +36,71 @@ namespace ReadingBusesAPI
         ///     there  is no point making another request to the API as you will get the same data and take longer.
         /// </summary>
         /// <returns>Returns if it has been less than 15 seconds from last asking for GPS data.</returns>
-        private bool RefreshCache() => (DateTime.Now - _lastRetrieval).TotalSeconds > 15;
+        private bool IsCacheValid() => (DateTime.Now - _lastRetrieval).TotalSeconds > 15;
+
+
+        /// <summary>
+        ///     Gets historic/archived GPS data for buses on a specific date, filtered either by vehicle ID, or all buses without a
+        ///     time period or both.
+        ///     GPS data is not stored for as long as other forms of data you may fail to get data older than a few months.
+        /// </summary>
+        /// <param name="dateStartTime">Vehicle ID Number eg 414</param>
+        /// <param name="timeSpan">
+        ///     (optional) How long a period do you want data for, you can not get multiple days worth of data.
+        ///     If you ask this your result will be automatically truncated to only the start date to midnight.
+        /// </param>
+        /// <param name="vehicle">(optional) Vehicle ID Number eg 414</param>
+        /// <returns>An array of GPS locations at a previous date.</returns>
+        /// <exception cref="InvalidOperationException">
+        ///     Thrown if, you have not choose a date in the past, or the date is too far in the past and so no data exists.
+        ///     Thrown if you have not filtered by either 'timeSpan' or 'vehicle' ID or both.
+        ///     Thrown if the API key is invalid or expired.
+        /// </exception>
+        /// See
+        /// <see cref="GPSController.GetLiveVehiclePositions()" />
+        /// to get live data instead.
+        public async Task<ArchivedPositions[]> GetArchivedVehiclePositions(DateTime dateStartTime, TimeSpan? timeSpan,
+            string vehicle = null)
+        {
+            if (dateStartTime == null || dateStartTime > DateTime.Now)
+                throw new InvalidOperationException(
+                    "You can not get past data for a date in the future, if you want real time GPS data please us the 'GetLiveVehiclePositions' Function instead.");
+
+            if (timeSpan == null && string.IsNullOrEmpty(vehicle))
+                throw new InvalidOperationException(
+                    "You must filter by either timeSpan and/or vehicle ID. Both can not be left blank.");
+
+
+            var data =
+                await new WebClient().DownloadStringTaskAsync(
+                    new Uri("https://rtl2.ods-live.co.uk/api/vehiclePositionHistory?key=" + ReadingBuses.APIKey +
+                            "&date=" + dateStartTime.ToString("yyyy-MM-dd") + "&vehicle=" + vehicle + "&from=" +
+                            dateStartTime.TimeOfDay +
+                            "&to=" + addTimeSpan(dateStartTime, timeSpan).TimeOfDay));
+
+
+            return JsonConvert.DeserializeObject<ArchivedPositions[]>(data).ToArray();
+        }
+
+
+        /// <summary>
+        ///     Adds the time span onto the start date time. If the time span expands into the next day stop it and limit it to
+        ///     today only. If no time span was given then assume they want a full day of data.
+        /// </summary>
+        /// <param name="start">The start date time, for what day and what time they want to get data from.</param>
+        /// <param name="timeSpan">The length of time they want data for.,</param>
+        /// <returns></returns>
+        private DateTime addTimeSpan(DateTime start, TimeSpan? timeSpan)
+        {
+            if (timeSpan == null)
+                return start.Date + new TimeSpan(23, 59, 59);
+
+            DateTime newDateTime = (DateTime) (start + timeSpan);
+            if (newDateTime.Date.Equals(start.Date))
+                return newDateTime;
+
+            return start.Date + new TimeSpan(23, 59, 59);
+        }
 
 
         /// <summary>
@@ -46,7 +110,7 @@ namespace ReadingBusesAPI
         /// <exception cref="InvalidOperationException">Thrown if the API key is invalid or expired.</exception>
         public async Task<LivePosition[]> GetLiveVehiclePositions()
         {
-            if (RefreshCache() || _livePositionCache == null)
+            if (IsCacheValid() || _livePositionCache == null)
             {
                 var download =
                     await new WebClient().DownloadStringTaskAsync(
@@ -61,6 +125,7 @@ namespace ReadingBusesAPI
         /// <summary>
         ///     Gets live GPS data for a single buses matching Vehicle ID number.
         /// </summary>
+        /// <param name="vehicle">Vehicle ID Number eg 414</param>
         /// <returns>The GPS point of Vehicle matching your ID provided.</returns>
         /// <exception cref="InvalidOperationException">
         ///     Thrown if a vehicle of the ID does not exist or is not currently active.

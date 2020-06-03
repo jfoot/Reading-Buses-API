@@ -8,8 +8,12 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using ReadingBusesAPI.Bus_Stops;
+using ReadingBusesAPI.Live_Vehicle_Positions;
+using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.TimeTable;
 
-namespace ReadingBusesAPI
+namespace ReadingBusesAPI.Bus_Service
 {
     /// <summary>
     ///     Stores information about an individual bus services. Related to the "List Of Services" API.

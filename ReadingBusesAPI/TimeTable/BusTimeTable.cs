@@ -8,8 +8,10 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using ReadingBusesAPI.Bus_Service;
+using ReadingBusesAPI.Bus_Stops;
 
-namespace ReadingBusesAPI
+namespace ReadingBusesAPI.TimeTable
 {
     /// <summary>
     ///     Represents and retrieves information  about a scheduled/predicted single time table record, which means information

@@ -9,7 +9,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ReadingBusesAPI
+namespace ReadingBusesAPI.Bus_Stops
 {
     /// <summary>
     ///     This classes simply gets all the buses stops visited by Reading Buses, by interfacing with the "List Of Bus Stops"

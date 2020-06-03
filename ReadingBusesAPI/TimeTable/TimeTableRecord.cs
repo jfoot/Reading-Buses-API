@@ -4,8 +4,11 @@
 
 using System;
 using Newtonsoft.Json;
+using ReadingBusesAPI.Bus_Service;
+using ReadingBusesAPI.Bus_Stops;
+using ReadingBusesAPI.Shared;
 
-namespace ReadingBusesAPI
+namespace ReadingBusesAPI.TimeTable
 {
     /// <summary>
     ///     Represents the Raw timetable object data you get from the Timetabled Journeys and Tracking History APIs.

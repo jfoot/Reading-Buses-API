@@ -4,7 +4,7 @@
 
 using System;
 
-namespace ReadingBusesAPI
+namespace ReadingBusesAPI.Shared
 {
     /// <summary>
     ///     Stores an X and Y Position simply.
@@ -26,6 +26,15 @@ namespace ReadingBusesAPI
         {
             X = x;
             Y = y;
+        }
+
+        /// <summary>
+        ///     Converts point to string representation.
+        /// </summary>
+        /// <returns>Point as a string.</returns>
+        public override string ToString()
+        {
+            return X + ", " + Y;
         }
 
 
