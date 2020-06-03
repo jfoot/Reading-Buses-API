@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using ReadingBusesAPI.Shared;
 
 namespace ReadingBusesAPI.Vehicle_Positions
 {
@@ -73,34 +74,13 @@ namespace ReadingBusesAPI.Vehicle_Positions
 
             var data =
                 await new WebClient().DownloadStringTaskAsync(
-                    new Uri("https://rtl2.ods-live.co.uk/api/vehiclePositionHistory?key=" + ReadingBuses.APIKey +
-                            "&date=" + dateStartTime.ToString("yyyy-MM-dd") + "&vehicle=" + vehicle + "&from=" +
-                            dateStartTime.TimeOfDay +
-                            "&to=" + addTimeSpan(dateStartTime, timeSpan).TimeOfDay));
+                    new Uri(URLConstructor.VehiclePositionHistory(dateStartTime,timeSpan,vehicle)));
 
 
             return JsonConvert.DeserializeObject<ArchivedPositions[]>(data).ToArray();
         }
 
-
-        /// <summary>
-        ///     Adds the time span onto the start date time. If the time span expands into the next day stop it and limit it to
-        ///     today only. If no time span was given then assume they want a full day of data.
-        /// </summary>
-        /// <param name="start">The start date time, for what day and what time they want to get data from.</param>
-        /// <param name="timeSpan">The length of time they want data for.,</param>
-        /// <returns></returns>
-        private DateTime addTimeSpan(DateTime start, TimeSpan? timeSpan)
-        {
-            if (timeSpan == null)
-                return start.Date + new TimeSpan(23, 59, 59);
-
-            DateTime newDateTime = (DateTime) (start + timeSpan);
-            if (newDateTime.Date.Equals(start.Date))
-                return newDateTime;
-
-            return start.Date + new TimeSpan(23, 59, 59);
-        }
+        
 
 
         /// <summary>
@@ -114,7 +94,7 @@ namespace ReadingBusesAPI.Vehicle_Positions
             {
                 var download =
                     await new WebClient().DownloadStringTaskAsync(
-                        new Uri("https://rtl2.ods-live.co.uk/api/vehiclePositions?key=" + ReadingBuses.APIKey));
+                        new Uri(URLConstructor.LiveVehiclePositions()));
                 _livePositionCache = JsonConvert.DeserializeObject<LivePosition[]>(download).ToArray();
                 _lastRetrieval = DateTime.Now;
             }

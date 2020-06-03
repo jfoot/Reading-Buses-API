@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ReadingBusesAPI.Bus_Service;
 using ReadingBusesAPI.Bus_Stops;
+using ReadingBusesAPI.Shared;
 
 namespace ReadingBusesAPI.TimeTable
 {
@@ -92,13 +93,7 @@ namespace ReadingBusesAPI.TimeTable
 
 
             var timeTable = JsonConvert.DeserializeObject<List<ArchivedBusTimeTable>>(
-                await new WebClient().DownloadStringTaskAsync("https://rtl2.ods-live.co.uk/api/trackingHistory?key=" +
-                                                              ReadingBuses.APIKey +
-                                                              "&service=" + (service ?? new BusService("")).ServiceId +
-                                                              "&date=" +
-                                                              date.ToString("yyyy-MM-dd") + "&vehicle=" + vehicle +
-                                                              "&location=" +
-                                                              (location ?? new BusStop("")).ActoCode));
+                await new WebClient().DownloadStringTaskAsync(URLConstructor.TrackingHistory(service,location,date,vehicle)));
             return timeTable.ToArray();
         }
 

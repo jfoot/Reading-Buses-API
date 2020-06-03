@@ -54,6 +54,9 @@ namespace ReadingBusesAPI
         }
 
         /// <value>Keeps track of if cache data is being used or not</value>
+        internal static bool Debugging { get; set; } = false;
+
+        /// <value>Keeps track of if cache data is being used or not</value>
         internal static bool Cache { get; set; } = true;
 
         /// <value>Keeps track of if warnings are being outputted to console or not.</value>
@@ -126,6 +129,18 @@ namespace ReadingBusesAPI
                 throw new InvalidOperationException(
                     "Cache Storage Setting can not be changed once ReadingBuses Object is initialized.");
         }
+
+
+        /// <summary>
+        ///     Sets if you want to debug the library by making requests to a dummy server instead of the real live sever. 
+        /// </summary>
+        /// <param name="value">True or False for if you want to debug or not.</param>
+        /// <remarks>Unless you are developing or editing library in some way you should not need to use this.</remarks>
+        public static void SetDebugging(bool value)
+        {
+            Debugging = value;
+        }
+
 
 
         /// <summary>

@@ -8,6 +8,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using ReadingBusesAPI.Shared;
 
 namespace ReadingBusesAPI.Bus_Stops
 {
@@ -30,8 +31,7 @@ namespace ReadingBusesAPI.Bus_Stops
             if (!File.Exists(_cacheLocation) || !ReadingBuses.Cache)
             {
                 var locations = JsonConvert.DeserializeObject<List<BusStop>>(
-                    await new WebClient().DownloadStringTaskAsync(
-                        "https://rtl2.ods-live.co.uk/api/busstops?key=" + ReadingBuses.APIKey));
+                    await new WebClient().DownloadStringTaskAsync(URLConstructor.ListOfBusStops()));
 
                 var locationsFiltered = new Dictionary<string, BusStop>();
 

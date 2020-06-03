@@ -94,8 +94,7 @@ namespace ReadingBusesAPI.Bus_Service
                 _stops = new List<string>();
                 _stops = JsonConvert.DeserializeObject<List<BusStop>>(
                         await new WebClient().DownloadStringTaskAsync(
-                            "https://rtl2.ods-live.co.uk/api/linePatterns?key=" + ReadingBuses.APIKey + "&service=" +
-                            ServiceId))
+                            URLConstructor.LinePatterns(this)))
                     .Select(p => p.ActoCode).ToList();
             }
 

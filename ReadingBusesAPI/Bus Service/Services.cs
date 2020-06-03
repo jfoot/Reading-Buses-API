@@ -10,6 +10,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using ReadingBusesAPI.Shared;
 
 namespace ReadingBusesAPI.Bus_Service
 {
@@ -32,7 +33,7 @@ namespace ReadingBusesAPI.Bus_Service
             {
                 var newServicesData = JsonConvert.DeserializeObject<List<BusService>>(
                         await new WebClient().DownloadStringTaskAsync(
-                            "https://rtl2.ods-live.co.uk/api/services?key=" + ReadingBuses.APIKey))
+                            URLConstructor.ListOfServices()))
                     .OrderBy(p => Convert.ToInt32(Regex.Replace(p.ServiceId, "[^0-9.]", ""))).ToList();
 
                 // Save the JSON file for later use. 

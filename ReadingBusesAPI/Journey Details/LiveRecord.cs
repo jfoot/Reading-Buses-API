@@ -88,8 +88,7 @@ namespace ReadingBusesAPI.Journey_Details
         /// <exception cref="Exception">Thrown if you have used an invalid or expired API key.</exception>
         public static List<LiveRecord> GetLiveData(string actoCode)
         {
-            XDocument doc = XDocument.Load("https://rtl2.ods-live.co.uk/api/siri/sm?key=" + ReadingBuses.APIKey +
-                                           "&location=" + actoCode);
+            XDocument doc = XDocument.Load(URLConstructor.StopPredictions(actoCode));
             XNamespace ns = doc.Root.GetDefaultNamespace();
             var arrivals = doc.Descendants(ns + "MonitoredStopVisit").Select(x => new LiveRecord()
             {
