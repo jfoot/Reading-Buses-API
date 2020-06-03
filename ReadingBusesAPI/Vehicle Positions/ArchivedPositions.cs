@@ -6,10 +6,10 @@ using System;
 using Newtonsoft.Json;
 using ReadingBusesAPI.Shared;
 
-namespace ReadingBusesAPI.Live_Vehicle_Positions
+namespace ReadingBusesAPI.Vehicle_Positions
 {
     /// <summary>
-    /// Stores information about previous/ archived GPS data on vehicles. 
+    ///     Stores information about previous/ archived GPS data on vehicles.
     /// </summary>
     public class ArchivedPositions
     {

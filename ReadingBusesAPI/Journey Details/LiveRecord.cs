@@ -9,7 +9,7 @@ using System.Xml.Linq;
 using ReadingBusesAPI.Bus_Service;
 using ReadingBusesAPI.Shared;
 
-namespace ReadingBusesAPI.Live_Journey_Details
+namespace ReadingBusesAPI.Journey_Details
 {
     /// <summary>
     ///     Used to store information about a buses arrival at a bus stop. Mainly related to the "Stop Predictions" API.

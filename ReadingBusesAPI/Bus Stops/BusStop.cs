@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ReadingBusesAPI.Bus_Service;
-using ReadingBusesAPI.Live_Journey_Details;
+using ReadingBusesAPI.Journey_Details;
 using ReadingBusesAPI.Shared;
 using ReadingBusesAPI.TimeTable;
 

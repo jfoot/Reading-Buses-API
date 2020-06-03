@@ -76,7 +76,7 @@ namespace ReadingBusesAPI.TimeTable
         ///     provided at least
         ///     either the service or location or vehicle.
         /// </exception>
-        ///  See also
+        /// See also
         /// <see cref="BusTimeTable.GetTimeTable(BusService , DateTime ,BusStop)" />
         /// to get future time table data instead.
         internal static async Task<ArchivedBusTimeTable[]> GetTimeTable(BusService service, DateTime date,

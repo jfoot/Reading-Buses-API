@@ -9,7 +9,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ReadingBusesAPI.Bus_Stops;
-using ReadingBusesAPI.Live_Vehicle_Positions;
+using ReadingBusesAPI.Vehicle_Positions;
 using ReadingBusesAPI.Shared;
 using ReadingBusesAPI.TimeTable;
 

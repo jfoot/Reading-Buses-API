@@ -8,7 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ReadingBusesAPI.Live_Vehicle_Positions
+namespace ReadingBusesAPI.Vehicle_Positions
 {
     /// <summary>
     ///     Helps get live and historical GPS data on vehicles by accessing the "Live Vehicle Positions" API.
