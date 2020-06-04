@@ -1,3 +1,4 @@
+![.NET Core](https://github.com/jfoot/Reading-Buses-API/workflows/.NET%20Core/badge.svg)
 # Reading-Buses-API
 A C# Library for the Reading Buses API (currently only for .net Core, but can be converted to .net Framework with ease.) 
 The library supports the List of Bus Stops, Live Vehicle Positions, Stop Predictions, List of Services and Line Patterns API.
