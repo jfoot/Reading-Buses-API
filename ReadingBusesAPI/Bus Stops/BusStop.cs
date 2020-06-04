@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ReadingBusesAPI.Bus_Service;
+using ReadingBusesAPI.Error_Management;
 using ReadingBusesAPI.Journey_Details;
 using ReadingBusesAPI.Shared;
 using ReadingBusesAPI.TimeTable;
@@ -106,7 +107,12 @@ namespace ReadingBusesAPI.Bus_Stops
         ///     (optional) the service you want time table data for specifically. If null, you get time table
         ///     data for all services at this stop.
         /// </param>
-        /// <returns></returns>
+        /// <returns>An array of time table records for a particular bus stop.</returns>
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
+        ///     If you have not provided any date.
+        /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
         public Task<BusTimeTable[]> GetTimeTable(DateTime date, BusService service = null)
         {
             return BusTimeTable.GetTimeTable(service, date, this);

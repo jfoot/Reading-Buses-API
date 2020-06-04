@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ReadingBusesAPI.Bus_Service;
 using ReadingBusesAPI.Bus_Stops;
+using ReadingBusesAPI.Error_Management;
 using ReadingBusesAPI.Shared;
 
 namespace ReadingBusesAPI.TimeTable
@@ -72,11 +73,12 @@ namespace ReadingBusesAPI.TimeTable
         /// <param name="location">The location to get timetable data from.</param>
         /// <param name="vehicle">A bus/Vehicle ID number.</param>
         /// <returns>An array of time table records for the service or location or both</returns>
-        /// <exception cref="InvalidOperationException">
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
         ///     If you have tried to get data for a date in the future. Or if you have not provided any date, and/or you have not
-        ///     provided at least
-        ///     either the service or location or vehicle.
+        ///     provided at least either the service or location or vehicle.
         /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
         /// See also
         /// <see cref="BusTimeTable.GetTimeTable(BusService , DateTime ,BusStop)" />
         /// to get future time table data instead.
@@ -84,18 +86,27 @@ namespace ReadingBusesAPI.TimeTable
             BusStop location, string vehicle)
         {
             if (date == null || date > DateTime.Now)
-                throw new InvalidOperationException(
+                throw new ReadingBusesApiExceptionMalformedQuery(
                     "You can not get past data for a date in the future, if you want time table data use the 'BusTimeTable' objects and functions instead.");
 
             if (service == null && location == null && string.IsNullOrEmpty(vehicle))
-                throw new InvalidOperationException(
+                throw new ReadingBusesApiExceptionMalformedQuery(
                     "You must provide a date and a service and/or location for a valid query.");
 
+            string json = await new WebClient().DownloadStringTaskAsync(
+                UrlConstructor.TrackingHistory(service, location, date, vehicle));
 
-            var timeTable = JsonConvert.DeserializeObject<List<ArchivedBusTimeTable>>(
-                await new WebClient().DownloadStringTaskAsync(
-                    UrlConstructor.TrackingHistory(service, location, date, vehicle)));
-            return timeTable.ToArray();
+            try
+            {
+                var timeTable = JsonConvert.DeserializeObject<List<ArchivedBusTimeTable>>(json);
+                return timeTable.ToArray();
+            }
+            catch (JsonReaderException)
+            {
+                ErrorManagement.TryErrorMessageRetrieval(json);
+            }
+            //Should never reach this stage.
+            throw new ReadingBusesApiExceptionCritical();
         }
 
 
@@ -108,10 +119,12 @@ namespace ReadingBusesAPI.TimeTable
         /// <param name="location">The location to get timetable data from.</param>
         /// <param name="vehicle">A bus/Vehicle ID number.</param>
         /// <returns>Returns an IGroupings of Arrays of 'BusTimeTable' records grouped by journey codes.</returns>
-        /// <exception cref="InvalidOperationException">
-        ///     If you have not provided any date, and/or you have not provided at least
-        ///     either the service or location.
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
+        ///     If you have tried to get data for a date in the future. Or if you have not provided any date, and/or you have not
+        ///     provided at least either the service or location or vehicle.
         /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
         internal static async Task<IGrouping<string, ArchivedBusTimeTable>[]> GetGroupedTimeTable(BusService service,
             DateTime date,
             BusStop location, string vehicle)

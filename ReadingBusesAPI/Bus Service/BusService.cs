@@ -9,6 +9,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ReadingBusesAPI.Bus_Stops;
+using ReadingBusesAPI.Error_Management;
 using ReadingBusesAPI.Shared;
 using ReadingBusesAPI.TimeTable;
 using ReadingBusesAPI.Vehicle_Positions;
@@ -87,15 +88,23 @@ namespace ReadingBusesAPI.Bus_Service
         ///     Gets a list of bus stops acto codes, if this is the first time it's asked for call upon the API
         ///     This is delayed so only to call the API when needed.
         /// </summary>
+        /// <exception cref="ReadingBusesApiException">Thrown if you have an invalid or expired API key.</exception>
         private async Task<List<string>> GetStops()
         {
             if (_stops == null)
             {
+                string json = await new WebClient().DownloadStringTaskAsync(
+                    UrlConstructor.LinePatterns(this));
                 _stops = new List<string>();
-                _stops = JsonConvert.DeserializeObject<List<BusStop>>(
-                        await new WebClient().DownloadStringTaskAsync(
-                            UrlConstructor.LinePatterns(this)))
-                    .Select(p => p.ActoCode).ToList();
+                
+                try{
+                    _stops = JsonConvert.DeserializeObject<List<BusStop>>(json)
+                        .Select(p => p.ActoCode).ToList();
+                }
+                catch (Newtonsoft.Json.JsonReaderException)
+                {
+                    ErrorManagement.TryErrorMessageRetrieval(json);
+                }
             }
 
             return _stops;
@@ -198,7 +207,13 @@ namespace ReadingBusesAPI.Bus_Service
         ///     (optional) a specific bus stop you want archived timetables for, if null it will get a timetable for
         ///     every bus stop on route.
         /// </param>
-        /// <returns></returns>
+        /// <returns>An array of time table records, containing the scheduled and actual arrival and departure times of buses. </returns>
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
+        ///     If you have tried to get data for a date in the future. Or if you have not provided any date, and/or you have not
+        ///     provided at least either the service or location or vehicle.
+        /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
         public Task<ArchivedBusTimeTable[]> GetArchivedTimeTable(DateTime date, BusStop location = null)
         {
             return ArchivedBusTimeTable.GetTimeTable(this, date, location, null);
@@ -215,6 +230,12 @@ namespace ReadingBusesAPI.Bus_Service
         ///     whole routes timetable.
         /// </param>
         /// <returns>A grouping of arrays of time table records based upon journey code.</returns>
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
+        ///     If you have tried to get data for a date in the future. Or if you have not provided any date, and/or you have not
+        ///     provided at least either the service or location or vehicle.
+        /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
         public Task<IGrouping<string, ArchivedBusTimeTable>[]> GetGroupedArchivedTimeTable(DateTime date,
             BusStop location = null)
         {

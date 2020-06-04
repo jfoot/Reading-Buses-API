@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using ReadingBusesAPI.Error_Management;
 using ReadingBusesAPI.Shared;
 
 namespace ReadingBusesAPI.Vehicle_Positions
@@ -52,11 +53,13 @@ namespace ReadingBusesAPI.Vehicle_Positions
         /// </param>
         /// <param name="vehicle">(optional) Vehicle ID Number eg 414</param>
         /// <returns>An array of GPS locations at a previous date.</returns>
-        /// <exception cref="InvalidOperationException">
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
         ///     Thrown if, you have not choose a date in the past, or the date is too far in the past and so no data exists.
         ///     Thrown if you have not filtered by either 'timeSpan' or 'vehicle' ID or both.
         ///     Thrown if the API key is invalid or expired.
         /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
         /// See
         /// <see cref="GPSController.GetLiveVehiclePositions()" />
         /// to get live data instead.
@@ -64,20 +67,29 @@ namespace ReadingBusesAPI.Vehicle_Positions
             string vehicle = null)
         {
             if (dateStartTime == null || dateStartTime > DateTime.Now)
-                throw new InvalidOperationException(
+                throw new ReadingBusesApiExceptionMalformedQuery(
                     "You can not get past data for a date in the future, if you want real time GPS data please us the 'GetLiveVehiclePositions' Function instead.");
 
             if (timeSpan == null && string.IsNullOrEmpty(vehicle))
-                throw new InvalidOperationException(
+                throw new ReadingBusesApiExceptionMalformedQuery(
                     "You must filter by either timeSpan and/or vehicle ID. Both can not be left blank.");
 
 
-            var data =
+            var json =
                 await new WebClient().DownloadStringTaskAsync(
                     new Uri(UrlConstructor.VehiclePositionHistory(dateStartTime, timeSpan, vehicle)));
 
-
-            return JsonConvert.DeserializeObject<ArchivedPositions[]>(data).ToArray();
+            try
+            {
+                ArchivedPositions[] data = JsonConvert.DeserializeObject<ArchivedPositions[]>(json).ToArray();
+                return data;
+            }
+            catch (JsonReaderException)
+            {
+                ErrorManagement.TryErrorMessageRetrieval(json);
+            }
+            //Should never reach this stage.
+            throw new ReadingBusesApiExceptionCritical();
         }
 
 
@@ -85,16 +97,28 @@ namespace ReadingBusesAPI.Vehicle_Positions
         ///     Gets live GPS data for all buses currently operating.
         /// </summary>
         /// <returns>An array of GPS locations for all buses operating by Reading Buses currently</returns>
-        /// <exception cref="InvalidOperationException">Thrown if the API key is invalid or expired.</exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API key is invalid or expired.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
         public async Task<LivePosition[]> GetLiveVehiclePositions()
         {
             if (IsCacheValid() || _livePositionCache == null)
             {
-                var download =
+                var json =
                     await new WebClient().DownloadStringTaskAsync(
                         new Uri(UrlConstructor.LiveVehiclePositions()));
-                _livePositionCache = JsonConvert.DeserializeObject<LivePosition[]>(download).ToArray();
-                _lastRetrieval = DateTime.Now;
+
+                try
+                {
+                    _livePositionCache = JsonConvert.DeserializeObject<LivePosition[]>(json).ToArray();
+                    _lastRetrieval = DateTime.Now;
+                    return _livePositionCache;
+                }
+                catch (JsonReaderException)
+                {
+                    ErrorManagement.TryErrorMessageRetrieval(json);
+                }
+                //Should never get here.
+                throw new ReadingBusesApiExceptionCritical();
             }
 
             return _livePositionCache;
@@ -105,7 +129,7 @@ namespace ReadingBusesAPI.Vehicle_Positions
         /// </summary>
         /// <param name="vehicle">Vehicle ID Number eg 414</param>
         /// <returns>The GPS point of Vehicle matching your ID provided.</returns>
-        /// <exception cref="InvalidOperationException">
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">
         ///     Thrown if a vehicle of the ID does not exist or is not currently active.
         ///     You can check by using the 'IsVehicle' function.
         /// </exception>
@@ -115,7 +139,7 @@ namespace ReadingBusesAPI.Vehicle_Positions
                 return (await GetLiveVehiclePositions()).Single(o =>
                     string.Equals(o.Vehicle, vehicle, StringComparison.CurrentCultureIgnoreCase));
 
-            throw new InvalidOperationException(
+            throw new ReadingBusesApiExceptionBadQuery(
                 "A Vehicle of that ID can not be found currently operating. You can first check with the 'IsVehicle' function.");
         }
 

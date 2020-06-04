@@ -73,7 +73,7 @@ namespace ReadingBusesAPI.Shared
             if (ReadingBuses.Debugging)
                 return DummyApi + "services.html";
 
-            return ReadingBuses.Debugging ? "" : ReadingBusesApi + "services?key=" + ReadingBuses.APIKey;
+            return ReadingBusesApi + "services?key=" + ReadingBuses.APIKey;
         }
 
         /// <summary>

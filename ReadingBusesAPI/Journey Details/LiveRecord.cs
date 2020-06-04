@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using ReadingBusesAPI.Bus_Service;
+using ReadingBusesAPI.Error_Management;
 using ReadingBusesAPI.Shared;
 
 namespace ReadingBusesAPI.Journey_Details
@@ -84,24 +85,40 @@ namespace ReadingBusesAPI.Journey_Details
         /// </summary>
         /// <param name="actoCode">The Acto-code ID for a specific bus stop.</param>
         /// <returns>A list of Live Records containing details about upcoming buses.</returns>
-        /// <exception cref="NullReferenceException">Thrown if there is an error with the API.</exception>
-        /// <exception cref="Exception">Thrown if you have used an invalid or expired API key.</exception>
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">Thrown if no data is returned from the API.</exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if you have used an invalid or expired API key or an invalid acto-code</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if no error message or reasoning for fault is detectable.</exception>
         public static List<LiveRecord> GetLiveData(string actoCode)
         {
-            XDocument doc = XDocument.Load(UrlConstructor.StopPredictions(actoCode));
-            XNamespace ns = doc.Root.GetDefaultNamespace();
-            var arrivals = doc.Descendants(ns + "MonitoredStopVisit").Select(x => new LiveRecord()
+            try
             {
-                ServiceNumber = (string) x.Descendants(ns + "LineRef").FirstOrDefault(),
-                Destination = (string) x.Descendants(ns + "DestinationName").FirstOrDefault(),
-                SchArrival = (DateTime) x.Descendants(ns + "AimedArrivalTime").FirstOrDefault(),
-                ExptArrival = (DateTime?) x.Descendants(ns + "ExpectedArrivalTime").FirstOrDefault(),
-                OperatorCode = ReadingBuses.GetOperatorE((string) x.Descendants(ns + "OperatorRef").FirstOrDefault()),
-                VehicleRef = (string) x.Descendants(ns + "VehicleRef").FirstOrDefault(),
-                ViaMessage = (string) x.Descendants(ns + "Via").FirstOrDefault()
-            }).ToList();
-
-            return arrivals;
+                XDocument doc = XDocument.Load(UrlConstructor.StopPredictions(actoCode));
+                XNamespace ns = doc.Root.GetDefaultNamespace();
+                var arrivals = doc.Descendants(ns + "MonitoredStopVisit").Select(x => new LiveRecord()
+                {
+                    ServiceNumber = (string) x.Descendants(ns + "LineRef").FirstOrDefault(),
+                    Destination = (string) x.Descendants(ns + "DestinationName").FirstOrDefault(),
+                    SchArrival = (DateTime) x.Descendants(ns + "AimedArrivalTime").FirstOrDefault(),
+                    ExptArrival = (DateTime?) x.Descendants(ns + "ExpectedArrivalTime").FirstOrDefault(),
+                    OperatorCode =
+                        ReadingBuses.GetOperatorE((string) x.Descendants(ns + "OperatorRef").FirstOrDefault()),
+                    VehicleRef = (string) x.Descendants(ns + "VehicleRef").FirstOrDefault(),
+                    ViaMessage = (string) x.Descendants(ns + "Via").FirstOrDefault()
+                }).ToList();
+                return arrivals;
+            }
+            catch (NullReferenceException)
+            {
+                throw new ReadingBusesApiExceptionMalformedQuery("No data received.");
+            }
+            catch (System.Net.WebException ex)
+            {
+                throw new ReadingBusesApiExceptionBadQuery(ex.Message);
+            }
+            catch (Exception)
+            {
+                throw new ReadingBusesApiExceptionCritical();
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ReadingBusesAPI.Bus_Service;
 using ReadingBusesAPI.Bus_Stops;
+using ReadingBusesAPI.Error_Management;
 using ReadingBusesAPI.Shared;
 using ReadingBusesAPI.TimeTable;
 using ReadingBusesAPI.Vehicle_Positions;
@@ -83,7 +84,8 @@ namespace ReadingBusesAPI
         /// <summary>
         ///     Creates cache data and retrieves bus services and bus stop data.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Gets the basic bus stops and services data.</returns>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">If the API key is invalid or expired.</exception>
         private async Task SetUp()
         {
             try
@@ -108,8 +110,8 @@ namespace ReadingBusesAPI
             {
                 _instance = null;
                 PrintFullErrorLogs(ex.Message);
-                throw new InvalidOperationException(
-                    "The API Key Entered is incorrect, please check you have a valid Reading Buses API Key.");
+                throw new ReadingBusesApiExceptionBadQuery(
+                    "The API Key Entered is probably incorrect, please check you have a valid Reading Buses API Key. \n\n This is all we know: \n" + ex.Message);
             }
         }
 
@@ -117,7 +119,7 @@ namespace ReadingBusesAPI
         ///     Sets if you want to cache data into local files or always get new data from the API, which will take longer.
         /// </summary>
         /// <param name="value">True or False for if you want to get Cache or live data.</param>
-        /// <exception cref="InvalidOperationException">
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
         ///     Thrown if you attempt to change the cache options after the library has
         ///     been instantiated
         /// </exception>
@@ -126,7 +128,7 @@ namespace ReadingBusesAPI
             if (_instance == null)
                 Cache = value;
             else
-                throw new InvalidOperationException(
+                throw new ReadingBusesApiExceptionMalformedQuery(
                     "Cache Storage Setting can not be changed once ReadingBuses Object is initialized.");
         }
 
@@ -192,7 +194,7 @@ namespace ReadingBusesAPI
         /// </summary>
         /// <param name="apiKey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
         /// <returns>An instance of the library controller. This same instance can be got by calling the "GetInstance" method.</returns>
-        /// <exception cref="InvalidOperationException">Can throw an exception if you pass an invalid or expired API Key.</exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Can throw an exception if you pass an invalid or expired API Key.</exception>
         /// See
         /// <see cref="ReadingBuses.GetInstance()" />
         /// to get any future instances afterwards.
@@ -255,7 +257,7 @@ namespace ReadingBusesAPI
         /// </summary>
         /// <param name="actoCode">The code of the bus stop</param>
         /// <returns>A Bus Stop object for the Acto Code specified.</returns>
-        /// <exception cref="InvalidOperationException">
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
         ///     Thrown if the bus stop does not exist. You should first check with
         ///     'IsLocation' If there is any uncertainty.
         /// </exception>
@@ -267,7 +269,7 @@ namespace ReadingBusesAPI
             if (IsLocation(actoCode))
                 return Locations[actoCode];
 
-            throw new InvalidOperationException(
+            throw new ReadingBusesApiExceptionMalformedQuery(
                 "A bus stop of that Acto Code can not be found, please make sure you have a valid Bus Stop Code. You can use, the 'IsLocation' function to check beforehand.");
         }
 
@@ -311,7 +313,7 @@ namespace ReadingBusesAPI
         /// </summary>
         /// <param name="serviceNumber">The service number/ID for the service you wish to be returned eg: 17 or 22.</param>
         /// <returns>The services matching the ID.</returns>
-        /// <exception cref="InvalidOperationException">
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
         ///     Thrown if the bus services does not exist. You should first check with
         ///     'IsService' If there is any uncertainty.
         /// </exception>
@@ -324,7 +326,7 @@ namespace ReadingBusesAPI
                 return Services.Where(o =>
                     string.Equals(o.ServiceId, serviceNumber, StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
-            throw new InvalidOperationException(
+            throw new ReadingBusesApiExceptionMalformedQuery(
                 "The service number provided does not exist. You can check if it exists by calling 'IsService' first.");
         }
 
@@ -335,7 +337,7 @@ namespace ReadingBusesAPI
         /// <param name="serviceNumber">The service number/ID for the service you wish to be returned eg: 17 or 22.</param>
         /// <param name="operators">The bus operator to search in, for example "ReadingBuses"</param>
         /// <returns>The services matching the ID.</returns>
-        /// <exception cref="InvalidOperationException">
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
         ///     Thrown if the bus services does not exist. You should first check with
         ///     'IsService' If there is any uncertainty.
         /// </exception>
@@ -349,7 +351,7 @@ namespace ReadingBusesAPI
                     string.Equals(o.ServiceId, serviceNumber, StringComparison.CurrentCultureIgnoreCase) &&
                     o.OperatorCode.Equals(operators));
 
-            throw new InvalidOperationException(
+            throw new ReadingBusesApiExceptionMalformedQuery(
                 "The service number provided does not exist. You can check if it exists by calling 'IsService' first.");
         }
 
@@ -392,6 +394,12 @@ namespace ReadingBusesAPI
         /// <param name="date">The date you want a report for, must be in the past.</param>
         /// <param name="vehicle">The vehicle ID number </param>
         /// <returns>An array of Archived Bus Departure and arrival times with their timetabled data.</returns>
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
+        ///     If you have tried to get data for a date in the future. Or if you have not provided any date, and/or you have not
+        ///     provided at least either the service or location or vehicle.
+        /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
         public Task<ArchivedBusTimeTable[]> GetVehicleTrackingHistory(DateTime date, string vehicle)
         {
             return ArchivedBusTimeTable.GetTimeTable(null, date, null, vehicle);

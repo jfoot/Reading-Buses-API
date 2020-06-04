@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ReadingBusesAPI.Bus_Service;
 using ReadingBusesAPI.Bus_Stops;
+using ReadingBusesAPI.Error_Management;
 using ReadingBusesAPI.Shared;
 
 namespace ReadingBusesAPI.TimeTable
@@ -36,23 +37,32 @@ namespace ReadingBusesAPI.TimeTable
         /// <param name="date">The date of the time table.</param>
         /// <param name="location">The location to get timetable data from.</param>
         /// <returns>An array of time table records for the service or location or both</returns>
-        /// <exception cref="InvalidOperationException">
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
         ///     If you have not provided any date, and/or you have not provided at least
         ///     either the service or location.
         /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
         internal static async Task<BusTimeTable[]> GetTimeTable(BusService service, DateTime date,
             BusStop location)
         {
             if (date == null || service == null && location == null)
-                throw new InvalidOperationException(
+                throw new ReadingBusesApiExceptionMalformedQuery(
                     "You must provide a date and a service and/or location for a valid query.");
 
+            string json = await new WebClient().DownloadStringTaskAsync(
+                UrlConstructor.TimetabledJourneys(service, location, date));
 
-            var timeTable = JsonConvert.DeserializeObject<List<BusTimeTable>>(
-                await new WebClient().DownloadStringTaskAsync(
-                    UrlConstructor.TimetabledJourneys(service, location, date)));
-
-            return timeTable.ToArray();
+            try{
+                var timeTable = JsonConvert.DeserializeObject<List<BusTimeTable>>(json);
+                return timeTable.ToArray();
+            }
+            catch (JsonReaderException)
+            {
+                ErrorManagement.TryErrorMessageRetrieval(json);
+            }
+            //Should never reach this stage.
+            throw new ReadingBusesApiExceptionCritical();
         }
 
         /// <summary>
@@ -63,10 +73,12 @@ namespace ReadingBusesAPI.TimeTable
         /// <param name="date">The date of the time table.</param>
         /// <param name="location">The location to get timetable data from.</param>
         /// <returns>Returns an IGroupings of Arrays of 'BusTimeTable' records grouped by journey codes.</returns>
-        /// <exception cref="InvalidOperationException">
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
         ///     If you have not provided any date, and/or you have not provided at least
         ///     either the service or location.
         /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
         internal static async Task<IGrouping<string, BusTimeTable>[]> GetGroupedTimeTable(BusService service,
             DateTime date,
             BusStop location)

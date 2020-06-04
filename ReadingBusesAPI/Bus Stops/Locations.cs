@@ -9,6 +9,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.Error_Management;
 
 namespace ReadingBusesAPI.Bus_Stops
 {
@@ -19,7 +20,7 @@ namespace ReadingBusesAPI.Bus_Stops
     internal class Locations
     {
         /// <value>the location for the service cache file.</value>
-        private readonly string _cacheLocation = "cache\\Locations.cache";
+        private const string CacheLocation = "cache\\Locations.cache";
 
 
         /// <summary>
@@ -28,30 +29,38 @@ namespace ReadingBusesAPI.Bus_Stops
         /// <exception cref="InvalidOperationException">Thrown if an invalid or expired API Key is used.</exception>
         internal async Task<Dictionary<string, BusStop>> FindLocations()
         {
-            if (!File.Exists(_cacheLocation) || !ReadingBuses.Cache)
+            if (!File.Exists(CacheLocation) || !ReadingBuses.Cache)
             {
-                var locations = JsonConvert.DeserializeObject<List<BusStop>>(
-                    await new WebClient().DownloadStringTaskAsync(UrlConstructor.ListOfBusStops()));
-
+                string json = await new WebClient().DownloadStringTaskAsync(UrlConstructor.ListOfBusStops());
                 var locationsFiltered = new Dictionary<string, BusStop>();
 
-                foreach (var location in locations)
-                    if (!locationsFiltered.ContainsKey(location.ActoCode))
-                        locationsFiltered.Add(location.ActoCode, location);
+                try
+                {
+                    List<BusStop> locations = JsonConvert.DeserializeObject<List<BusStop>>(json);
 
-                if (ReadingBuses.Cache)
-                    await File.WriteAllTextAsync(_cacheLocation,
-                        JsonConvert.SerializeObject(locationsFiltered,
-                            Formatting.Indented)); // Save the JSON file for later use.       
+                    foreach (var location in locations)
+                        if (!locationsFiltered.ContainsKey(location.ActoCode))
+                            locationsFiltered.Add(location.ActoCode, location);
+
+                    if (ReadingBuses.Cache)
+                        await File.WriteAllTextAsync(CacheLocation,
+                            JsonConvert.SerializeObject(locationsFiltered,
+                                Formatting.Indented)); // Save the JSON file for later use.  
+                    
+                }
+                catch(JsonReaderException)
+                {
+                    ErrorManagement.TryErrorMessageRetrieval(json);
+                }
 
                 return locationsFiltered;
             }
             else
             {
-                DirectoryInfo ch = new DirectoryInfo(_cacheLocation);
+                DirectoryInfo ch = new DirectoryInfo(CacheLocation);
                 if ((DateTime.Now - ch.CreationTime).TotalDays > ReadingBuses.CacheValidityLength)
                 {
-                    File.Delete(_cacheLocation);
+                    File.Delete(CacheLocation);
                     ReadingBuses.PrintWarning("Warning: Cache data expired, downloading latest Locations Data.");
                     return await FindLocations();
                 }
@@ -60,11 +69,11 @@ namespace ReadingBusesAPI.Bus_Stops
                 try
                 {
                     return JsonConvert.DeserializeObject<Dictionary<string, BusStop>>(
-                        await File.ReadAllTextAsync(_cacheLocation));
+                        await File.ReadAllTextAsync(CacheLocation));
                 }
-                catch (JsonException)
+                catch (JsonReaderException)
                 {
-                    File.Delete(_cacheLocation);
+                    File.Delete(CacheLocation);
                     ReadingBuses.PrintWarning(
                         "Warning: Unable to read Locations Cache File, deleting and regenerating cache.");
                     return await FindLocations();
