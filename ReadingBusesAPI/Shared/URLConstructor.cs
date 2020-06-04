@@ -11,7 +11,11 @@ namespace ReadingBusesAPI.Shared
     public static class UrlConstructor
     {
         /// <value>URL for the Reading buses Open Data API server.</value>
-        private const string _readingBusesAPI = "https://rtl2.ods-live.co.uk/api/";
+        private const string ReadingBusesApi = "https://rtl2.ods-live.co.uk/api/";
+
+        /// <value>URL for the Reading buses Open Data API server.</value>
+        private const string DummyApi = "https://jonathanfoot.com/Projects/RBAPI/test-data/";
+
 
 
         /// <summary>
@@ -21,9 +25,9 @@ namespace ReadingBusesAPI.Shared
         public static string ListOfBusStops()
         {
             if (ReadingBuses.Debugging)
-                return "";
+                return DummyApi + "busstops.html";
 
-            return ReadingBuses.Debugging ? "" : _readingBusesAPI + "busstops?key=" + ReadingBuses.APIKey;
+            return ReadingBusesApi + "busstops?key=" + ReadingBuses.APIKey;
         }
 
         /// <summary>
@@ -33,9 +37,9 @@ namespace ReadingBusesAPI.Shared
         public static string LiveVehiclePositions()
         {
             if (ReadingBuses.Debugging)
-                return "";
+                return DummyApi + "vehiclePositions.html";
 
-            return ReadingBuses.Debugging ? "" : _readingBusesAPI + "vehiclePositions?key=" + ReadingBuses.APIKey;
+            return ReadingBusesApi + "vehiclePositions?key=" + ReadingBuses.APIKey;
         }
 
 
@@ -54,9 +58,9 @@ namespace ReadingBusesAPI.Shared
         public static string StopPredictions(string actoCode)
         {
             if (ReadingBuses.Debugging)
-                return "";
+                return DummyApi + "stopPredictions.xml";
 
-            return _readingBusesAPI + "siri/sm?key=" + ReadingBuses.APIKey +
+            return ReadingBusesApi + "siri/sm?key=" + ReadingBuses.APIKey +
                    "&location=" + actoCode;
         }
 
@@ -67,9 +71,9 @@ namespace ReadingBusesAPI.Shared
         public static string ListOfServices()
         {
             if (ReadingBuses.Debugging)
-                return "";
+                return DummyApi + "services.html";
 
-            return ReadingBuses.Debugging ? "" : _readingBusesAPI + "services?key=" + ReadingBuses.APIKey;
+            return ReadingBuses.Debugging ? "" : ReadingBusesApi + "services?key=" + ReadingBuses.APIKey;
         }
 
         /// <summary>
@@ -80,9 +84,9 @@ namespace ReadingBusesAPI.Shared
         public static string LinePatterns(BusService service)
         {
             if (ReadingBuses.Debugging)
-                return "";
+                return DummyApi + "linePatterns.html";
 
-            return _readingBusesAPI + "linePatterns?key=" + ReadingBuses.APIKey + "&service=" + service.ServiceId;
+            return ReadingBusesApi + "linePatterns?key=" + ReadingBuses.APIKey + "&service=" + service.ServiceId;
         }
 
         /// <summary>
@@ -95,9 +99,9 @@ namespace ReadingBusesAPI.Shared
         public static string TimetabledJourneys(BusService service, BusStop location, DateTime date)
         {
             if (ReadingBuses.Debugging)
-                return "";
+                return DummyApi + "scheduledJourneys.html";
 
-            return _readingBusesAPI + "scheduledJourneys?key=" + ReadingBuses.APIKey +
+            return ReadingBusesApi + "scheduledJourneys?key=" + ReadingBuses.APIKey +
                    "&service=" + (service ?? new BusService("")).ServiceId +
                    "&date=" +
                    date.ToString("yyyy-MM-dd") + "&location=" +
@@ -115,9 +119,9 @@ namespace ReadingBusesAPI.Shared
         public static string TrackingHistory(BusService service, BusStop location, DateTime date, string vehicle)
         {
             if (ReadingBuses.Debugging)
-                return "";
+                return DummyApi + "trackingHistory.html";
 
-            return _readingBusesAPI + "trackingHistory?key=" +
+            return ReadingBusesApi + "trackingHistory?key=" +
                    ReadingBuses.APIKey +
                    "&service=" + (service ?? new BusService("")).ServiceId +
                    "&date=" +
@@ -137,9 +141,9 @@ namespace ReadingBusesAPI.Shared
             string vehicle)
         {
             if (ReadingBuses.Debugging)
-                return "";
+                return DummyApi + "vehiclePositionHistory.html";
 
-            return _readingBusesAPI + "vehiclePositionHistory?key=" + ReadingBuses.APIKey +
+            return ReadingBusesApi + "vehiclePositionHistory?key=" + ReadingBuses.APIKey +
                    "&date=" + dateStartTime.ToString("yyyy-MM-dd") + "&vehicle=" + vehicle + "&from=" +
                    dateStartTime.TimeOfDay +
                    "&to=" + AddTimeSpan(dateStartTime, timeSpan).TimeOfDay;
