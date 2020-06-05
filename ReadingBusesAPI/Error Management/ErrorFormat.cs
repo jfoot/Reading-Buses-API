@@ -14,11 +14,12 @@ namespace ReadingBusesAPI.Error_Management
     {
         /// <value>The status of the request, always false for failed.</value>
         [JsonProperty("status")]
-        [JsonConverter(typeof(ParseStringConverter))]
+   
         public bool Status { get; set; }
 
         /// <value>The status code of the error</value>
         [JsonProperty("code", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(ParseStringConverter))]
         public long? Code { get; set; }
 
         /// <value>The error message/ reason.</value>

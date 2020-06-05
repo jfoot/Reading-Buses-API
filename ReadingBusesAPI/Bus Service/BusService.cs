@@ -101,7 +101,7 @@ namespace ReadingBusesAPI.Bus_Service
                     _stops = JsonConvert.DeserializeObject<List<BusStop>>(json)
                         .Select(p => p.ActoCode).ToList();
                 }
-                catch (Newtonsoft.Json.JsonReaderException)
+                catch (JsonSerializationException)
                 {
                     ErrorManagement.TryErrorMessageRetrieval(json);
                 }
@@ -173,7 +173,12 @@ namespace ReadingBusesAPI.Bus_Service
         ///     (optional) a specific bus stop you want timetables for, if null it will get a timetable for
         ///     every bus stop on route.
         /// </param>
-        /// <returns></returns>
+        /// <returns>An array for the time table at a particular bus stop.</returns>
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
+        ///     If you have not provided any date.
+        /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
         public Task<BusTimeTable[]> GetTimeTable(DateTime date, BusStop location = null)
         {
             return BusTimeTable.GetTimeTable(this, date, location);

@@ -48,7 +48,7 @@ namespace ReadingBusesAPI.Bus_Stops
                                 Formatting.Indented)); // Save the JSON file for later use.  
                     
                 }
-                catch(JsonReaderException)
+                catch(JsonSerializationException)
                 {
                     ErrorManagement.TryErrorMessageRetrieval(json);
                 }
@@ -71,7 +71,7 @@ namespace ReadingBusesAPI.Bus_Stops
                     return JsonConvert.DeserializeObject<Dictionary<string, BusStop>>(
                         await File.ReadAllTextAsync(CacheLocation));
                 }
-                catch (JsonReaderException)
+                catch (JsonSerializationException)
                 {
                     File.Delete(CacheLocation);
                     ReadingBuses.PrintWarning(

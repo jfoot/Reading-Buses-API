@@ -32,8 +32,8 @@ namespace ReadingBusesAPI.Bus_Service
         {
             if (!File.Exists(CacheLocation) || !ReadingBuses.Cache)
             {
-                string json =
-                    await new WebClient().DownloadStringTaskAsync(
+                string json = await 
+                    new WebClient().DownloadStringTaskAsync(
                         UrlConstructor.ListOfServices());
                
                 List<BusService> newServicesData = new List<BusService>();
@@ -41,17 +41,18 @@ namespace ReadingBusesAPI.Bus_Service
                 try
                 {
                     newServicesData = JsonConvert.DeserializeObject<List<BusService>>(json)
-                    .OrderBy(p => Convert.ToInt32(Regex.Replace(p.ServiceId, "[^0-9.]", ""))).ToList();
+                        .OrderBy(p => Convert.ToInt32(Regex.Replace(p.ServiceId, "[^0-9.]", ""))).ToList();
 
                     // Save the JSON file for later use. 
                     if (ReadingBuses.Cache)
                         await File.WriteAllTextAsync(CacheLocation,
                             JsonConvert.SerializeObject(newServicesData, Formatting.Indented));
                 }
-                catch (JsonReaderException)
+                catch (JsonSerializationException)
                 {
                     ErrorManagement.TryErrorMessageRetrieval(json);
                 }
+                
 
                 return newServicesData;
             }
@@ -70,7 +71,7 @@ namespace ReadingBusesAPI.Bus_Service
                     return JsonConvert.DeserializeObject<List<BusService>>(
                         await File.ReadAllTextAsync(CacheLocation));
                 }
-                catch (JsonReaderException)
+                catch (JsonSerializationException)
                 {
                     File.Delete(CacheLocation);
                     ReadingBuses.PrintWarning(

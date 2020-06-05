@@ -168,7 +168,7 @@ namespace ReadingBusesAPI.Shared
             //Since we have already checked it is not null we can cast it.
             TimeSpan safe = (TimeSpan) timeSpan;
 
-            DateTime newDateTime = (DateTime) (start + safe.Duration());
+            DateTime newDateTime = (start + safe.Duration());
             if (newDateTime.Date.Equals(start.Date))
                 return newDateTime;
 

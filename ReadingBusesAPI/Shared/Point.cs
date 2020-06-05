@@ -9,7 +9,7 @@ namespace ReadingBusesAPI.Shared
     /// <summary>
     ///     Stores an X and Y Position simply.
     /// </summary>
-    public struct Point
+    public readonly struct Point
     {
         /// <value>The X value.</value>
         public double X { get; }

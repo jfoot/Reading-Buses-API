@@ -50,7 +50,7 @@ namespace ReadingBusesAPI
         /// <param name="apiKey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
         private ReadingBuses(string apiKey)
         {
-            APIKey = apiKey;
+            ApiKey = apiKey;
             GPSController = new GPSController();
         }
 
@@ -70,7 +70,7 @@ namespace ReadingBusesAPI
         internal static int CacheValidityLength { get; set; } = 7;
 
         /// <value>Holds the users API Key.</value>
-        internal static string APIKey { get; private set; }
+        internal static string ApiKey { get; private set; }
 
         /// <value>Holds information on all the bus stops/locations visited by Reading Buses</value>
         internal static Dictionary<string, BusStop> Locations { get; set; }
@@ -106,12 +106,11 @@ namespace ReadingBusesAPI
                 Locations = await locationsTask;
                 Services = await servicesTask;
             }
-            catch (Exception ex)
+            catch (AggregateException ex)
             {
                 _instance = null;
                 PrintFullErrorLogs(ex.Message);
-                throw new ReadingBusesApiExceptionBadQuery(
-                    "The API Key Entered is probably incorrect, please check you have a valid Reading Buses API Key. \n\n This is all we know: \n" + ex.Message);
+                throw new ReadingBusesApiExceptionBadQuery(ex.InnerExceptions[0].Message);
             }
         }
 
@@ -277,14 +276,18 @@ namespace ReadingBusesAPI
         ///     All the bus stop locations that Reading Buses Visits
         /// </summary>
         /// <returns>All the bus stops Reading Buses visits</returns>
+#pragma warning disable CA1822 // Mark members as static
         public BusStop[] GetLocations() => Locations.Values.ToArray();
+#pragma warning restore CA1822 // Mark members as static
 
         /// <summary>
         ///     Checks to see if the acto code for the bus stop exists in the API feed or not.
         /// </summary>
         /// <param name="actoCode">The ID Code for a bus stop.</param>
         /// <returns>True or False depending on if the stop is in the API feed or not.</returns>
+#pragma warning disable CA1822 // Mark members as static
         public bool IsLocation(string actoCode) => Locations.ContainsKey(actoCode);
+#pragma warning restore CA1822 // Mark members as static
 
         #endregion
 
@@ -400,7 +403,9 @@ namespace ReadingBusesAPI
         /// </exception>
         /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
         /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
+#pragma warning disable CA1822 // Mark members as static
         public Task<ArchivedBusTimeTable[]> GetVehicleTrackingHistory(DateTime date, string vehicle)
+#pragma warning restore CA1822 // Mark members as static
         {
             return ArchivedBusTimeTable.GetTimeTable(null, date, null, vehicle);
         }
