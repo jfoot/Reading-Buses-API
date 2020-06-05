@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Xml.Linq;
 using ReadingBusesAPI.Bus_Service;
 using ReadingBusesAPI.Error_Management;
@@ -86,7 +87,10 @@ namespace ReadingBusesAPI.Journey_Details
         /// <param name="actoCode">The Acto-code ID for a specific bus stop.</param>
         /// <returns>A list of Live Records containing details about upcoming buses.</returns>
         /// <exception cref="ReadingBusesApiExceptionMalformedQuery">Thrown if no data is returned from the API.</exception>
-        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if you have used an invalid or expired API key or an invalid acto-code</exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">
+        ///     Thrown if you have used an invalid or expired API key or an invalid
+        ///     acto-code
+        /// </exception>
         /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if no error message or reasoning for fault is detectable.</exception>
         public static List<LiveRecord> GetLiveData(string actoCode)
         {
@@ -111,7 +115,7 @@ namespace ReadingBusesAPI.Journey_Details
             {
                 throw new ReadingBusesApiExceptionMalformedQuery("No data received.");
             }
-            catch (System.Net.WebException ex)
+            catch (WebException ex)
             {
                 throw new ReadingBusesApiExceptionBadQuery(ex.Message);
             }

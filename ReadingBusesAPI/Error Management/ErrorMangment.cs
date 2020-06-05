@@ -2,21 +2,19 @@
 // Licensed under the GNU Affero General Public License, Version 3.0 
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Runtime.ConstrainedExecution;
 using Newtonsoft.Json;
 
 namespace ReadingBusesAPI.Error_Management
 {
     /// <summary>
-    /// Responsible for extracting and producing an error message from an API result. To the end user.
+    ///     Responsible for extracting and producing an error message from an API result. To the end user.
     /// </summary>
     internal static class ErrorManagement
     {
         /// <summary>
-        /// Attempts to extract the error message directly sent from the API.
-        /// If it can get the error message given send to the user. If the error message
-        /// can not be extracted then the API has proved no explanation and so throw a generic error.
+        ///     Attempts to extract the error message directly sent from the API.
+        ///     If it can get the error message given send to the user. If the error message
+        ///     can not be extracted then the API has proved no explanation and so throw a generic error.
         /// </summary>
         /// <param name="json">Data returned from the API.</param>
         internal static void TryErrorMessageRetrieval(string json)

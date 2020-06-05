@@ -17,7 +17,6 @@ namespace ReadingBusesAPI.Shared
         private const string DummyApi = "https://jonathanfoot.com/Projects/RBAPI/test-data/";
 
 
-
         /// <summary>
         ///     Returns back the URL needed for a get request to the 'List of Bus Stops' API.
         /// </summary>
@@ -27,7 +26,7 @@ namespace ReadingBusesAPI.Shared
             if (ReadingBuses.Debugging)
                 return DummyApi + "busstops.html";
 
-            return ReadingBusesApi + "busstops?key=" + ReadingBuses.APIKey;
+            return ReadingBusesApi + "busstops?key=" + ReadingBuses.ApiKey;
         }
 
         /// <summary>
@@ -39,7 +38,7 @@ namespace ReadingBusesAPI.Shared
             if (ReadingBuses.Debugging)
                 return DummyApi + "vehiclePositions.html";
 
-            return ReadingBusesApi + "vehiclePositions?key=" + ReadingBuses.APIKey;
+            return ReadingBusesApi + "vehiclePositions?key=" + ReadingBuses.ApiKey;
         }
 
 
@@ -60,7 +59,7 @@ namespace ReadingBusesAPI.Shared
             if (ReadingBuses.Debugging)
                 return DummyApi + "stopPredictions.xml";
 
-            return ReadingBusesApi + "siri/sm?key=" + ReadingBuses.APIKey +
+            return ReadingBusesApi + "siri/sm?key=" + ReadingBuses.ApiKey +
                    "&location=" + actoCode;
         }
 
@@ -73,7 +72,7 @@ namespace ReadingBusesAPI.Shared
             if (ReadingBuses.Debugging)
                 return DummyApi + "services.html";
 
-            return ReadingBusesApi + "services?key=" + ReadingBuses.APIKey;
+            return ReadingBusesApi + "services?key=" + ReadingBuses.ApiKey;
         }
 
         /// <summary>
@@ -86,7 +85,7 @@ namespace ReadingBusesAPI.Shared
             if (ReadingBuses.Debugging)
                 return DummyApi + "linePatterns.html";
 
-            return ReadingBusesApi + "linePatterns?key=" + ReadingBuses.APIKey + "&service=" + service.ServiceId;
+            return ReadingBusesApi + "linePatterns?key=" + ReadingBuses.ApiKey + "&service=" + service.ServiceId;
         }
 
         /// <summary>
@@ -101,7 +100,7 @@ namespace ReadingBusesAPI.Shared
             if (ReadingBuses.Debugging)
                 return DummyApi + "scheduledJourneys.html";
 
-            return ReadingBusesApi + "scheduledJourneys?key=" + ReadingBuses.APIKey +
+            return ReadingBusesApi + "scheduledJourneys?key=" + ReadingBuses.ApiKey +
                    "&service=" + (service ?? new BusService("")).ServiceId +
                    "&date=" +
                    date.ToString("yyyy-MM-dd") + "&location=" +
@@ -122,7 +121,7 @@ namespace ReadingBusesAPI.Shared
                 return DummyApi + "trackingHistory.html";
 
             return ReadingBusesApi + "trackingHistory?key=" +
-                   ReadingBuses.APIKey +
+                   ReadingBuses.ApiKey +
                    "&service=" + (service ?? new BusService("")).ServiceId +
                    "&date=" +
                    date.ToString("yyyy-MM-dd") + "&vehicle=" + vehicle +
@@ -143,7 +142,7 @@ namespace ReadingBusesAPI.Shared
             if (ReadingBuses.Debugging)
                 return DummyApi + "vehiclePositionHistory.html";
 
-            return ReadingBusesApi + "vehiclePositionHistory?key=" + ReadingBuses.APIKey +
+            return ReadingBusesApi + "vehiclePositionHistory?key=" + ReadingBuses.ApiKey +
                    "&date=" + dateStartTime.ToString("yyyy-MM-dd") + "&vehicle=" + vehicle + "&from=" +
                    dateStartTime.TimeOfDay +
                    "&to=" + AddTimeSpan(dateStartTime, timeSpan).TimeOfDay;
@@ -168,7 +167,7 @@ namespace ReadingBusesAPI.Shared
             //Since we have already checked it is not null we can cast it.
             TimeSpan safe = (TimeSpan) timeSpan;
 
-            DateTime newDateTime = (start + safe.Duration());
+            DateTime newDateTime = start + safe.Duration();
             if (newDateTime.Date.Equals(start.Date))
                 return newDateTime;
 

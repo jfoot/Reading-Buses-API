@@ -7,7 +7,7 @@ using System;
 namespace ReadingBusesAPI.Error_Management
 {
     /// <summary>
-    /// Stores the basic/base type of Exception which can be thrown by the API.
+    ///     Stores the basic/base type of Exception which can be thrown by the API.
     /// </summary>
     public class ReadingBusesApiException : Exception
     {
@@ -21,7 +21,6 @@ namespace ReadingBusesAPI.Error_Management
 
         internal ReadingBusesApiException(string message, Exception innerException) : base(message, innerException)
         {
-
         }
     }
 }

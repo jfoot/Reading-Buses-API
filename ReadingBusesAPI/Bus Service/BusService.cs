@@ -96,8 +96,9 @@ namespace ReadingBusesAPI.Bus_Service
                 string json = await new WebClient().DownloadStringTaskAsync(
                     UrlConstructor.LinePatterns(this));
                 _stops = new List<string>();
-                
-                try{
+
+                try
+                {
                     _stops = JsonConvert.DeserializeObject<List<BusStop>>(json)
                         .Select(p => p.ActoCode).ToList();
                 }
@@ -142,7 +143,7 @@ namespace ReadingBusesAPI.Bus_Service
         /// </summary>
         /// <returns>An array of GPS data points for all vehicles currently operating on this service.</returns>
         public async Task<LivePosition[]> GetLivePositions() =>
-            (await ReadingBuses.GetInstance().GPSController.GetLiveVehiclePositions()).Where(o =>
+            (await ReadingBuses.GetInstance().GpsController.GetLiveVehiclePositions()).Where(o =>
                 string.Equals(o.ServiceId, ServiceId, StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
         /// <summary>

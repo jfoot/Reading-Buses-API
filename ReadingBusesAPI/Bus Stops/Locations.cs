@@ -8,8 +8,8 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using ReadingBusesAPI.Shared;
 using ReadingBusesAPI.Error_Management;
+using ReadingBusesAPI.Shared;
 
 namespace ReadingBusesAPI.Bus_Stops
 {
@@ -46,9 +46,8 @@ namespace ReadingBusesAPI.Bus_Stops
                         await File.WriteAllTextAsync(CacheLocation,
                             JsonConvert.SerializeObject(locationsFiltered,
                                 Formatting.Indented)); // Save the JSON file for later use.  
-                    
                 }
-                catch(JsonSerializationException)
+                catch (JsonSerializationException)
                 {
                     ErrorManagement.TryErrorMessageRetrieval(json);
                 }

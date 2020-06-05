@@ -116,7 +116,6 @@ namespace ReadingBusesAPI.TimeTable
             }
         }
 
-        
 
         /// <summary>
         ///     Converts a string into a Direction Enum and back again for the JSON converter.

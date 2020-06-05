@@ -101,10 +101,11 @@ namespace ReadingBusesAPI.TimeTable
                 var timeTable = JsonConvert.DeserializeObject<List<ArchivedBusTimeTable>>(json);
                 return timeTable.ToArray();
             }
-            catch (JsonReaderException)
+            catch (JsonSerializationException)
             {
                 ErrorManagement.TryErrorMessageRetrieval(json);
             }
+
             //Should never reach this stage.
             throw new ReadingBusesApiExceptionCritical();
         }

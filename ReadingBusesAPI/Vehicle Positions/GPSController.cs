@@ -63,7 +63,9 @@ namespace ReadingBusesAPI.Vehicle_Positions
         /// See
         /// <see cref="GPSController.GetLiveVehiclePositions()" />
         /// to get live data instead.
+#pragma warning disable CA1822 // Mark members as static
         public async Task<ArchivedPositions[]> GetArchivedVehiclePositions(DateTime dateStartTime, TimeSpan? timeSpan,
+#pragma warning restore CA1822 // Mark members as static
             string vehicle = null)
         {
             if (dateStartTime == null || dateStartTime > DateTime.Now)
@@ -84,10 +86,11 @@ namespace ReadingBusesAPI.Vehicle_Positions
                 ArchivedPositions[] data = JsonConvert.DeserializeObject<ArchivedPositions[]>(json).ToArray();
                 return data;
             }
-            catch (JsonReaderException)
+            catch (JsonSerializationException)
             {
                 ErrorManagement.TryErrorMessageRetrieval(json);
             }
+
             //Should never reach this stage.
             throw new ReadingBusesApiExceptionCritical();
         }
@@ -113,10 +116,11 @@ namespace ReadingBusesAPI.Vehicle_Positions
                     _lastRetrieval = DateTime.Now;
                     return _livePositionCache;
                 }
-                catch (JsonReaderException)
+                catch (JsonSerializationException)
                 {
                     ErrorManagement.TryErrorMessageRetrieval(json);
                 }
+
                 //Should never get here.
                 throw new ReadingBusesApiExceptionCritical();
             }

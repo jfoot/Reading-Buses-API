@@ -8,13 +8,12 @@ using ReadingBusesAPI.Shared;
 namespace ReadingBusesAPI.Error_Management
 {
     /// <summary>
-    /// Represents an error message object returned by all JSON feeds of the API.
+    ///     Represents an error message object returned by all JSON feeds of the API.
     /// </summary>
     internal sealed class ErrorFormat
     {
         /// <value>The status of the request, always false for failed.</value>
         [JsonProperty("status")]
-   
         public bool Status { get; set; }
 
         /// <value>The status code of the error</value>

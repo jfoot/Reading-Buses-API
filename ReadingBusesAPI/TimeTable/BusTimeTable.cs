@@ -53,14 +53,16 @@ namespace ReadingBusesAPI.TimeTable
             string json = await new WebClient().DownloadStringTaskAsync(
                 UrlConstructor.TimetabledJourneys(service, location, date));
 
-            try{
+            try
+            {
                 var timeTable = JsonConvert.DeserializeObject<List<BusTimeTable>>(json);
                 return timeTable.ToArray();
             }
-            catch (JsonReaderException)
+            catch (JsonSerializationException)
             {
                 ErrorManagement.TryErrorMessageRetrieval(json);
             }
+
             //Should never reach this stage.
             throw new ReadingBusesApiExceptionCritical();
         }

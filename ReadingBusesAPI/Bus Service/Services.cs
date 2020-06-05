@@ -32,10 +32,10 @@ namespace ReadingBusesAPI.Bus_Service
         {
             if (!File.Exists(CacheLocation) || !ReadingBuses.Cache)
             {
-                string json = await 
+                string json = await
                     new WebClient().DownloadStringTaskAsync(
                         UrlConstructor.ListOfServices());
-               
+
                 List<BusService> newServicesData = new List<BusService>();
 
                 try
@@ -52,7 +52,7 @@ namespace ReadingBusesAPI.Bus_Service
                 {
                     ErrorManagement.TryErrorMessageRetrieval(json);
                 }
-                
+
 
                 return newServicesData;
             }

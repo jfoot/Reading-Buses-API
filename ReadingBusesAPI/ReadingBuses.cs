@@ -43,6 +43,12 @@ namespace ReadingBusesAPI
         /// <value>The singleton instance</value>
         private static ReadingBuses _instance;
 
+        /// <value>Holds information on all the bus stops/locations visited by Reading Buses</value>
+        private Dictionary<string, BusStop> _locations;
+
+        /// <value>Holds information on all the services operated by Reading Buses</value>
+        private List<BusService> _services;
+
 
         /// <summary>
         ///     Create a new Reading Buses library object, this is the main control.
@@ -51,35 +57,29 @@ namespace ReadingBusesAPI
         private ReadingBuses(string apiKey)
         {
             ApiKey = apiKey;
-            GPSController = new GPSController();
+            GpsController = new GPSController();
         }
 
         /// <value>Keeps track of if cache data is being used or not</value>
-        internal static bool Debugging { get; set; } = false;
+        internal static bool Debugging { get; private set; } = false;
 
         /// <value>Keeps track of if cache data is being used or not</value>
-        internal static bool Cache { get; set; } = true;
+        internal static bool Cache { get; private set; } = true;
 
         /// <value>Keeps track of if warnings are being outputted to console or not.</value>
-        internal static bool Warning { get; set; } = true;
+        internal static bool Warning { get; private set; } = true;
 
         /// <value>Keeps track of if full error logs are being outputted to console or not.</value>
-        internal static bool FullError { get; set; } = false;
+        internal static bool FullError { get; private set; } = false;
 
         /// <value>Stores how many days cache data is valid for in days before being regenerated</value>
-        internal static int CacheValidityLength { get; set; } = 7;
+        internal static int CacheValidityLength { get; private set; } = 7;
 
         /// <value>Holds the users API Key.</value>
         internal static string ApiKey { get; private set; }
 
-        /// <value>Holds information on all the bus stops/locations visited by Reading Buses</value>
-        internal static Dictionary<string, BusStop> Locations { get; set; }
-
-        /// <value>Holds information on all the services operated by Reading Buses</value>
-        internal List<BusService> Services { get; set; }
-
         /// <value>Stores the GPS controller, which can help get vehicle GPS data.</value>
-        public GPSController GPSController { get; }
+        public GPSController GpsController { get; }
 
         /// <summary>
         ///     Creates cache data and retrieves bus services and bus stop data.
@@ -103,8 +103,8 @@ namespace ReadingBusesAPI
                 Task<Dictionary<string, BusStop>> locationsTask = new Locations().FindLocations();
 
 
-                Locations = await locationsTask;
-                Services = await servicesTask;
+                _locations = await locationsTask;
+                _services = await servicesTask;
             }
             catch (AggregateException ex)
             {
@@ -266,7 +266,7 @@ namespace ReadingBusesAPI
         public BusStop GetLocation(string actoCode)
         {
             if (IsLocation(actoCode))
-                return Locations[actoCode];
+                return _locations[actoCode];
 
             throw new ReadingBusesApiExceptionMalformedQuery(
                 "A bus stop of that Acto Code can not be found, please make sure you have a valid Bus Stop Code. You can use, the 'IsLocation' function to check beforehand.");
@@ -277,7 +277,7 @@ namespace ReadingBusesAPI
         /// </summary>
         /// <returns>All the bus stops Reading Buses visits</returns>
 #pragma warning disable CA1822 // Mark members as static
-        public BusStop[] GetLocations() => Locations.Values.ToArray();
+        public BusStop[] GetLocations() => _locations.Values.ToArray();
 #pragma warning restore CA1822 // Mark members as static
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace ReadingBusesAPI
         /// <param name="actoCode">The ID Code for a bus stop.</param>
         /// <returns>True or False depending on if the stop is in the API feed or not.</returns>
 #pragma warning disable CA1822 // Mark members as static
-        public bool IsLocation(string actoCode) => Locations.ContainsKey(actoCode);
+        public bool IsLocation(string actoCode) => _locations.ContainsKey(actoCode);
 #pragma warning restore CA1822 // Mark members as static
 
         #endregion
@@ -297,7 +297,7 @@ namespace ReadingBusesAPI
         ///     All the Services Reading Buses Operates
         /// </summary>
         /// <returns>All the Services Reading Buses Operates</returns>
-        public BusService[] GetServices() => Services.ToArray();
+        public BusService[] GetServices() => _services.ToArray();
 
 
         /// <summary>
@@ -306,7 +306,7 @@ namespace ReadingBusesAPI
         /// </summary>
         /// <param name="brandName">The brand name for the services you wish to find, eg "pink" or "sky blue".</param>
         /// <returns>An array of Bus Services which are of the brand name specified.</returns>
-        public BusService[] GetServices(string brandName) => Services
+        public BusService[] GetServices(string brandName) => _services
             .Where(o => string.Equals(o.BrandName, brandName, StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
         /// <summary>
@@ -326,7 +326,7 @@ namespace ReadingBusesAPI
         public BusService[] GetService(string serviceNumber)
         {
             if (IsService(serviceNumber))
-                return Services.Where(o =>
+                return _services.Where(o =>
                     string.Equals(o.ServiceId, serviceNumber, StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
             throw new ReadingBusesApiExceptionMalformedQuery(
@@ -350,7 +350,7 @@ namespace ReadingBusesAPI
         public BusService GetService(string serviceNumber, Operators operators)
         {
             if (IsService(serviceNumber, operators))
-                return Services.Single(o =>
+                return _services.Single(o =>
                     string.Equals(o.ServiceId, serviceNumber, StringComparison.CurrentCultureIgnoreCase) &&
                     o.OperatorCode.Equals(operators));
 
@@ -364,7 +364,7 @@ namespace ReadingBusesAPI
         /// </summary>
         /// <param name="serviceNumber">The service number to find.</param>
         /// <returns>True or False for if a service is the API feed or not.</returns>
-        public bool IsService(string serviceNumber) => Services.Any(o =>
+        public bool IsService(string serviceNumber) => _services.Any(o =>
             string.Equals(o.ServiceId, serviceNumber, StringComparison.CurrentCultureIgnoreCase));
 
 
@@ -374,7 +374,7 @@ namespace ReadingBusesAPI
         /// <param name="serviceNumber">The service number to find.</param>
         /// <param name="operators">The specific bus operator you want to search in.</param>
         /// <returns>True or False for if a service is the API feed or not.</returns>
-        public bool IsService(string serviceNumber, Operators operators) => Services.Any(o =>
+        public bool IsService(string serviceNumber, Operators operators) => _services.Any(o =>
             string.Equals(o.ServiceId, serviceNumber, StringComparison.CurrentCultureIgnoreCase) &&
             o.OperatorCode.Equals(operators));
 
@@ -384,7 +384,7 @@ namespace ReadingBusesAPI
         /// </summary>
         public void PrintServices()
         {
-            foreach (var service in Services)
+            foreach (var service in _services)
                 Console.WriteLine(service.BrandName + " " + service.ServiceId);
         }
 
