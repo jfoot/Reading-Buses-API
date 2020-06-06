@@ -1,0 +1,200 @@
+﻿// Copyright (c) Jonathan Foot. All Rights Reserved. 
+// Licensed under the GNU Affero General Public License, Version 3.0 
+// See the LICENSE file in the project root for more information.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using NUnit.Framework;
+using ReadingBusesAPI;
+using ReadingBusesAPI.Bus_Service;
+using ReadingBusesAPI.Bus_Stops;
+using ReadingBusesAPI.Error_Management;
+using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.TimeTable;
+using ReadingBusesAPI.Vehicle_Positions;
+
+namespace ReadingBuses_API_Tests.Dummy_Server_Tests
+{
+	/// <summary>
+	///     Tests for the 'BusService' class on a dummy server.
+	/// </summary>
+	[TestFixture]
+	public class BusServiceTestsDummy
+	{
+		private BusService _testService;
+
+		/// <summary>
+		///     Directs traffic to dummy server.
+		/// </summary>
+		[OneTimeSetUp]
+		public void Setup()
+		{
+			//Use the dummy server connection. This lets us test is it the API which has changed and broken the program or something that I have coded which is the problem.
+			ReadingBuses.SetDebugging(true);
+			_testService = ReadingBuses.GetInstance().GetService("17", Operators.ReadingBuses);
+		}
+
+		/// <summary>
+		///     Check that an array of string of acto codes is returned.
+		/// </summary>
+		[Test]
+		public async Task CheckGetLocationsActoCodesAsync()
+		{
+			string[] actoCodes = await _testService.GetLocationsActo();
+
+			foreach (var actoCode in actoCodes)
+			{
+				if(!ReadingBuses.GetInstance().IsLocation(actoCode))
+					Assert.Fail("Not a real location.");
+			}
+
+
+			if(actoCodes.Length != 0)
+				Assert.Pass();
+			else
+				Assert.Fail("No acto-codes were returned.");
+		}
+
+
+		/// <summary>
+		///     Check that an array of locations is returned.
+		/// </summary>
+		[Test]
+		public async Task CheckGetLocationsAsync()
+		{
+			BusStop[] locations = await _testService.GetLocations();
+
+		
+			if (locations.Length != 0)
+				Assert.Pass();
+			else
+				Assert.Fail("No locations were returned.");
+		}
+
+
+		/// <summary>
+		///     Check that an array of Live GPS positions is returned.
+		/// </summary>
+		[Test]
+		public async Task CheckGetLivePositionsAsync()
+		{
+			LivePosition[] livePositions = await _testService.GetLivePositions();
+
+
+			if (livePositions.Length != 0)
+				Assert.Pass();
+			else
+				Assert.Fail("No live positions were returned.");
+		}
+
+
+		/// <summary>
+		///     Check that an array of time table records is returned.
+		/// </summary>
+		[Test]
+		public async Task CheckGetTimeTableAsync()
+		{
+			BusTimeTable[] timeTable = await _testService.GetTimeTable(DateTime.Now.AddDays(-1));
+
+
+			if (timeTable.Length == 0)
+				Assert.Fail("No time table records were returned.");
+
+
+			BusTimeTable[] timeTableFuture = await _testService.GetTimeTable(DateTime.Now.AddDays(10));
+
+
+			if (timeTableFuture.Length == 0)
+				Assert.Fail("No time table records were returned.");
+
+			Assert.Pass();
+		}
+
+
+		/// <summary>
+		///     Check that an array of time table records is returned and grouped correctly.
+		/// </summary>
+		[Test]
+		public async Task CheckGetTimeTableGroupedAsync()
+		{
+			IGrouping<string, BusTimeTable>[] timeTableGroup = await _testService.GetGroupedTimeTable(DateTime.Now.AddDays(-1));
+
+			if (timeTableGroup.Length == 0)
+				Assert.Fail("No time table records were returned.");
+
+			foreach (var group in timeTableGroup)
+			{
+				if(@group.Any(x => x.JourneyCode != @group.First().JourneyCode))
+					Assert.Fail("Not all elements in group have same journey code.");
+			}
+
+			Assert.Pass();
+		}
+
+
+		/// <summary>
+		///     Check that an array of archived time table records is returned.
+		/// </summary>
+		[Test]
+		public async Task CheckGetArchivedTimeTableAsync()
+		{
+			ArchivedBusTimeTable[] timeTable = await _testService.GetArchivedTimeTable(DateTime.Now.AddDays(-1));
+
+
+			if (timeTable.Length == 0)
+				Assert.Fail("No time table records were returned.");
+
+
+			Assert.Pass();
+		}
+
+
+		/// <summary>
+		///     Check that an error is thrown when trying to get future data.
+		/// </summary>
+		[Test]
+		public void CheckGetArchivedTimeTableErrorAsync()
+		{
+			Assert.ThrowsAsync<ReadingBusesApiExceptionMalformedQuery>(async () =>
+				 await _testService.GetArchivedTimeTable(DateTime.Now.AddDays(10)));
+		}
+
+
+
+		/// <summary>
+		///     Check that an array of archived time table records is returned and grouped correctly.
+		/// </summary>
+		[Test]
+		public async Task CheckGetArchivedTimeTableGroupedAsync()
+		{
+			IGrouping<string, ArchivedBusTimeTable>[] timeTableGroup = await _testService.GetGroupedArchivedTimeTable(DateTime.Now.AddDays(-1));
+
+			if (timeTableGroup.Length == 0)
+				Assert.Fail("No time table records were returned.");
+
+			foreach (var group in timeTableGroup)
+			{
+				if (@group.Any(x => x.JourneyCode != @group.First().JourneyCode))
+					Assert.Fail("Not all elements in group have same journey code.");
+			}
+
+			Assert.Pass();
+		}
+
+
+		/// <summary>
+		///     Check that an error is thrown when trying to get future data.
+		/// </summary>
+		[Test]
+		public void CheckGetArchivedTimeTableGroupedErrorAsync()
+		{
+			Assert.ThrowsAsync<ReadingBusesApiExceptionMalformedQuery>(async () =>
+				await _testService.GetGroupedArchivedTimeTable(DateTime.Now.AddDays(10)));
+		}
+
+
+	}
+}

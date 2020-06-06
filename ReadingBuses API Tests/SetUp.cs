@@ -24,6 +24,8 @@ namespace ReadingBuses_API_Tests
 			ReadingBuses.SetFullError(true);
 			//Output any warnings to logs for debugging them if needed.
 			ReadingBuses.SetWarning(true);
+			//By Default use the dummy server first. We can switch to live server in later tests.
+			ReadingBuses.SetDebugging(true);
 			//Gets the API Key from Git Hub Secrets. 
 			_ = await ReadingBuses.Initialise(Environment.GetEnvironmentVariable("API_KEY"));
 		}

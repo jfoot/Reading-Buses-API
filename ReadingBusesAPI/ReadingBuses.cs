@@ -139,7 +139,11 @@ namespace ReadingBusesAPI
         /// <remarks>Unless you are developing or editing library in some way you should not need to use this.</remarks>
         public static void SetDebugging(bool value)
         {
-            Debugging = value;
+            if (Debugging != value)
+            {
+                Debugging = value;
+                _instance?.SetUp().Wait();
+            }
         }
 
 
