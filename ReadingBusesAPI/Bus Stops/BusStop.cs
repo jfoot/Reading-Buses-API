@@ -75,7 +75,7 @@ namespace ReadingBusesAPI.Bus_Stops
         ///     Gets live data from a bus stop.
         /// </summary>
         /// <returns>Returns a list of Live Records, which are individual buses due to arrive at the bus stop.</returns>
-        public async Task<List<LiveRecord>> GetLiveData()
+        public async Task<LiveRecord[]> GetLiveData()
         {
             return await Task.Run(() => LiveRecord.GetLiveData(ActoCode)).ConfigureAwait(false);
         }

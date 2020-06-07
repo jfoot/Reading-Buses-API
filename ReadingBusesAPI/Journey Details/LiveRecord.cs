@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Xml.Linq;
@@ -92,7 +91,7 @@ namespace ReadingBusesAPI.Journey_Details
         ///     acto-code
         /// </exception>
         /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if no error message or reasoning for fault is detectable.</exception>
-        internal static List<LiveRecord> GetLiveData(string actoCode)
+        internal static LiveRecord[] GetLiveData(string actoCode)
         {
             try
             {
@@ -109,7 +108,7 @@ namespace ReadingBusesAPI.Journey_Details
                     VehicleRef = (string) x.Descendants(ns + "VehicleRef").FirstOrDefault(),
                     ViaMessage = (string) x.Descendants(ns + "Via").FirstOrDefault()
                 }).ToList();
-                return arrivals;
+                return arrivals.ToArray();
             }
             catch (NullReferenceException)
             {

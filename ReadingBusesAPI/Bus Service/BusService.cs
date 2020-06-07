@@ -146,7 +146,7 @@ namespace ReadingBusesAPI.Bus_Service
             (await ReadingBuses.GetInstance().GpsController.GetLiveVehiclePositions().ConfigureAwait(false)).Where(o =>
                 string.Equals(o.ServiceId, ServiceId, StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
-  
+
         #region BusTimeTable
 
         /// <summary>
