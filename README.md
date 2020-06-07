@@ -1,5 +1,8 @@
 ![.NET Core](https://github.com/jfoot/Reading-Buses-API/workflows/.NET%20Core/badge.svg)
 # Reading-Buses-API
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/934c9f78e365473880a146fcdc4a4df6)](https://app.codacy.com/manual/jfoot/Reading-Buses-API?utm_source=github.com&utm_medium=referral&utm_content=jfoot/Reading-Buses-API&utm_campaign=Badge_Grade_Dashboard)
+
 A C# Library for the Reading Buses API (currently only for .net Core, but can be converted to .net Framework with ease.) 
 The library supports the List of Bus Stops, Live Vehicle Positions, Stop Predictions, List of Services and Line Patterns API.
 
