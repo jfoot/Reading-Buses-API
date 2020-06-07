@@ -75,14 +75,17 @@ namespace ReadingBusesAPI.Bus_Stops
         ///     Gets live data from a bus stop.
         /// </summary>
         /// <returns>Returns a list of Live Records, which are individual buses due to arrive at the bus stop.</returns>
-        public List<LiveRecord> GetLiveData() => LiveRecord.GetLiveData(ActoCode);
+        public async Task<List<LiveRecord>> GetLiveData()
+        {
+            return await Task.Run(() => LiveRecord.GetLiveData(ActoCode)).ConfigureAwait(false);
+        }
 
         /// <summary>
         ///     Finds the 'BusService' object for all of the bus services which visit this stop.
         /// </summary>
         /// <param name="busOperator"></param>
         /// <returns>A list of BusService Objects for services which visit this bus stop.</returns>
-        public List<BusService> GetServices(Operators busOperator)
+        public BusService[] GetServices(Operators busOperator)
         {
             string[] services = Services.Split('/');
             List<BusService> serviceObjects = new List<BusService>();
@@ -90,7 +93,7 @@ namespace ReadingBusesAPI.Bus_Stops
             foreach (var service in services)
                 serviceObjects.Add(ReadingBuses.GetInstance().GetService(service, busOperator));
 
-            return serviceObjects;
+            return serviceObjects.ToArray();
         }
 
         /// <summary>

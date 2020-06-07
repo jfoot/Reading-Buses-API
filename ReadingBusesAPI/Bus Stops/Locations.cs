@@ -31,7 +31,8 @@ namespace ReadingBusesAPI.Bus_Stops
         {
             if (!File.Exists(CacheLocation) || !ReadingBuses.Cache)
             {
-                string json = await new WebClient().DownloadStringTaskAsync(UrlConstructor.ListOfBusStops());
+                string json = await new WebClient().DownloadStringTaskAsync(UrlConstructor.ListOfBusStops())
+                    .ConfigureAwait(false);
                 var locationsFiltered = new Dictionary<string, BusStop>();
 
                 try
@@ -45,7 +46,7 @@ namespace ReadingBusesAPI.Bus_Stops
                     if (ReadingBuses.Cache)
                         await File.WriteAllTextAsync(CacheLocation,
                             JsonConvert.SerializeObject(locationsFiltered,
-                                Formatting.Indented)); // Save the JSON file for later use.  
+                                Formatting.Indented)).ConfigureAwait(false); // Save the JSON file for later use.  
                 }
                 catch (JsonSerializationException)
                 {
@@ -61,21 +62,21 @@ namespace ReadingBusesAPI.Bus_Stops
                 {
                     File.Delete(CacheLocation);
                     ReadingBuses.PrintWarning("Warning: Cache data expired, downloading latest Locations Data.");
-                    return await FindLocations();
+                    return await FindLocations().ConfigureAwait(false);
                 }
 
 
                 try
                 {
                     return JsonConvert.DeserializeObject<Dictionary<string, BusStop>>(
-                        await File.ReadAllTextAsync(CacheLocation));
+                        await File.ReadAllTextAsync(CacheLocation).ConfigureAwait(false));
                 }
                 catch (JsonSerializationException)
                 {
                     File.Delete(CacheLocation);
                     ReadingBuses.PrintWarning(
                         "Warning: Unable to read Locations Cache File, deleting and regenerating cache.");
-                    return await FindLocations();
+                    return await FindLocations().ConfigureAwait(false);
                 }
             }
         }

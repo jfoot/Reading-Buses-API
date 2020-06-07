@@ -34,7 +34,7 @@ namespace ReadingBusesAPI.Bus_Service
             {
                 string json = await
                     new WebClient().DownloadStringTaskAsync(
-                        UrlConstructor.ListOfServices());
+                        UrlConstructor.ListOfServices()).ConfigureAwait(false);
 
                 List<BusService> newServicesData = new List<BusService>();
 
@@ -46,7 +46,7 @@ namespace ReadingBusesAPI.Bus_Service
                     // Save the JSON file for later use. 
                     if (ReadingBuses.Cache)
                         await File.WriteAllTextAsync(CacheLocation,
-                            JsonConvert.SerializeObject(newServicesData, Formatting.Indented));
+                            JsonConvert.SerializeObject(newServicesData, Formatting.Indented)).ConfigureAwait(false);
                 }
                 catch (JsonSerializationException)
                 {
@@ -63,20 +63,20 @@ namespace ReadingBusesAPI.Bus_Service
                 {
                     File.Delete(CacheLocation);
                     ReadingBuses.PrintWarning("Warning: Cache data expired, downloading latest Services Data.");
-                    return await FindServices();
+                    return await FindServices().ConfigureAwait(false);
                 }
 
                 try
                 {
                     return JsonConvert.DeserializeObject<List<BusService>>(
-                        await File.ReadAllTextAsync(CacheLocation));
+                        await File.ReadAllTextAsync(CacheLocation).ConfigureAwait(false));
                 }
                 catch (JsonSerializationException)
                 {
                     File.Delete(CacheLocation);
                     ReadingBuses.PrintWarning(
                         "Warning: Unable to read Services Cache File, deleting and regenerating cache.");
-                    return await FindServices();
+                    return await FindServices().ConfigureAwait(false);
                 }
             }
         }

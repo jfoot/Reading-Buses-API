@@ -51,7 +51,7 @@ namespace ReadingBusesAPI.TimeTable
                     "You must provide a date and a service and/or location for a valid query.");
 
             string json = await new WebClient().DownloadStringTaskAsync(
-                UrlConstructor.TimetabledJourneys(service, location, date));
+                UrlConstructor.TimetabledJourneys(service, location, date)).ConfigureAwait(false);
 
             try
             {
@@ -85,7 +85,7 @@ namespace ReadingBusesAPI.TimeTable
             DateTime date,
             BusStop location)
         {
-            return (await GetTimeTable(service, date, location))
+            return (await GetTimeTable(service, date, location).ConfigureAwait(false))
                 .GroupBy(x => x.JourneyCode).ToArray();
         }
     }

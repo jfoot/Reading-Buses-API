@@ -79,7 +79,7 @@ namespace ReadingBusesAPI.Vehicle_Positions
 
             var json =
                 await new WebClient().DownloadStringTaskAsync(
-                    new Uri(UrlConstructor.VehiclePositionHistory(dateStartTime, timeSpan, vehicle)));
+                    new Uri(UrlConstructor.VehiclePositionHistory(dateStartTime, timeSpan, vehicle))).ConfigureAwait(false);
 
             try
             {
@@ -108,7 +108,7 @@ namespace ReadingBusesAPI.Vehicle_Positions
             {
                 var json =
                     await new WebClient().DownloadStringTaskAsync(
-                        new Uri(UrlConstructor.LiveVehiclePositions()));
+                        new Uri(UrlConstructor.LiveVehiclePositions())).ConfigureAwait(false);
 
                 try
                 {
@@ -139,8 +139,8 @@ namespace ReadingBusesAPI.Vehicle_Positions
         /// </exception>
         public async Task<LivePosition> GetLiveVehiclePosition(string vehicle)
         {
-            if (await IsVehicle(vehicle))
-                return (await GetLiveVehiclePositions()).Single(o =>
+            if (await IsVehicle(vehicle).ConfigureAwait(false))
+                return (await GetLiveVehiclePositions().ConfigureAwait(false)).Single(o =>
                     string.Equals(o.Vehicle, vehicle, StringComparison.CurrentCultureIgnoreCase));
 
             throw new ReadingBusesApiExceptionBadQuery(
@@ -152,7 +152,7 @@ namespace ReadingBusesAPI.Vehicle_Positions
         /// </summary>
         /// <param name="vehicle">Vehicle ID Number eg 414</param>
         /// <returns>True or False for if the buses GPS can be found or not currently.</returns>
-        public async Task<bool> IsVehicle(string vehicle) => (await GetLiveVehiclePositions()).Any(o =>
+        public async Task<bool> IsVehicle(string vehicle) => (await GetLiveVehiclePositions().ConfigureAwait(false)).Any(o =>
             string.Equals(o.Vehicle, vehicle, StringComparison.CurrentCultureIgnoreCase));
     }
 }

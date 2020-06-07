@@ -92,7 +92,7 @@ namespace ReadingBusesAPI.Journey_Details
         ///     acto-code
         /// </exception>
         /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if no error message or reasoning for fault is detectable.</exception>
-        public static List<LiveRecord> GetLiveData(string actoCode)
+        internal static List<LiveRecord> GetLiveData(string actoCode)
         {
             try
             {

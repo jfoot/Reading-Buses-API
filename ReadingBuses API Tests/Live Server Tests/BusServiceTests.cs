@@ -1,7 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Copyright (c) Jonathan Foot. All Rights Reserved. 
+// Licensed under the GNU Affero General Public License, Version 3.0 
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using ReadingBusesAPI;
@@ -32,6 +34,32 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 			ReadingBuses.SetDebugging(false);
 			_testService = ReadingBuses.GetInstance().GetService("17", Operators.ReadingBuses);
 		}
+
+
+		/// <summary>
+		///     Check the default constructor
+		/// </summary>
+		[Test]
+		public void CheckDefaultConstructor()
+		{
+			BusService service = new BusService("22");
+
+			Assert.AreEqual("22", service.ServiceId);
+			Assert.AreEqual(Operators.Other, service.OperatorCode);
+		}
+
+		/// <summary>
+		///     Check the second constructor
+		/// </summary>
+		[Test]
+		public void CheckSecondConstructor()
+		{
+			BusService service = new BusService("22", Operators.ReadingBuses);
+
+			Assert.AreEqual("22", service.ServiceId);
+			Assert.AreEqual(Operators.ReadingBuses, service.OperatorCode);
+		}
+
 
 		/// <summary>
 		///     Check that an array of string of acto codes is returned.

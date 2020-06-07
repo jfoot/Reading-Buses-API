@@ -101,10 +101,11 @@ namespace ReadingBusesAPI
 
                 Task<List<BusService>> servicesTask = new Services().FindServices();
                 Task<Dictionary<string, BusStop>> locationsTask = new Locations().FindLocations();
+                
 
-
-                _locations = await locationsTask;
-                _services = await servicesTask;
+                await Task.WhenAll(servicesTask, locationsTask).ConfigureAwait(false); 
+                _services = servicesTask.Result;
+                _locations = locationsTask.Result;
             }
             catch (AggregateException ex)
             {
@@ -206,7 +207,7 @@ namespace ReadingBusesAPI
             if (_instance == null)
             {
                 _instance = new ReadingBuses(apiKey);
-                await _instance.SetUp();
+                await _instance.SetUp().ConfigureAwait(false);
             }
 
             return _instance;
@@ -383,16 +384,7 @@ namespace ReadingBusesAPI
             o.OperatorCode.Equals(operators));
 
 
-        /// <summary>
-        ///     Prints off all the services found by the API which Reading Buses Operates
-        /// </summary>
-        public void PrintServices()
-        {
-            foreach (var service in _services)
-                Console.WriteLine(service.BrandName + " " + service.ServiceId);
-        }
-
-
+      
         /// <summary>
         ///     Gets the archived real bus departure and arrival times along with their time table history for a specific vehicle,
         ///     on a specific date.

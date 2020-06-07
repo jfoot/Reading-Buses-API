@@ -115,7 +115,7 @@ namespace ReadingBusesAPI.Bus_Service
         ///     Gets an array of stops the bus service travels too as an array of ActoCode
         /// </summary>
         /// <returns>An array of Acto-Codes for the stops visited by this services.</returns>
-        public async Task<string[]> GetLocationsActo() => (await GetStops()).ToArray();
+        public async Task<string[]> GetLocationsActo() => (await GetStops().ConfigureAwait(false)).ToArray();
 
         /// <summary>
         ///     Gets an array of 'BusStop' objects the bus service travels too as an array of BusStop objects.
@@ -126,7 +126,7 @@ namespace ReadingBusesAPI.Bus_Service
         {
             if (_stopsObjects == null)
             {
-                List<string> actoCodes = await GetStops();
+                List<string> actoCodes = await GetStops().ConfigureAwait(false);
 
                 BusStop[] temp = new BusStop[actoCodes.Count];
                 for (int i = 0; i < temp.Length; i++)
@@ -143,27 +143,10 @@ namespace ReadingBusesAPI.Bus_Service
         /// </summary>
         /// <returns>An array of GPS data points for all vehicles currently operating on this service.</returns>
         public async Task<LivePosition[]> GetLivePositions() =>
-            (await ReadingBuses.GetInstance().GpsController.GetLiveVehiclePositions()).Where(o =>
+            (await ReadingBuses.GetInstance().GpsController.GetLiveVehiclePositions().ConfigureAwait(false)).Where(o =>
                 string.Equals(o.ServiceId, ServiceId, StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
-        /// <summary>
-        ///     Prints off all the Acto-codes for bus stops visited by the service.
-        /// </summary>
-        public void PrintLocationsActo()
-        {
-            foreach (var stop in GetStops().Result)
-                Console.WriteLine(stop);
-        }
-
-        /// <summary>
-        ///     Prints off all the names for the bus stops visited by the service.
-        /// </summary>
-        public void PrintLocationNames()
-        {
-            foreach (var stop in GetLocations().Result)
-                Console.WriteLine(stop.CommonName);
-        }
-
+  
         #region BusTimeTable
 
         /// <summary>

@@ -94,7 +94,7 @@ namespace ReadingBusesAPI.TimeTable
                     "You must provide a date and a service and/or location for a valid query.");
 
             string json = await new WebClient().DownloadStringTaskAsync(
-                UrlConstructor.TrackingHistory(service, location, date, vehicle));
+                UrlConstructor.TrackingHistory(service, location, date, vehicle)).ConfigureAwait(false);
 
             try
             {
@@ -130,7 +130,7 @@ namespace ReadingBusesAPI.TimeTable
             DateTime date,
             BusStop location, string vehicle)
         {
-            return (await GetTimeTable(service, date, location, vehicle))
+            return (await GetTimeTable(service, date, location, vehicle).ConfigureAwait(false))
                 .GroupBy(x => x.JourneyCode).ToArray();
         }
     }
