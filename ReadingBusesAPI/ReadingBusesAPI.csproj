@@ -41,6 +41,14 @@
         <DebugType>Full</DebugType>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <Optimize>true</Optimize>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <Optimize>true</Optimize>
+    </PropertyGroup>
+
 
     <ItemGroup>
         <None Include="..\LICENSE.txt">

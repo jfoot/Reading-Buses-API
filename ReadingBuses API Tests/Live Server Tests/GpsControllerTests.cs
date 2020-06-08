@@ -34,21 +34,21 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		///     Checks we can get archived vehicle position data.
 		/// </summary>
 		//[Test]
-		//DISABLED DUE TO TAKING SO LONG.
-		public async Task GetArchivedVehiclePositionsAsync()
-		{
-			ArchivedPositions[] positions = await ReadingBuses.GetInstance().GpsController
-				.GetArchivedVehiclePositions(DateTime.Now.AddDays(-1), new TimeSpan(2, 0, 0));
-			if (positions.Length != 0)
-			{
-				Assert.Pass();
-			}
-			else
-			{
-				Assert.Fail(
-					"No archived vehicles found. But this could be because there isn't any, please run this test at a reasonable British time.");
-			}
-		}
+		////DISABLED DUE TO TAKING SO LONG.
+		//public async Task GetArchivedVehiclePositionsAsync()
+		//{
+		//	ArchivedPositions[] positions = await ReadingBuses.GetInstance().GpsController
+		//		.GetArchivedVehiclePositions(DateTime.Now.AddDays(-1), new TimeSpan(2, 0, 0));
+		//	if (positions.Length != 0)
+		//	{
+		//		Assert.Pass();
+		//	}
+		//	else
+		//	{
+		//		Assert.Fail(
+		//			"No archived vehicles found. But this could be because there isn't any, please run this test at a reasonable British time.");
+		//	}
+		//}
 
 		/// <summary>
 		///     Throws an error is a null time span or date in the future is passed.
