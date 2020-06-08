@@ -102,6 +102,25 @@ namespace ReadingBusesAPI.Bus_Stops
         /// <returns>A Point Object for the position of the bus stop.</returns>
         public Point GetPoint() => new Point(double.Parse(Longitude), double.Parse(Latitude));
 
+
+        /// <summary>
+        ///     Gets time table data at this specific bus stop.
+        /// </summary>
+        /// <param name="date">The date you want time table data for.</param>
+        /// <returns>An array of time table records for a particular bus stop.</returns>
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
+        ///     If you have not provided any date.
+        /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
+        public Task<BusTimeTable[]> GetTimeTable(DateTime date)
+        {
+            return BusTimeTable.GetTimeTable(null, date, this);
+        }
+
+        
+
+
         /// <summary>
         ///     Gets time table data at this specific bus stop.
         /// </summary>
@@ -116,10 +135,24 @@ namespace ReadingBusesAPI.Bus_Stops
         /// </exception>
         /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
         /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-        public Task<BusTimeTable[]> GetTimeTable(DateTime date, BusService service = null)
+        public Task<BusTimeTable[]> GetTimeTable(DateTime date, BusService service)
         {
             return BusTimeTable.GetTimeTable(service, date, this);
         }
+
+
+
+        /// <summary>
+        ///     Gets the archived real bus departure and arrival times along with their time table history at this specific bus
+        ///     stop.
+        /// </summary>
+        /// <param name="date">The date you want time table data for. This should be a date in the past.</param>
+        /// <returns></returns>
+        public Task<ArchivedBusTimeTable[]> GetArchivedTimeTable(DateTime date)
+        {
+            return ArchivedBusTimeTable.GetTimeTable(null, date, this, null);
+        }
+
 
 
         /// <summary>
@@ -132,7 +165,7 @@ namespace ReadingBusesAPI.Bus_Stops
         ///     data for all services at this stop.
         /// </param>
         /// <returns></returns>
-        public Task<ArchivedBusTimeTable[]> GetArchivedTimeTable(DateTime date, BusService service = null)
+        public Task<ArchivedBusTimeTable[]> GetArchivedTimeTable(DateTime date, BusService service)
         {
             return ArchivedBusTimeTable.GetTimeTable(service, date, this, null);
         }

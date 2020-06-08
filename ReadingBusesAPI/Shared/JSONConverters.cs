@@ -44,12 +44,12 @@ namespace ReadingBusesAPI.Shared
                 case Operators.NewburyAndDistrict:
                     serializer.Serialize(writer, "N&D");
                     return;
-                case Operators.Other:
+                default:
                     serializer.Serialize(writer, "OTH");
                     return;
             }
 
-            throw new Exception("Cannot marshal type Operators");
+            throw new JsonSerializationException("Cannot marshal type Operators");
         }
     }
 
@@ -67,7 +67,7 @@ namespace ReadingBusesAPI.Shared
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
             if (long.TryParse(value, out var l)) return l;
-            throw new Exception("Cannot unmarshal type long");
+            throw new JsonSerializationException("Cannot unmarshal type long");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)

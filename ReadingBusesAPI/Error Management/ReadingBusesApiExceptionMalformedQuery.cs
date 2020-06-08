@@ -9,11 +9,6 @@ namespace ReadingBusesAPI.Error_Management
     /// </summary>
     public class ReadingBusesApiExceptionMalformedQuery : ReadingBusesApiException
     {
-        internal ReadingBusesApiExceptionMalformedQuery() : base()
-        {
-        }
-
-
         internal ReadingBusesApiExceptionMalformedQuery(string content) : base(content)
         {
         }

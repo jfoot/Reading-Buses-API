@@ -15,7 +15,7 @@ namespace ReadingBusesAPI.Vehicle_Positions
     /// <summary>
     ///     Helps get live and historical GPS data on vehicles by accessing the "Live Vehicle Positions" API.
     /// </summary>
-    public sealed class GPSController
+    public sealed class GpsController
     {
         /// <value>The last time a GPS request was made. This is used to prevent unnecessary API calls.</value>
         private static DateTime _lastRetrieval;
@@ -27,7 +27,7 @@ namespace ReadingBusesAPI.Vehicle_Positions
         ///     Creates a GPS Controller, you should not need to make your own GPS controller, you can get an instance of one via
         ///     the main 'ReadingBuses' object.
         /// </summary>
-        internal GPSController()
+        internal GpsController()
         {
             _lastRetrieval = DateTime.Now.AddHours(-1);
         }
@@ -38,7 +38,40 @@ namespace ReadingBusesAPI.Vehicle_Positions
         ///     there  is no point making another request to the API as you will get the same data and take longer.
         /// </summary>
         /// <returns>Returns if it has been less than 15 seconds from last asking for GPS data.</returns>
-        private bool IsCacheValid() => (DateTime.Now - _lastRetrieval).TotalSeconds > 15;
+        private static bool IsCacheValid() => (DateTime.Now - _lastRetrieval).TotalSeconds > 15;
+
+
+
+
+        /// <summary>
+        ///     Gets historic/archived GPS data for buses on a specific date, filtered either by vehicle ID, or all buses without a
+        ///     time period or both.
+        ///     GPS data is not stored for as long as other forms of data you may fail to get data older than a few months.
+        /// </summary>
+        /// <param name="dateStartTime">Vehicle ID Number eg 414</param>
+        /// <param name="timeSpan">
+        ///     (optional) How long a period do you want data for, you can not get multiple days worth of data.
+        ///     If you ask this your result will be automatically truncated to only the start date to midnight.
+        /// </param>
+        /// <returns>An array of GPS locations at a previous date.</returns>
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
+        ///     Thrown if, you have not choose a date in the past, or the date is too far in the past and so no data exists.
+        ///     Thrown if you have not filtered by either 'timeSpan' or 'vehicle' ID or both.
+        ///     Thrown if the API key is invalid or expired.
+        /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
+        /// See
+        /// <see cref="GpsController.GetLiveVehiclePositions()" />
+        /// to get live data instead.
+#pragma warning disable CA1822 // Mark members as static
+        public async Task<ArchivedPositions[]> GetArchivedVehiclePositions(DateTime dateStartTime, TimeSpan? timeSpan){
+#pragma warning restore CA1822 // Mark members as static
+            return await GetArchivedVehiclePositions(dateStartTime, timeSpan, null).ConfigureAwait(false);
+        }
+
+
+
 
 
         /// <summary>
@@ -61,12 +94,12 @@ namespace ReadingBusesAPI.Vehicle_Positions
         /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
         /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
         /// See
-        /// <see cref="GPSController.GetLiveVehiclePositions()" />
+        /// <see cref="GpsController.GetLiveVehiclePositions()" />
         /// to get live data instead.
 #pragma warning disable CA1822 // Mark members as static
         public async Task<ArchivedPositions[]> GetArchivedVehiclePositions(DateTime dateStartTime, TimeSpan? timeSpan,
 #pragma warning restore CA1822 // Mark members as static
-            string vehicle = null)
+            string vehicle)
         {
             if (dateStartTime == null || dateStartTime > DateTime.Now)
                 throw new ReadingBusesApiExceptionMalformedQuery(

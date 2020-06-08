@@ -18,7 +18,7 @@ namespace ReadingBusesAPI.TimeTable
         /// <summary>
         ///     Default constructor, to block creating objects directly.
         /// </summary>
-        internal TimeTableRecord()
+        protected internal TimeTableRecord()
         {
         }
 

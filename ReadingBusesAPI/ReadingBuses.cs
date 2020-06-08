@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -61,7 +62,7 @@ namespace ReadingBusesAPI
         }
 
         /// <value>Keeps track of if cache data is being used or not</value>
-        internal static bool Debugging { get; private set; } = false;
+        internal static bool Debugging { get; private set; }
 
         /// <value>Keeps track of if cache data is being used or not</value>
         internal static bool Cache { get; private set; } = true;
@@ -70,7 +71,7 @@ namespace ReadingBusesAPI
         internal static bool Warning { get; private set; } = true;
 
         /// <value>Keeps track of if full error logs are being outputted to console or not.</value>
-        internal static bool FullError { get; private set; } = false;
+        internal static bool FullError { get; private set; } 
 
         /// <value>Stores how many days cache data is valid for in days before being regenerated</value>
         internal static int CacheValidityLength { get; private set; } = 7;
@@ -109,10 +110,18 @@ namespace ReadingBusesAPI
             }
             catch (AggregateException ex)
             {
-                _instance = null;
+                DeleteInstance();
                 PrintFullErrorLogs(ex.Message);
                 throw new ReadingBusesApiExceptionBadQuery(ex.InnerExceptions[0].Message);
             }
+        }
+
+        /// <summary>
+        /// Deletes the current singleton instance if there was an error generating one.
+        /// </summary>
+        private static void DeleteInstance()
+        {
+            _instance = null;
         }
 
         /// <summary>
@@ -149,13 +158,13 @@ namespace ReadingBusesAPI
 
 
         /// <summary>
-        ///     Sets if you want to print out warning messages to the console screen or not.
+        ///     Sets if you want to print out warning messages to the console screen or not. Only done so in debug.
         /// </summary>
         /// <param name="value">True or False for printing warning messages.</param>
         public static void SetWarning(bool value) => Warning = value;
 
         /// <summary>
-        ///     Sets if you want to print out the full error logs to console, only needed for debugging library errors.
+        ///     Sets if you want to print out the full error logs to console, only needed for debugging library errors. Only done so in debug.
         /// </summary>
         /// <param name="value">True or False for printing full error logs to console.</param>
         public static void SetFullError(bool value) => FullError = value;
@@ -173,9 +182,10 @@ namespace ReadingBusesAPI
         public static void InvalidateCache() => Directory.Delete("cache", true);
 
         /// <summary>
-        ///     Internal method for printing warning messages to the console screen.
+        ///     Internal method for printing warning messages to the console screen. Only done so in debug.
         /// </summary>
         /// <param name="message">The message to print off to console.</param>
+        [Conditional("DEBUG")]
         internal static void PrintWarning(string message)
         {
             if (Warning)
@@ -183,9 +193,10 @@ namespace ReadingBusesAPI
         }
 
         /// <summary>
-        ///     Internal method for printing warning messages to the console screen.
+        ///     Internal method for printing warning messages to the console screen. Only done so in debug.
         /// </summary>
         /// <param name="message">The message to print off to console.</param>
+        [Conditional("DEBUG")]
         internal static void PrintFullErrorLogs(string message)
         {
             if (FullError)

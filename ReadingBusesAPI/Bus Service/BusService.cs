@@ -36,7 +36,7 @@ namespace ReadingBusesAPI.Bus_Service
 
         /// <summary>
         ///     Used to create a snub/ fake object for passing to function calls, if all you need to pass is an service number to
-        ///     the function.
+        ///     the function. Makes operator code, "other" by default.
         /// </summary>
         /// <param name="serviceNumber">ID of the bus service.</param>
         /// <remarks>
@@ -153,6 +153,23 @@ namespace ReadingBusesAPI.Bus_Service
         ///     Gets the full bus time table, for a specific date.
         /// </summary>
         /// <param name="date">the date on which you want a timetable for.</param>
+        /// <returns>An array for the time table at a particular bus stop.</returns>
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
+        ///     If you have not provided any date.
+        /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
+        public Task<BusTimeTable[]> GetTimeTable(DateTime date)
+        {
+            return BusTimeTable.GetTimeTable(this, date, null);
+        }
+
+
+
+        /// <summary>
+        ///     Gets the full bus time table, for a specific date.
+        /// </summary>
+        /// <param name="date">the date on which you want a timetable for.</param>
         /// <param name="location">
         ///     (optional) a specific bus stop you want timetables for, if null it will get a timetable for
         ///     every bus stop on route.
@@ -163,10 +180,23 @@ namespace ReadingBusesAPI.Bus_Service
         /// </exception>
         /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
         /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-        public Task<BusTimeTable[]> GetTimeTable(DateTime date, BusStop location = null)
+        public Task<BusTimeTable[]> GetTimeTable(DateTime date, BusStop location)
         {
             return BusTimeTable.GetTimeTable(this, date, location);
         }
+
+
+
+        /// <summary>
+        ///     Gets the time table for this specific bus service, split into groups by the journey code.
+        /// </summary>
+        /// <param name="date">The date on which you want the time table for.</param>
+        /// <returns>A grouping of arrays of time table records based upon journey code.</returns>
+        public Task<IGrouping<string, BusTimeTable>[]> GetGroupedTimeTable(DateTime date)
+        {
+            return BusTimeTable.GetGroupedTimeTable(this, date, null);
+        }
+
 
 
         /// <summary>
@@ -178,7 +208,7 @@ namespace ReadingBusesAPI.Bus_Service
         ///     whole routes timetable.
         /// </param>
         /// <returns>A grouping of arrays of time table records based upon journey code.</returns>
-        public Task<IGrouping<string, BusTimeTable>[]> GetGroupedTimeTable(DateTime date, BusStop location = null)
+        public Task<IGrouping<string, BusTimeTable>[]> GetGroupedTimeTable(DateTime date, BusStop location)
         {
             return BusTimeTable.GetGroupedTimeTable(this, date, location);
         }
@@ -186,6 +216,29 @@ namespace ReadingBusesAPI.Bus_Service
         #endregion
 
         #region ArchivedBusTimeTable
+
+
+
+        /// <summary>
+        ///     Gets the archived real bus departure and arrival times along with their time table history for this service on a
+        ///     specific date.
+        /// </summary>
+        /// <param name="date">the date on which you want a archived timetable data for. This should be a date in the past.</param>
+        /// <returns>An array of time table records, containing the scheduled and actual arrival and departure times of buses. </returns>
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
+        ///     If you have tried to get data for a date in the future. Or if you have not provided any date, and/or you have not
+        ///     provided at least either the service or location or vehicle.
+        /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
+        public Task<ArchivedBusTimeTable[]> GetArchivedTimeTable(DateTime date)
+        {
+            return ArchivedBusTimeTable.GetTimeTable(this, date, null, null);
+        }
+
+
+
+
 
         /// <summary>
         ///     Gets the archived real bus departure and arrival times along with their time table history for this service on a
@@ -203,10 +256,32 @@ namespace ReadingBusesAPI.Bus_Service
         /// </exception>
         /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
         /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-        public Task<ArchivedBusTimeTable[]> GetArchivedTimeTable(DateTime date, BusStop location = null)
+        public Task<ArchivedBusTimeTable[]> GetArchivedTimeTable(DateTime date, BusStop location)
         {
             return ArchivedBusTimeTable.GetTimeTable(this, date, location, null);
         }
+
+
+
+
+        /// <summary>
+        ///     Gets the archived real bus departure and arrival times along with their time table history for this service on a
+        ///     specific date, split into groups by the journey code.
+        /// </summary>
+        /// <param name="date">The date on which you want the time table for.  This should be a date in the past.</param>
+        /// <returns>A grouping of arrays of time table records based upon journey code.</returns>
+        /// <exception cref="ReadingBusesApiExceptionMalformedQuery">
+        ///     If you have tried to get data for a date in the future. Or if you have not provided any date, and/or you have not
+        ///     provided at least either the service or location or vehicle.
+        /// </exception>
+        /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
+        /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
+        public Task<IGrouping<string, ArchivedBusTimeTable>[]> GetGroupedArchivedTimeTable(DateTime date)
+        {
+            return ArchivedBusTimeTable.GetGroupedTimeTable(this, date, null, null);
+        }
+
+
 
 
         /// <summary>
@@ -226,7 +301,7 @@ namespace ReadingBusesAPI.Bus_Service
         /// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
         /// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
         public Task<IGrouping<string, ArchivedBusTimeTable>[]> GetGroupedArchivedTimeTable(DateTime date,
-            BusStop location = null)
+            BusStop location)
         {
             return ArchivedBusTimeTable.GetGroupedTimeTable(this, date, location, null);
         }

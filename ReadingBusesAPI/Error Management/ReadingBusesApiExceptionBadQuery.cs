@@ -8,11 +8,6 @@ namespace ReadingBusesAPI.Error_Management
     /// </summary>
     public class ReadingBusesApiExceptionBadQuery : ReadingBusesApiException
     {
-        internal ReadingBusesApiExceptionBadQuery() : base()
-        {
-        }
-
-
         internal ReadingBusesApiExceptionBadQuery(ErrorFormat content) : base(content.Message)
         {
         }
