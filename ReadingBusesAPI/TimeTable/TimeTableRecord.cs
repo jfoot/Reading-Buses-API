@@ -133,7 +133,7 @@ namespace ReadingBusesAPI.TimeTable
                 {
                     "Inbound" => Direction.Inbound,
                     "Outbound" => Direction.Outbound,
-                    _ => throw new Exception("Cannot unmarshal type Direction")
+                    _ => throw new JsonSerializationException("Cannot unmarshal type Direction")
                 };
             }
 
