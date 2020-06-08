@@ -88,7 +88,7 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 
 
 			//If this doesn't throw an error it has worked.
-			LivePosition vehPositions =
+			_ =
 				await ReadingBuses.GetInstance().GpsController.GetLiveVehiclePosition("1208");
 
 			Assert.Pass();

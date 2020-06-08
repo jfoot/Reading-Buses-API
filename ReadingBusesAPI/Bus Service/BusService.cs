@@ -165,7 +165,6 @@ namespace ReadingBusesAPI.Bus_Service
         }
 
 
-
         /// <summary>
         ///     Gets the full bus time table, for a specific date.
         /// </summary>
@@ -186,7 +185,6 @@ namespace ReadingBusesAPI.Bus_Service
         }
 
 
-
         /// <summary>
         ///     Gets the time table for this specific bus service, split into groups by the journey code.
         /// </summary>
@@ -196,7 +194,6 @@ namespace ReadingBusesAPI.Bus_Service
         {
             return BusTimeTable.GetGroupedTimeTable(this, date, null);
         }
-
 
 
         /// <summary>
@@ -217,8 +214,6 @@ namespace ReadingBusesAPI.Bus_Service
 
         #region ArchivedBusTimeTable
 
-
-
         /// <summary>
         ///     Gets the archived real bus departure and arrival times along with their time table history for this service on a
         ///     specific date.
@@ -235,9 +230,6 @@ namespace ReadingBusesAPI.Bus_Service
         {
             return ArchivedBusTimeTable.GetTimeTable(this, date, null, null);
         }
-
-
-
 
 
         /// <summary>
@@ -262,8 +254,6 @@ namespace ReadingBusesAPI.Bus_Service
         }
 
 
-
-
         /// <summary>
         ///     Gets the archived real bus departure and arrival times along with their time table history for this service on a
         ///     specific date, split into groups by the journey code.
@@ -280,8 +270,6 @@ namespace ReadingBusesAPI.Bus_Service
         {
             return ArchivedBusTimeTable.GetGroupedTimeTable(this, date, null, null);
         }
-
-
 
 
         /// <summary>

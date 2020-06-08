@@ -176,7 +176,7 @@ namespace ReadingBusesAPI.TimeTable
                 {
                     "NonTimingPoint" => false,
                     "TimingPoint" => true,
-                    _ => throw new Exception("Cannot unmarshal type TimingPoint")
+                    _ => throw new JsonSerializationException("Cannot unmarshal type TimingPoint")
                 };
             }
 

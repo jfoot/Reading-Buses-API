@@ -118,8 +118,6 @@ namespace ReadingBusesAPI.Bus_Stops
             return BusTimeTable.GetTimeTable(null, date, this);
         }
 
-        
-
 
         /// <summary>
         ///     Gets time table data at this specific bus stop.
@@ -141,7 +139,6 @@ namespace ReadingBusesAPI.Bus_Stops
         }
 
 
-
         /// <summary>
         ///     Gets the archived real bus departure and arrival times along with their time table history at this specific bus
         ///     stop.
@@ -152,7 +149,6 @@ namespace ReadingBusesAPI.Bus_Stops
         {
             return ArchivedBusTimeTable.GetTimeTable(null, date, this, null);
         }
-
 
 
         /// <summary>

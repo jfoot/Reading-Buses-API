@@ -58,7 +58,7 @@ namespace ReadingBusesAPI
         private ReadingBuses(string apiKey)
         {
             ApiKey = apiKey;
-            GpsController = new GPSController();
+            GpsController = new GpsController();
         }
 
         /// <value>Keeps track of if cache data is being used or not</value>
@@ -71,7 +71,7 @@ namespace ReadingBusesAPI
         internal static bool Warning { get; private set; } = true;
 
         /// <value>Keeps track of if full error logs are being outputted to console or not.</value>
-        internal static bool FullError { get; private set; } 
+        internal static bool FullError { get; private set; }
 
         /// <value>Stores how many days cache data is valid for in days before being regenerated</value>
         internal static int CacheValidityLength { get; private set; } = 7;
@@ -80,7 +80,7 @@ namespace ReadingBusesAPI
         internal static string ApiKey { get; private set; }
 
         /// <value>Stores the GPS controller, which can help get vehicle GPS data.</value>
-        public GPSController GpsController { get; }
+        public GpsController GpsController { get; }
 
         /// <summary>
         ///     Creates cache data and retrieves bus services and bus stop data.
@@ -117,7 +117,7 @@ namespace ReadingBusesAPI
         }
 
         /// <summary>
-        /// Deletes the current singleton instance if there was an error generating one.
+        ///     Deletes the current singleton instance if there was an error generating one.
         /// </summary>
         private static void DeleteInstance()
         {
@@ -164,7 +164,8 @@ namespace ReadingBusesAPI
         public static void SetWarning(bool value) => Warning = value;
 
         /// <summary>
-        ///     Sets if you want to print out the full error logs to console, only needed for debugging library errors. Only done so in debug.
+        ///     Sets if you want to print out the full error logs to console, only needed for debugging library errors. Only done
+        ///     so in debug.
         /// </summary>
         /// <param name="value">True or False for printing full error logs to console.</param>
         public static void SetFullError(bool value) => FullError = value;

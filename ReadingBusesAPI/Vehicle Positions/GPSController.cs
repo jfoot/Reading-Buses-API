@@ -41,8 +41,6 @@ namespace ReadingBusesAPI.Vehicle_Positions
         private static bool IsCacheValid() => (DateTime.Now - _lastRetrieval).TotalSeconds > 15;
 
 
-
-
         /// <summary>
         ///     Gets historic/archived GPS data for buses on a specific date, filtered either by vehicle ID, or all buses without a
         ///     time period or both.
@@ -65,13 +63,11 @@ namespace ReadingBusesAPI.Vehicle_Positions
         /// <see cref="GpsController.GetLiveVehiclePositions()" />
         /// to get live data instead.
 #pragma warning disable CA1822 // Mark members as static
-        public async Task<ArchivedPositions[]> GetArchivedVehiclePositions(DateTime dateStartTime, TimeSpan? timeSpan){
+        public async Task<ArchivedPositions[]> GetArchivedVehiclePositions(DateTime dateStartTime, TimeSpan? timeSpan)
+        {
 #pragma warning restore CA1822 // Mark members as static
             return await GetArchivedVehiclePositions(dateStartTime, timeSpan, null).ConfigureAwait(false);
         }
-
-
-
 
 
         /// <summary>
