@@ -326,9 +326,21 @@ namespace ReadingBusesAPI
         public BusService[] GetServices(string brandName) => _services
             .Where(o => string.Equals(o.BrandName, brandName, StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
+
+
+        /// <summary>
+        ///     Returns all services Reading Buses Operates under a specific operator.
+        /// </summary>
+        /// <param name="operatorC">The operator to filter by.</param>
+        /// <returns>An array of Bus Services which are of the brand name specified.</returns>
+        public BusService[] GetServices(Operators operatorC) => _services
+            .Where(o => o.OperatorCode == operatorC).ToArray();
+
+
+
         /// <summary>
         ///     Returns a service which matches the Service Number passed,
-        ///     because the Reading Buses API now supports, Kinnections and Newbury and District a service number can no longer be
+        ///     because the Reading Buses API now supports, Kennections and Newbury and District a service number can no longer be
         ///     considered unique.
         /// </summary>
         /// <param name="serviceNumber">The service number/ID for the service you wish to be returned eg: 17 or 22.</param>
@@ -383,6 +395,7 @@ namespace ReadingBusesAPI
         /// <returns>True or False for if a service is the API feed or not.</returns>
         public bool IsService(string serviceNumber) => _services.Any(o =>
             string.Equals(o.ServiceId, serviceNumber, StringComparison.CurrentCultureIgnoreCase));
+
 
 
         /// <summary>

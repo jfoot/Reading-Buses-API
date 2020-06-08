@@ -10,7 +10,6 @@ using ReadingBusesAPI.Bus_Service;
 using ReadingBusesAPI.Bus_Stops;
 using ReadingBusesAPI.Error_Management;
 using ReadingBusesAPI.Shared;
-using ReadingBusesAPI.Vehicle_Positions;
 
 namespace ReadingBuses_API_Tests.Live_Server_Tests
 {
@@ -26,7 +25,6 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		[OneTimeSetUp]
 		public void Setup()
 		{
-			LivePosition[] Positions = ReadingBuses.GetInstance().GpsController.GetLiveVehiclePositions().Result;
 			//Do not use the dummy server connection. Actually connect to the real ones for these tests.
 			ReadingBuses.SetDebugging(false);
 		}
