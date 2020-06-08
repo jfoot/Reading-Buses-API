@@ -6,7 +6,7 @@
         <ApplicationIcon>LogoHighRes.ico</ApplicationIcon>
         <StartupObject />
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Authors>jfoot</Authors>
+        <Authors>Jonathan Foot</Authors>
         <Company>Jonathan Foot</Company>
         <Product>Reading Buses API</Product>
         <Copyright>Jonathan Foot © 2020</Copyright>

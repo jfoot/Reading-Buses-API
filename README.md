@@ -53,9 +53,17 @@ BusStop[] Locations = Controller.GetLocations();
 ```c#
 BusStop Locations = Controller.GetLocation("33245365434");
 ```
+
+
+### Get GPS Data
 ***To get Live GPS Data***
 ```c#
 LivePosition[] Positions = await Controller.GpsController.GetLiveVehiclePositions();
+```
+
+***To get Archived GPS Data***
+```c#
+LivePosition[] Positions = await Controller.GpsController.GetArchivedVehiclePositions(DateTime.Now.AddDays(-1), new TimeSpan(3, 0, 0));
 ```
 
 Once you have the bus service or location you want to inspect, they have various properties to let you get further data about them. Such as live bus stop data, GPS data, bus service routes. For more examples please see the repository linked above.
