@@ -1,4 +1,5 @@
 ![.NET Core](https://github.com/jfoot/Reading-Buses-API/workflows/.NET%20Core/badge.svg)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/64f38db4be4c4a6f928560ea447c291d)](https://app.codacy.com/manual/jfoot/Reading-Buses-API?utm_source=github.com&utm_medium=referral&utm_content=jfoot/Reading-Buses-API&utm_campaign=Badge_Grade_Dashboard)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/654ef87688234627bd523c1db8318090)](https://www.codacy.com/manual/jfoot/Reading-Buses-API?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jfoot/Reading-Buses-API&amp;utm_campaign=Badge_Grade)
 [![https://img.shields.io/badge/Documentation-View-blue](https://img.shields.io/badge/Documentation-View-blue)](https://jonathanfoot.com/Projects/RBAPI/docs/)
 # Reading Buses API
