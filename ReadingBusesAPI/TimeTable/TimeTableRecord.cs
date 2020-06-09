@@ -4,9 +4,9 @@
 
 using System;
 using Newtonsoft.Json;
-using ReadingBusesAPI.Bus_Service;
-using ReadingBusesAPI.Bus_Stops;
-using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.BusServices;
+using ReadingBusesAPI.BusStops;
+using ReadingBusesAPI.Common;
 
 namespace ReadingBusesAPI.TimeTable
 {
@@ -129,12 +129,14 @@ namespace ReadingBusesAPI.TimeTable
             {
                 if (reader.TokenType == JsonToken.Null) return null;
                 var value = serializer.Deserialize<string>(reader);
-                return value switch
-                {
-                    "Inbound" => Direction.Inbound,
-                    "Outbound" => Direction.Outbound,
-                    _ => throw new JsonSerializationException("Cannot unmarshal type Direction")
-                };
+
+				if (value.Equals("Inbound", StringComparison.OrdinalIgnoreCase))
+					return Direction.Inbound;
+
+				if (value.Equals("Outbound", StringComparison.OrdinalIgnoreCase))
+					return Direction.Outbound;
+
+				throw new JsonSerializationException("Cannot unmarshal type Direction");
             }
 
             public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -172,12 +174,14 @@ namespace ReadingBusesAPI.TimeTable
             {
                 if (reader.TokenType == JsonToken.Null) return null;
                 var value = serializer.Deserialize<string>(reader);
-                return value switch
-                {
-                    "NonTimingPoint" => false,
-                    "TimingPoint" => true,
-                    _ => throw new JsonSerializationException("Cannot unmarshal type TimingPoint")
-                };
+
+				if (value.Equals("NonTimingPoint", StringComparison.OrdinalIgnoreCase))
+					return false;
+
+				if (value.Equals("TimingPoint", StringComparison.OrdinalIgnoreCase))
+					return true;
+
+				throw new JsonSerializationException("Cannot unmarshal type TimingPoint");
             }
 
             public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)

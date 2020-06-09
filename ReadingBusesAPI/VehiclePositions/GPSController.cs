@@ -7,10 +7,10 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using ReadingBusesAPI.Error_Management;
-using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.ErrorManagement;
+using ReadingBusesAPI.Common;
 
-namespace ReadingBusesAPI.Vehicle_Positions
+namespace ReadingBusesAPI.VehiclePositions
 {
     /// <summary>
     ///     Helps get live and historical GPS data on vehicles by accessing the "Live Vehicle Positions" API.
@@ -118,7 +118,7 @@ namespace ReadingBusesAPI.Vehicle_Positions
             }
             catch (JsonSerializationException)
             {
-                ErrorManagement.TryErrorMessageRetrieval(json);
+				ErrorManager.TryErrorMessageRetrieval(json);
             }
 
             //Should never reach this stage.
@@ -148,7 +148,7 @@ namespace ReadingBusesAPI.Vehicle_Positions
                 }
                 catch (JsonSerializationException)
                 {
-                    ErrorManagement.TryErrorMessageRetrieval(json);
+					ErrorManager.TryErrorMessageRetrieval(json);
                 }
 
                 //Should never get here.

@@ -8,12 +8,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using ReadingBusesAPI.Bus_Service;
-using ReadingBusesAPI.Bus_Stops;
-using ReadingBusesAPI.Error_Management;
-using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.BusServices;
+using ReadingBusesAPI.BusStops;
+using ReadingBusesAPI.ErrorManagement;
+using ReadingBusesAPI.Common;
 using ReadingBusesAPI.TimeTable;
-using ReadingBusesAPI.Vehicle_Positions;
+using ReadingBusesAPI.VehiclePositions;
 
 namespace ReadingBusesAPI
 {
@@ -240,8 +240,11 @@ namespace ReadingBusesAPI
         public static ReadingBuses GetInstance()
         {
             if (_instance == null)
+            {
                 throw new InvalidOperationException(
-                    "You must first initialise the object before usage, call the 'Initialise' function passing your API Key.");
+					"You must first initialise the object before usage, call the 'Initialise' function passing your API Key.");
+            }
+
             return _instance;
         }
 
@@ -255,13 +258,16 @@ namespace ReadingBusesAPI
         /// <returns>The Enum equivalent of the bus operator short code.</returns>
         internal static Operators GetOperatorE(string operatorCodeS)
         {
-            return operatorCodeS switch
-            {
-                "RGB" => Operators.ReadingBuses,
-                "KC" => Operators.Kennections,
-                "N&D" => Operators.NewburyAndDistrict,
-                _ => Operators.Other
-            };
+			if (operatorCodeS.Equals("RGB", StringComparison.OrdinalIgnoreCase))
+				return Operators.ReadingBuses;
+
+			if (operatorCodeS.Equals("KC", StringComparison.OrdinalIgnoreCase))
+				return Operators.Kennections;
+
+			if (operatorCodeS.Equals("N&D", StringComparison.OrdinalIgnoreCase))
+				return Operators.NewburyAndDistrict;
+
+			return Operators.Other;
         }
 
         #endregion

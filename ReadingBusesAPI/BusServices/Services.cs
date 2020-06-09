@@ -10,10 +10,10 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using ReadingBusesAPI.Error_Management;
-using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.ErrorManagement;
+using ReadingBusesAPI.Common;
 
-namespace ReadingBusesAPI.Bus_Service
+namespace ReadingBusesAPI.BusServices
 {
     /// <summary>
     ///     This classes simply gets all the bus services operated by Reading Buses, by interfacing with the "List Of Services"
@@ -32,9 +32,10 @@ namespace ReadingBusesAPI.Bus_Service
         {
             if (!File.Exists(CacheLocation) || !ReadingBuses.Cache)
             {
-                string json = await
-                    new WebClient().DownloadStringTaskAsync(
-                        UrlConstructor.ListOfServices()).ConfigureAwait(false);
+				
+				string json = (await
+					new WebClient().DownloadStringTaskAsync(
+                        UrlConstructor.ListOfServices()).ConfigureAwait(false));
 
                 List<BusService> newServicesData = new List<BusService>();
 
@@ -45,12 +46,12 @@ namespace ReadingBusesAPI.Bus_Service
 
                     // Save the JSON file for later use. 
                     if (ReadingBuses.Cache)
-                        await File.WriteAllTextAsync(CacheLocation,
-                            JsonConvert.SerializeObject(newServicesData, Formatting.Indented)).ConfigureAwait(false);
+                        File.WriteAllText(CacheLocation,
+                            JsonConvert.SerializeObject(newServicesData, Formatting.Indented));
                 }
                 catch (JsonSerializationException)
                 {
-                    ErrorManagement.TryErrorMessageRetrieval(json);
+					ErrorManager.TryErrorMessageRetrieval(json);
                 }
 
 
@@ -69,7 +70,7 @@ namespace ReadingBusesAPI.Bus_Service
                 try
                 {
                     return JsonConvert.DeserializeObject<List<BusService>>(
-                        await File.ReadAllTextAsync(CacheLocation).ConfigureAwait(false));
+                          File.ReadAllText(CacheLocation));
                 }
                 catch (JsonSerializationException)
                 {

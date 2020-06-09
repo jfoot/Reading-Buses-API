@@ -4,7 +4,7 @@
 
 using System;
 
-namespace ReadingBusesAPI.Shared
+namespace ReadingBusesAPI.Common
 {
     /// <summary>
     ///     Stores an X and Y Position simply.

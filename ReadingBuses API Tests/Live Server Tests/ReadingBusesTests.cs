@@ -6,10 +6,10 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 using ReadingBusesAPI;
-using ReadingBusesAPI.Bus_Service;
-using ReadingBusesAPI.Bus_Stops;
-using ReadingBusesAPI.Error_Management;
-using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.BusServices;
+using ReadingBusesAPI.BusStops;
+using ReadingBusesAPI.ErrorManagement;
+using ReadingBusesAPI.Common;
 
 namespace ReadingBuses_API_Tests.Live_Server_Tests
 {
@@ -154,7 +154,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 			BusService[] service = ReadingBuses.GetInstance().GetService(serviceNumber);
 
 
-			if (service.Length != 0 && service.All(x => x.ServiceId.Equals(serviceNumber)))
+			if (service.Length != 0 && service.All(x => x.ServiceId.Equals(serviceNumber, StringComparison.OrdinalIgnoreCase)))
 			{
 				Assert.Pass();
 			}

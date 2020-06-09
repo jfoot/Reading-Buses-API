@@ -8,10 +8,10 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using ReadingBusesAPI.Error_Management;
-using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.ErrorManagement;
+using ReadingBusesAPI.Common;
 
-namespace ReadingBusesAPI.Bus_Stops
+namespace ReadingBusesAPI.BusStops
 {
     /// <summary>
     ///     This classes simply gets all the buses stops visited by Reading Buses, by interfacing with the "List Of Bus Stops"
@@ -44,13 +44,13 @@ namespace ReadingBusesAPI.Bus_Stops
                             locationsFiltered.Add(location.ActoCode, location);
 
                     if (ReadingBuses.Cache)
-                        await File.WriteAllTextAsync(CacheLocation,
+                        File.WriteAllText(CacheLocation,
                             JsonConvert.SerializeObject(locationsFiltered,
-                                Formatting.Indented)).ConfigureAwait(false); // Save the JSON file for later use.  
+                                Formatting.Indented)); // Save the JSON file for later use.  
                 }
                 catch (JsonSerializationException)
                 {
-                    ErrorManagement.TryErrorMessageRetrieval(json);
+					ErrorManager.TryErrorMessageRetrieval(json);
                 }
 
                 return locationsFiltered;
@@ -69,7 +69,7 @@ namespace ReadingBusesAPI.Bus_Stops
                 try
                 {
                     return JsonConvert.DeserializeObject<Dictionary<string, BusStop>>(
-                        await File.ReadAllTextAsync(CacheLocation).ConfigureAwait(false));
+                         File.ReadAllText(CacheLocation));
                 }
                 catch (JsonSerializationException)
                 {

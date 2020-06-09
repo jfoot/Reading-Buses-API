@@ -6,8 +6,8 @@ using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using ReadingBusesAPI;
-using ReadingBusesAPI.Error_Management;
-using ReadingBusesAPI.Vehicle_Positions;
+using ReadingBusesAPI.ErrorManagement;
+using ReadingBusesAPI.VehiclePositions;
 
 namespace ReadingBuses_API_Tests.Live_Server_Tests
 {

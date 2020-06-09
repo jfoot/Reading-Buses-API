@@ -3,9 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using Newtonsoft.Json;
-using ReadingBusesAPI.Bus_Service;
+using ReadingBusesAPI.BusServices;
 
-namespace ReadingBusesAPI.Vehicle_Positions
+namespace ReadingBusesAPI.VehiclePositions
 {
     /// <summary>
     ///     Used to store live information about a buses GPS position. Related to the "Live Vehicle Positions" API.

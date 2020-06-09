@@ -5,7 +5,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace ReadingBusesAPI.Shared
+namespace ReadingBusesAPI.Common
 {
     /// <summary>
     ///     Converts a string short code for an Operator into an Operator Enum and back again for the JSON converter.

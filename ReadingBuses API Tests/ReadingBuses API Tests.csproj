@@ -5,6 +5,8 @@
     <RootNamespace>ReadingBuses_API_Tests</RootNamespace>
 
     <IsPackable>false</IsPackable>
+
+    <Configurations>Debug;Release;Release-3.1</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

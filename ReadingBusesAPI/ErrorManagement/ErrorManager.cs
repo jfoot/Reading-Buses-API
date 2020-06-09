@@ -4,12 +4,12 @@
 
 using Newtonsoft.Json;
 
-namespace ReadingBusesAPI.Error_Management
+namespace ReadingBusesAPI.ErrorManagement
 {
     /// <summary>
     ///     Responsible for extracting and producing an error message from an API result. To the end user.
     /// </summary>
-    internal static class ErrorManagement
+    internal static class ErrorManager
     {
         /// <summary>
         ///     Attempts to extract the error message directly sent from the API.

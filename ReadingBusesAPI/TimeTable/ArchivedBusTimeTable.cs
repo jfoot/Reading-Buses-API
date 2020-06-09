@@ -8,10 +8,10 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using ReadingBusesAPI.Bus_Service;
-using ReadingBusesAPI.Bus_Stops;
-using ReadingBusesAPI.Error_Management;
-using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.BusServices;
+using ReadingBusesAPI.BusStops;
+using ReadingBusesAPI.ErrorManagement;
+using ReadingBusesAPI.Common;
 
 namespace ReadingBusesAPI.TimeTable
 {
@@ -93,7 +93,7 @@ namespace ReadingBusesAPI.TimeTable
                 throw new ReadingBusesApiExceptionMalformedQuery(
                     "You must provide a date and a service and/or location for a valid query.");
 
-            string json = await new WebClient().DownloadStringTaskAsync(
+			string json = await new WebClient().DownloadStringTaskAsync(
                 UrlConstructor.TrackingHistory(service, location, date, vehicle)).ConfigureAwait(false);
 
             try
@@ -103,7 +103,7 @@ namespace ReadingBusesAPI.TimeTable
             }
             catch (JsonSerializationException)
             {
-                ErrorManagement.TryErrorMessageRetrieval(json);
+				ErrorManager.TryErrorMessageRetrieval(json);
             }
 
             //Should never reach this stage.

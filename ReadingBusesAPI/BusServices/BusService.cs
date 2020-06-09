@@ -8,13 +8,13 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using ReadingBusesAPI.Bus_Stops;
-using ReadingBusesAPI.Error_Management;
-using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.BusStops;
+using ReadingBusesAPI.ErrorManagement;
+using ReadingBusesAPI.Common;
 using ReadingBusesAPI.TimeTable;
-using ReadingBusesAPI.Vehicle_Positions;
+using ReadingBusesAPI.VehiclePositions;
 
-namespace ReadingBusesAPI.Bus_Service
+namespace ReadingBusesAPI.BusServices
 {
     /// <summary>
     ///     Stores information about an individual bus services. Related to the "List Of Services" API.
@@ -94,7 +94,7 @@ namespace ReadingBusesAPI.Bus_Service
             if (_stops == null)
             {
                 string json = await new WebClient().DownloadStringTaskAsync(
-                    UrlConstructor.LinePatterns(this));
+                    UrlConstructor.LinePatterns(this)).ConfigureAwait(false);
                 _stops = new List<string>();
 
                 try
@@ -104,7 +104,7 @@ namespace ReadingBusesAPI.Bus_Service
                 }
                 catch (JsonSerializationException)
                 {
-                    ErrorManagement.TryErrorMessageRetrieval(json);
+					ErrorManager.TryErrorMessageRetrieval(json);
                 }
             }
 

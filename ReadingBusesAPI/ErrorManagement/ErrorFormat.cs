@@ -3,9 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using Newtonsoft.Json;
-using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.Common;
 
-namespace ReadingBusesAPI.Error_Management
+namespace ReadingBusesAPI.ErrorManagement
 {
     /// <summary>
     ///     Represents an error message object returned by all JSON feeds of the API.

@@ -1,8 +1,8 @@
 ﻿using System;
-using ReadingBusesAPI.Bus_Service;
-using ReadingBusesAPI.Bus_Stops;
+using ReadingBusesAPI.BusServices;
+using ReadingBusesAPI.BusStops;
 
-namespace ReadingBusesAPI.Shared
+namespace ReadingBusesAPI.Common
 {
     /// <summary>
     ///     Returns back the URL needed to make a get command to the Reading Buses Open Data API.

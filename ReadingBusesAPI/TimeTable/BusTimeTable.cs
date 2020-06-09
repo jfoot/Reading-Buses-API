@@ -8,10 +8,10 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using ReadingBusesAPI.Bus_Service;
-using ReadingBusesAPI.Bus_Stops;
-using ReadingBusesAPI.Error_Management;
-using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.BusServices;
+using ReadingBusesAPI.BusStops;
+using ReadingBusesAPI.ErrorManagement;
+using ReadingBusesAPI.Common;
 
 namespace ReadingBusesAPI.TimeTable
 {
@@ -60,7 +60,7 @@ namespace ReadingBusesAPI.TimeTable
             }
             catch (JsonSerializationException)
             {
-                ErrorManagement.TryErrorMessageRetrieval(json);
+				ErrorManager.TryErrorMessageRetrieval(json);
             }
 
             //Should never reach this stage.

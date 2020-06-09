@@ -4,9 +4,9 @@
 
 using System;
 using Newtonsoft.Json;
-using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.Common;
 
-namespace ReadingBusesAPI.Vehicle_Positions
+namespace ReadingBusesAPI.VehiclePositions
 {
     /// <summary>
     ///     Stores information about previous/ archived GPS data on vehicles.

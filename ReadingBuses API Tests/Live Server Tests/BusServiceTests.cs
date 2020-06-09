@@ -7,12 +7,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using ReadingBusesAPI;
-using ReadingBusesAPI.Bus_Service;
-using ReadingBusesAPI.Bus_Stops;
-using ReadingBusesAPI.Error_Management;
-using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.BusServices;
+using ReadingBusesAPI.BusStops;
+using ReadingBusesAPI.ErrorManagement;
+using ReadingBusesAPI.Common;
 using ReadingBusesAPI.TimeTable;
-using ReadingBusesAPI.Vehicle_Positions;
+using ReadingBusesAPI.VehiclePositions;
 
 namespace ReadingBuses_API_Tests.Live_Server_Tests
 {

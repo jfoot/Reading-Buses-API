@@ -4,7 +4,7 @@
 
 using System;
 
-namespace ReadingBusesAPI.Error_Management
+namespace ReadingBusesAPI.ErrorManagement
 {
     /// <summary>
     ///     Stores the basic/base type of Exception which can be thrown by the API.

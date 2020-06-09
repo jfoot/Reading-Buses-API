@@ -6,11 +6,11 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Xml.Linq;
-using ReadingBusesAPI.Bus_Service;
-using ReadingBusesAPI.Error_Management;
-using ReadingBusesAPI.Shared;
+using ReadingBusesAPI.BusServices;
+using ReadingBusesAPI.ErrorManagement;
+using ReadingBusesAPI.Common;
 
-namespace ReadingBusesAPI.Journey_Details
+namespace ReadingBusesAPI.JourneyDetails
 {
     /// <summary>
     ///     Used to store information about a buses arrival at a bus stop. Mainly related to the "Stop Predictions" API.
