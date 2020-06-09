@@ -9,8 +9,8 @@ using NUnit.Framework;
 using ReadingBusesAPI;
 using ReadingBusesAPI.BusServices;
 using ReadingBusesAPI.BusStops;
-using ReadingBusesAPI.ErrorManagement;
 using ReadingBusesAPI.Common;
+using ReadingBusesAPI.ErrorManagement;
 using ReadingBusesAPI.TimeTable;
 using ReadingBusesAPI.VehiclePositions;
 
@@ -32,7 +32,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		{
 			//Use the Live server connection. 
 			ReadingBuses.SetDebugging(false);
-			_testService = ReadingBuses.GetInstance().GetService("17", Operators.ReadingBuses);
+			_testService = ReadingBuses.GetInstance().GetService("17", Company.ReadingBuses);
 		}
 
 
@@ -45,7 +45,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 			BusService service = new BusService("22");
 
 			Assert.AreEqual("22", service.ServiceId);
-			Assert.AreEqual(Operators.Other, service.OperatorCode);
+			Assert.AreEqual(Company.Other, service.OperatorCode);
 		}
 
 
@@ -265,10 +265,10 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		[Test]
 		public void CheckSecondConstructor()
 		{
-			BusService service = new BusService("22", Operators.ReadingBuses);
+			BusService service = new BusService("22", Company.ReadingBuses);
 
 			Assert.AreEqual("22", service.ServiceId);
-			Assert.AreEqual(Operators.ReadingBuses, service.OperatorCode);
+			Assert.AreEqual(Company.ReadingBuses, service.OperatorCode);
 		}
 	}
 }

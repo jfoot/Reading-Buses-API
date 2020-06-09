@@ -8,8 +8,8 @@ using NUnit.Framework;
 using ReadingBusesAPI;
 using ReadingBusesAPI.BusServices;
 using ReadingBusesAPI.BusStops;
-using ReadingBusesAPI.ErrorManagement;
 using ReadingBusesAPI.Common;
+using ReadingBusesAPI.ErrorManagement;
 using ReadingBusesAPI.TimeTable;
 
 namespace ReadingBuses_API_Tests.Dummy_Server_Tests
@@ -153,17 +153,17 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 		public void GetServicesAtStop()
 		{
 			BusStop stop = ReadingBuses.GetInstance().GetLocation("039025980002");
-			BusService[] services = stop.GetServices(Operators.ReadingBuses);
+			BusService[] services = stop.GetServices(Company.ReadingBuses);
 
 			foreach (var service in services)
 			{
-				if (!service.OperatorCode.Equals(Operators.ReadingBuses))
+				if (!service.OperatorCode.Equals(Company.ReadingBuses))
 				{
 					Assert.Fail("Not all services matched the specified operator.");
 				}
 			}
 
-			if (stop.GetServices(Operators.ReadingBuses).Length != 0)
+			if (stop.GetServices(Company.ReadingBuses).Length != 0)
 			{
 				Assert.Pass();
 			}

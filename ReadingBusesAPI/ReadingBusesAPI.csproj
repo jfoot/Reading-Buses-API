@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>ReadingBusesAPI_Universal</RootNamespace>
+    <RootNamespace>ReadingBusesAPI</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>ReadingBusesAPI</PackageId>
@@ -10,7 +10,7 @@
     <AssemblyVersion>2.1.0.0</AssemblyVersion>
     <FileVersion>2.1.0.0</FileVersion>
     <NeutralLanguage>en-GB</NeutralLanguage>
-    <PackageReleaseNotes>* Converted to .Net Standard for widder usage across .net applications. 
+    <PackageReleaseNotes>* Converted to .Net Standard for widder usage across .net applications!
 * Altered Naming of some Namespaces to enforce proper conventions.
 * Added new get all services by operator type.
 * Added Support for the Timetable Journeys API.
@@ -33,7 +33,7 @@
     <PackageTags>Reading Buses Open Data API</PackageTags>
     <PackageProjectUrl>https://github.com/jfoot/Reading-Buses-API</PackageProjectUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <Description>A C# Library for the Reading Buses API (http://rtl2.ods-live.co.uk/cms/apiservice), available to use in your C# console, UWP, WPF or Win Form Applications.
+    <Description>A C#, .net Standard Library for the Reading Buses API (http://rtl2.ods-live.co.uk/cms/apiservice), available to use in your C# console, UWP, WPF or Win Form Applications.
 
 Supports : List of Bus Stops, Live Vehicle Positions, Stop Predictions, List of Services, Line Patterns, Timetabled Journeys, Tracking History and the Vehicle Position History API.</Description>
     <Copyright>Jonathan Foot © 2020</Copyright>

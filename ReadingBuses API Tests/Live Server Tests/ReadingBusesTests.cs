@@ -8,8 +8,8 @@ using NUnit.Framework;
 using ReadingBusesAPI;
 using ReadingBusesAPI.BusServices;
 using ReadingBusesAPI.BusStops;
-using ReadingBusesAPI.ErrorManagement;
 using ReadingBusesAPI.Common;
+using ReadingBusesAPI.ErrorManagement;
 
 namespace ReadingBuses_API_Tests.Live_Server_Tests
 {
@@ -139,7 +139,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		[TestCase("X4")]
 		public void GetService(string serviceNumber)
 		{
-			BusService service = ReadingBuses.GetInstance().GetService(serviceNumber, Operators.ReadingBuses);
+			BusService service = ReadingBuses.GetInstance().GetService(serviceNumber, Company.ReadingBuses);
 			Assert.AreEqual(serviceNumber, service.ServiceId);
 		}
 
@@ -154,7 +154,8 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 			BusService[] service = ReadingBuses.GetInstance().GetService(serviceNumber);
 
 
-			if (service.Length != 0 && service.All(x => x.ServiceId.Equals(serviceNumber, StringComparison.OrdinalIgnoreCase)))
+			if (service.Length != 0 &&
+			    service.All(x => x.ServiceId.Equals(serviceNumber, StringComparison.OrdinalIgnoreCase)))
 			{
 				Assert.Pass();
 			}
@@ -172,7 +173,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		public void GetServiceError()
 		{
 			Assert.Throws(typeof(ReadingBusesApiExceptionMalformedQuery),
-				new TestDelegate(delegate { ReadingBuses.GetInstance().GetService("", Operators.Other); }));
+				new TestDelegate(delegate { ReadingBuses.GetInstance().GetService("", Company.Other); }));
 		}
 
 		/// <summary>

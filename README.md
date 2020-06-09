@@ -1,8 +1,8 @@
-![.NET Core](https://github.com/jfoot/Reading-Buses-API/workflows/.NET%20Core/badge.svg)
+[![.NET Core](https://github.com/jfoot/Reading-Buses-API/workflows/.NET%20Core/badge.svg)](https://github.com/jfoot/Reading-Buses-API/actions)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/654ef87688234627bd523c1db8318090)](https://www.codacy.com/manual/jfoot/Reading-Buses-API?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jfoot/Reading-Buses-API&amp;utm_campaign=Badge_Grade)
 [![https://img.shields.io/badge/Documentation-View-blue](https://img.shields.io/badge/Documentation-View-blue)](https://jonathanfoot.com/Projects/RBAPI/docs/)
 # Reading Buses API
-A C# Library for the [Reading Buses API](http://rtl2.ods-live.co.uk/cms/apiservice), available to use in your C# console, UWP, WPF or Win Form Applications.
+A C#, .net Standard Library for the [Reading Buses API](http://rtl2.ods-live.co.uk/cms/apiservice), available to use in your C# console, UWP, WPF or Win Form Applications.
 
 The library supports the List of Bus Stops, Live Vehicle Positions, Stop Predictions, List of Services, Line Patterns, Timetabled Journeys, Tracking History and the Vehicle Position History API..
 
@@ -35,13 +35,19 @@ To get a list of bus services operated by Reading Buses and the information abou
 ```c#
 BusService[] Services = Controller.GetServices();
 ```
+***To get all Services from a company:***
+```c#
+BusService[] RBServices = Controller.GetServices(Company.ReadingBuses);
+BusService[] KNServices = Controller.GetServices(Company.Kennections);
+```
+
 ***To get specific Services based on their brand:***
 ```c#
 BusService[] Services = Controller.GetServices("pink");
 ```
-***To get specific Service by Service Number and Operator:***
+***To get specific Service by Service Number and Company Operator:***
 ```c#
-BusService Services = Controller.GetService("17", Operators.ReadingBuses);
+BusService Services = Controller.GetService("17", Company.ReadingBuses);
 ```
 
 ### Get a List of Locations (Bus Stops)

@@ -4,19 +4,19 @@
 
 namespace ReadingBusesAPI.Common
 {
-    /// <summary>
-    ///     The direction in which a bus is traveling.
-    /// </summary>
-    public enum Direction
-    {
-        /// <summary>
-        ///     For buses traveling inbound.
-        /// </summary>
-        Inbound,
+	/// <summary>
+	///     The direction in which a bus is traveling.
+	/// </summary>
+	public enum Direction
+	{
+		/// <summary>
+		///     For buses traveling inbound.
+		/// </summary>
+		Inbound,
 
-        /// <summary>
-        ///     For buses traveling outbound.
-        /// </summary>
-        Outbound
-    }
+		/// <summary>
+		///     For buses traveling outbound.
+		/// </summary>
+		Outbound
+	}
 }

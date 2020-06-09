@@ -6,21 +6,21 @@ using System;
 
 namespace ReadingBusesAPI.ErrorManagement
 {
-    /// <summary>
-    ///     Stores the basic/base type of Exception which can be thrown by the API.
-    /// </summary>
-    public class ReadingBusesApiException : Exception
-    {
-        internal ReadingBusesApiException()
-        {
-        }
+	/// <summary>
+	///     Stores the basic/base type of Exception which can be thrown by the API.
+	/// </summary>
+	public class ReadingBusesApiException : Exception
+	{
+		internal ReadingBusesApiException()
+		{
+		}
 
-        internal ReadingBusesApiException(string content) : base(content)
-        {
-        }
+		internal ReadingBusesApiException(string content) : base(content)
+		{
+		}
 
-        internal ReadingBusesApiException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-    }
+		internal ReadingBusesApiException(string message, Exception innerException) : base(message, innerException)
+		{
+		}
+	}
 }
