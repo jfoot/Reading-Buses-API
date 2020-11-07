@@ -4,7 +4,7 @@
 ###############################
 # All files
 [*]
-file_header_template = Copyright (c) Joanthan Foot. All Rights Reserved. \nLicensed under the GNU Affero General Public License, Version 3.0
+file_header_template = Copyright (c) Jonathan Foot. All Rights Reserved. \nLicensed under the GNU Affero General Public License, Version 3.0
 
 indent_style = tab
 # Code files
