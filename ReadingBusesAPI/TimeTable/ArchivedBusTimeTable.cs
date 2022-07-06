@@ -6,8 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using ReadingBusesAPI.BusServices;
 using ReadingBusesAPI.BusStops;
 using ReadingBusesAPI.Common;
@@ -29,11 +30,11 @@ namespace ReadingBusesAPI.TimeTable
 		}
 
 		/// <value>The actual arrival time for the bus. </value>
-		[JsonProperty("ArrivalTime")]
+		[JsonPropertyName("ArrivalTime")]
 		public DateTime? ActArrivalTime { get; set; }
 
 		/// <value>The actual departure time for the bus. </value>
-		[JsonProperty("DepartureTime")]
+		[JsonPropertyName("DepartureTime")]
 		public DateTime? ActDepartureTime { get; set; }
 
 		/// <summary>
@@ -108,10 +109,10 @@ namespace ReadingBusesAPI.TimeTable
 
 			try
 			{
-				var timeTable = JsonConvert.DeserializeObject<List<ArchivedBusTimeTable>>(json);
+				var timeTable = JsonSerializer.Deserialize<List<ArchivedBusTimeTable>>(json);
 				return timeTable.ToArray();
 			}
-			catch (JsonSerializationException)
+			catch (JsonException)
 			{
 				ErrorManager.TryErrorMessageRetrieval(json);
 			}

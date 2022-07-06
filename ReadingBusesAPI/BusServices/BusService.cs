@@ -6,8 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using ReadingBusesAPI.BusStops;
 using ReadingBusesAPI.Common;
 using ReadingBusesAPI.ErrorManagement;
@@ -70,16 +71,16 @@ namespace ReadingBusesAPI.BusServices
 		///     The service number for the bus service, this is only guaranteed to be unique per operator, not in the API as a
 		///     whole. For example Reading Buses and Newbury And District both operate a number '2' service.
 		/// </value>
-		[JsonProperty("route_code")]
+		[JsonPropertyName("route_code")]
 		public string ServiceId { get; internal set; }
 
 		/// <value>The brand name for the service, used mainly for Reading Buses services, such as Lion, Purple or Orange.</value>
-		[JsonProperty("group_name")]
+		[JsonPropertyName("group_name")]
 		public string BrandName { get; internal set; }
 
 
 		/// <value>The operator enum value.</value>
-		[JsonProperty("operator_code")]
+		[JsonPropertyName("operator_code")]
 		[JsonConverter(typeof(ParseOperatorConverter))]
 		public Company OperatorCode { get; internal set; }
 
@@ -99,10 +100,10 @@ namespace ReadingBusesAPI.BusServices
 
 				try
 				{
-					_stops = JsonConvert.DeserializeObject<List<BusStop>>(json)
+					_stops = JsonSerializer.Deserialize<List<BusStop>>(json)
 						.Select(p => p.ActoCode).ToList();
 				}
-				catch (JsonSerializationException)
+				catch (JsonException)
 				{
 					ErrorManager.TryErrorMessageRetrieval(json);
 				}

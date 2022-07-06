@@ -2,7 +2,8 @@
 // Licensed under the GNU Affero General Public License, Version 3.0 
 // See the LICENSE file in the project root for more information.
 
-using Newtonsoft.Json;
+
+using System.Text.Json;
 
 namespace ReadingBusesAPI.ErrorManagement
 {
@@ -23,9 +24,9 @@ namespace ReadingBusesAPI.ErrorManagement
 			try
 			{
 				//If it can deserializeObject the object then the API has proved an error message.
-				error = JsonConvert.DeserializeObject<ErrorFormat>(json);
+				error = JsonSerializer.Deserialize<ErrorFormat>(json);
 			}
-			catch (JsonSerializationException ex)
+			catch (JsonException ex)
 			{
 				//Else it failed to extract an error message and so throw a generic critical error.
 				ReadingBuses.PrintFullErrorLogs(ex.Message);

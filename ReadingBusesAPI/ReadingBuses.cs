@@ -54,7 +54,7 @@ namespace ReadingBusesAPI
 		/// <summary>
 		///     Create a new Reading Buses library object, this is the main control.
 		/// </summary>
-		/// <param name="apiKey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
+		/// <param name="apiKey">The Reading Buses API Key, get your own from https://reading-opendata.r2p.com/ </param>
 		private ReadingBuses(string apiKey)
 		{
 			ApiKey = apiKey;
@@ -213,7 +213,7 @@ namespace ReadingBusesAPI
 		/// <summary>
 		///     Used to initially initialise the ReadingBuses Object, it is recommended you do this in your programs start up.
 		/// </summary>
-		/// <param name="apiKey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
+		/// <param name="apiKey">The Reading Buses API Key, get your own from https://reading-opendata.r2p.com/ </param>
 		/// <returns>An instance of the library controller. This same instance can be got by calling the "GetInstance" method.</returns>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Can throw an exception if you pass an invalid or expired API Key.</exception>
 		/// See
@@ -263,17 +263,17 @@ namespace ReadingBusesAPI
 		/// <returns>The Enum equivalent of the bus operator short code.</returns>
 		internal static Company GetOperatorE(string operatorCodeS)
 		{
-			if (operatorCodeS.Equals("RGB", StringComparison.OrdinalIgnoreCase))
+			if (operatorCodeS.Equals("RBUS", StringComparison.OrdinalIgnoreCase))
 			{
 				return Company.ReadingBuses;
 			}
 
-			if (operatorCodeS.Equals("KC", StringComparison.OrdinalIgnoreCase))
+			if (operatorCodeS.Equals("CTNY", StringComparison.OrdinalIgnoreCase))
 			{
-				return Company.Kennections;
+				return Company.ThamesValley;
 			}
 
-			if (operatorCodeS.Equals("N&D", StringComparison.OrdinalIgnoreCase))
+			if (operatorCodeS.Equals("NADS", StringComparison.OrdinalIgnoreCase))
 			{
 				return Company.NewburyAndDistrict;
 			}

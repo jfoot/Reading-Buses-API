@@ -2,7 +2,7 @@
 // Licensed under the GNU Affero General Public License, Version 3.0 
 // See the LICENSE file in the project root for more information.
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using ReadingBusesAPI.BusServices;
 
 namespace ReadingBusesAPI.VehiclePositions
@@ -20,11 +20,11 @@ namespace ReadingBusesAPI.VehiclePositions
 		}
 
 		/// <value>Holds the Service Number for the bus route.</value>
-		[JsonProperty("service")]
+		[JsonPropertyName("service")]
 		public string ServiceId { get; internal set; }
 
 		/// <value>bearing direction of the bus</value>
-		[JsonProperty("bearing")]
+		[JsonPropertyName("bearing")]
 		public string Bearing { get; internal set; }
 
 

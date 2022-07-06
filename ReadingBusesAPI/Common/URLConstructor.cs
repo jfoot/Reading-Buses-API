@@ -11,10 +11,10 @@ namespace ReadingBusesAPI.Common
 	public static class UrlConstructor
 	{
 		/// <value>URL for the Reading buses Open Data API server.</value>
-		private const string ReadingBusesApi = "https://rtl2.ods-live.co.uk/api/";
+		private const string ReadingBusesApi = "https://reading-opendata.r2p.com/api/v1/";
 
 		/// <value>URL for the Reading buses Open Data API server.</value>
-		private const string DummyApi = "https://jonathanfoot.com/Projects/RBAPI/test-data/";
+		private const string DummyApi = "https://reading-opendata.r2p.com/api/v1/";
 
 
 		/// <summary>
@@ -28,7 +28,7 @@ namespace ReadingBusesAPI.Common
 				return DummyApi + "busstops.html";
 			}
 
-			return ReadingBusesApi + "busstops?key=" + ReadingBuses.ApiKey;
+			return ReadingBusesApi + "busstops?api_token=" + ReadingBuses.ApiKey;
 		}
 
 		/// <summary>
@@ -39,10 +39,10 @@ namespace ReadingBusesAPI.Common
 		{
 			if (ReadingBuses.Debugging)
 			{
-				return DummyApi + "vehiclePositions.html";
+				return DummyApi + "vehicle-positions.html";
 			}
 
-			return ReadingBusesApi + "vehiclePositions?key=" + ReadingBuses.ApiKey;
+			return ReadingBusesApi + "vehicle-positions?api_token=" + ReadingBuses.ApiKey;
 		}
 
 
@@ -52,6 +52,7 @@ namespace ReadingBusesAPI.Common
 		/// <returns>Returns back the URL needed for a get request to the 'Live Journey Details' API.</returns>
 		public static string LiveJourneyDetails() =>
 			throw new NotImplementedException("This API feed is not yet implemented");
+
 
 		/// <summary>
 		///     Returns back the URL needed for a get request to the 'Stop Predictions' API.
@@ -65,7 +66,7 @@ namespace ReadingBusesAPI.Common
 				return DummyApi + "stopPredictions.xml";
 			}
 
-			return ReadingBusesApi + "siri/sm?key=" + ReadingBuses.ApiKey +
+			return ReadingBusesApi + "siri-sm?api_token=" + ReadingBuses.ApiKey +
 			       "&location=" + actoCode;
 		}
 
@@ -77,10 +78,10 @@ namespace ReadingBusesAPI.Common
 		{
 			if (ReadingBuses.Debugging)
 			{
-				return DummyApi + "services.html";
+				return DummyApi + "lines.html";
 			}
 
-			return ReadingBusesApi + "services?key=" + ReadingBuses.ApiKey;
+			return ReadingBusesApi + "lines?api_token=" + ReadingBuses.ApiKey;
 		}
 
 		/// <summary>
@@ -92,10 +93,10 @@ namespace ReadingBusesAPI.Common
 		{
 			if (ReadingBuses.Debugging)
 			{
-				return DummyApi + "linePatterns.html";
+				return DummyApi + "line-patterns.html";
 			}
 
-			return ReadingBusesApi + "linePatterns?key=" + ReadingBuses.ApiKey + "&service=" + service.ServiceId;
+			return ReadingBusesApi + "line-patterns?api_token=" + ReadingBuses.ApiKey + "&line=" + service.ServiceId;
 		}
 
 		/// <summary>
@@ -109,12 +110,12 @@ namespace ReadingBusesAPI.Common
 		{
 			if (ReadingBuses.Debugging)
 			{
-				return DummyApi + "scheduledJourneys.html";
+				return DummyApi + "scheduled-journeys.html";
 			}
 
-			return ReadingBusesApi + "scheduledJourneys?key=" + ReadingBuses.ApiKey +
-			       "&service=" + (service ?? new BusService("")).ServiceId +
-			       "&date=" +
+			return ReadingBusesApi + "scheduled-journeys?api_token=" + ReadingBuses.ApiKey +
+				   "&line=" + (service ?? new BusService("")).ServiceId +
+				   "&date=" +
 			       date.ToString("yyyy-MM-dd") + "&location=" +
 			       (location ?? new BusStop("")).ActoCode;
 		}
@@ -131,12 +132,12 @@ namespace ReadingBusesAPI.Common
 		{
 			if (ReadingBuses.Debugging)
 			{
-				return DummyApi + "trackingHistory.html";
+				return DummyApi + "tracking-history.html";
 			}
 
-			return ReadingBusesApi + "trackingHistory?key=" +
+			return ReadingBusesApi + "tracking-history?api_token=" +
 			       ReadingBuses.ApiKey +
-			       "&service=" + (service ?? new BusService("")).ServiceId +
+				   "&line=" + (service ?? new BusService("")).ServiceId +
 			       "&date=" +
 			       date.ToString("yyyy-MM-dd") + "&vehicle=" + vehicle +
 			       "&location=" +
@@ -155,10 +156,10 @@ namespace ReadingBusesAPI.Common
 		{
 			if (ReadingBuses.Debugging)
 			{
-				return DummyApi + "vehiclePositionHistory.html";
+				return DummyApi + "vehicle-position-history.html";
 			}
 
-			return ReadingBusesApi + "vehiclePositionHistory?key=" + ReadingBuses.ApiKey +
+			return ReadingBusesApi + "vehicle-position-history?api_token=" + ReadingBuses.ApiKey +
 			       "&date=" + dateStartTime.ToString("yyyy-MM-dd") + "&vehicle=" + vehicle + "&from=" +
 			       dateStartTime.TimeOfDay +
 			       "&to=" + AddTimeSpan(dateStartTime, timeSpan).TimeOfDay;

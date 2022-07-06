@@ -4,8 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using ReadingBusesAPI.BusServices;
 using ReadingBusesAPI.Common;
 using ReadingBusesAPI.ErrorManagement;
@@ -41,34 +41,34 @@ namespace ReadingBusesAPI.BusStops
 		}
 
 		/// <value>The unique identifier for a bus stop.</value>
-		[JsonProperty("location_code")]
+		[JsonPropertyName("location_code")]
 		public string ActoCode { get; internal set; }
 
 		/// <value>The public, easy to understand stop name.</value>
-		[JsonProperty("description")]
+		[JsonPropertyName("description")]
 		public string CommonName { get; internal set; }
 
 		/// <value>The latitude of the bus stop</value>
-		[JsonProperty("latitude")]
+		[JsonPropertyName("latitude")]
 		public string Latitude { get; internal set; }
 
 		/// <value>The longitude of the bus stop</value>
-		[JsonProperty("longitude")]
+		[JsonPropertyName("longitude")]
 		public string Longitude { get; internal set; }
 
 		/// <value>The bearing of the bus stop</value>
-		[JsonProperty("bearing")]
+		[JsonPropertyName("bearing")]
 		public string Bearing { get; internal set; }
 
 		/// <value>The services that travel to this stop, separated by '/'</value>
 		/// See
 		/// <see cref="BusStop.GetServices(Operators)" />
 		/// to get a list of Service Objects.
-		[JsonProperty("routes")]
+		[JsonPropertyName("routes")]
 		public string ServicesString { get; internal set; }
 
 		/// <value>The Brand/Group of buses that most frequently visit this stop. Such as Purple, for the Purple 17s.</value>
-		[JsonProperty("group_name")]
+		[JsonPropertyName("group_name")]
 		public string GroupName { get; internal set; }
 
 		/// <summary>

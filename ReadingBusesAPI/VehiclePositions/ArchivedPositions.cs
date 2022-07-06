@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using ReadingBusesAPI.Common;
 
 namespace ReadingBusesAPI.VehiclePositions
@@ -22,24 +22,24 @@ namespace ReadingBusesAPI.VehiclePositions
 
 
 		/// <value>Holds the operators enum value.</value>
-		[JsonProperty("operator")]
+		[JsonPropertyName("operator")]
 		[JsonConverter(typeof(ParseOperatorConverter))]
 		public Company OperatorCode { get; internal set; }
 
 		/// <value>Holds the reference/identifier for the vehicle</value>
-		[JsonProperty("vehicle")]
+		[JsonPropertyName("vehicle")]
 		public string Vehicle { get; internal set; }
 
 		/// <value>Holds the time it was last seen/ new data was retrieved.</value>
-		[JsonProperty("observed")]
+		[JsonPropertyName("observed")]
 		public DateTimeOffset Observed { get; internal set; }
 
 		/// <value>Latitude position of the bus</value>
-		[JsonProperty("latitude")]
+		[JsonPropertyName("latitude")]
 		public string Latitude { get; internal set; }
 
 		/// <value>longitude position of the bus</value>
-		[JsonProperty("longitude")]
+		[JsonPropertyName("longitude")]
 		public string Longitude { get; internal set; }
 
 

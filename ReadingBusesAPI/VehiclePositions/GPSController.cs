@@ -5,8 +5,8 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using ReadingBusesAPI.Common;
 using ReadingBusesAPI.ErrorManagement;
 
@@ -117,10 +117,10 @@ namespace ReadingBusesAPI.VehiclePositions
 
 			try
 			{
-				ArchivedPositions[] data = JsonConvert.DeserializeObject<ArchivedPositions[]>(json).ToArray();
+				ArchivedPositions[] data = JsonSerializer.Deserialize<ArchivedPositions[]>(json).ToArray();
 				return data;
 			}
-			catch (JsonSerializationException)
+			catch (JsonException)
 			{
 				ErrorManager.TryErrorMessageRetrieval(json);
 			}
@@ -146,11 +146,11 @@ namespace ReadingBusesAPI.VehiclePositions
 
 				try
 				{
-					_livePositionCache = JsonConvert.DeserializeObject<LivePosition[]>(json).ToArray();
+					_livePositionCache = JsonSerializer.Deserialize<LivePosition[]>(json).ToArray();
 					_lastRetrieval = DateTime.Now;
 					return _livePositionCache;
 				}
-				catch (JsonSerializationException)
+				catch (JsonException)
 				{
 					ErrorManager.TryErrorMessageRetrieval(json);
 				}
