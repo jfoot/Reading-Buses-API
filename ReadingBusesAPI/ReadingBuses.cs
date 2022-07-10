@@ -97,13 +97,18 @@ namespace ReadingBusesAPI
 					DirectoryInfo ch = new DirectoryInfo("cache") {Attributes = FileAttributes.Hidden};
 				}
 
-				Task<List<BusService>> servicesTask = new Services().FindServices();
-				Task<Dictionary<string, BusStop>> locationsTask = new Locations().FindLocations();
+				//Ordering here is important, must get services before locations.
+				_services = await new Services().FindServices(); 
+				_locations = await new Locations().FindLocations();
 
 
-				await Task.WhenAll(servicesTask, locationsTask).ConfigureAwait(false);
-				_services = servicesTask.Result;
-				_locations = locationsTask.Result;
+				//Task<List<BusService>> servicesTask = new Services().FindServices();
+				//Task<Dictionary<string, BusStop>> locationsTask = new Locations().FindLocations();
+
+
+				//await Task.WhenAll(servicesTask, locationsTask).ConfigureAwait(false);
+				//_services = servicesTask.Result;
+				//_locations = locationsTask.Result;
 			}
 			catch (AggregateException ex)
 			{

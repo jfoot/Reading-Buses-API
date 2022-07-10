@@ -27,7 +27,7 @@ namespace ReadingBuses_API_Tests
 			//By Default use the dummy server first. We can switch to live server in later tests.
 			ReadingBuses.SetDebugging(false);
 			//Gets the API Key from Git Hub Secrets. 
-			_ = await ReadingBuses.Initialise("iuWs005BGtewY2NeybCw8GKqP0l3d4c6VozOKtLeXfua3sBa3ctaMUeRLmIc");
+			_ = await ReadingBuses.Initialise(Environment.GetEnvironmentVariable("API_KEY"));
 		}
 	}
 }

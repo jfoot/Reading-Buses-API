@@ -32,8 +32,6 @@ namespace ReadingBusesAPI.BusServices
 		{
 			if (!File.Exists(CacheLocation) || !ReadingBuses.Cache)
 			{
-				string url = UrlConstructor.ListOfServices();
-
 				string json = await
 					new WebClient().DownloadStringTaskAsync(
 						UrlConstructor.ListOfServices()).ConfigureAwait(false);
@@ -50,7 +48,6 @@ namespace ReadingBusesAPI.BusServices
 					{
 						File.WriteAllText(CacheLocation,
 							JsonSerializer.Serialize(newServicesData, new JsonSerializerOptions { WriteIndented = true }));
-
 					}
 				}
 				catch (JsonException)

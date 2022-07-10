@@ -18,7 +18,7 @@ using ReadingBusesAPI.VehiclePositions;
 namespace ReadingBusesAPI.BusServices
 {
 	/// <summary>
-	///     Stores information about an individual bus services. Related to the "List Of Services" API.
+	///     Stores information about an individual bus services. Related to the "List Of Lines" API.
 	/// </summary>
 	public sealed class BusService
 	{
@@ -29,9 +29,12 @@ namespace ReadingBusesAPI.BusServices
 		private BusStop[] _stopsObjects;
 
 		/// <summary>
-		///     The default constructor, used for automatic phrasing of data.
+		///     The default constructor, used only for JSON Parsing.
+		///     Will be made internal when System.Text.Json add support for internal constructors in a future update.
 		/// </summary>
-		internal BusService()
+		[JsonConstructor]
+		[Obsolete("Do not use, will be made internal when system.text.json supports parsing in future updates.")]
+		public BusService()
 		{
 		}
 
@@ -66,22 +69,24 @@ namespace ReadingBusesAPI.BusServices
 			OperatorCode = operators;
 		}
 
-
 		/// <value>
 		///     The service number for the bus service, this is only guaranteed to be unique per operator, not in the API as a
 		///     whole. For example Reading Buses and Newbury And District both operate a number '2' service.
 		/// </value>
 		[JsonPropertyName("route_code")]
+		[JsonInclude]
 		public string ServiceId { get; internal set; }
 
 		/// <value>The brand name for the service, used mainly for Reading Buses services, such as Lion, Purple or Orange.</value>
 		[JsonPropertyName("group_name")]
+		[JsonInclude]
 		public string BrandName { get; internal set; }
 
 
 		/// <value>The operator enum value.</value>
 		[JsonPropertyName("operator_code")]
 		[JsonConverter(typeof(ParseOperatorConverter))]
+		[JsonInclude]
 		public Company OperatorCode { get; internal set; }
 
 

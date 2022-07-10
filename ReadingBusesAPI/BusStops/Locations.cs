@@ -37,15 +37,20 @@ namespace ReadingBusesAPI.BusStops
 
 				try
 				{
-					List<BusStop> locations = JsonSerializer.Deserialize<List<BusStop>>(json);
+					List<BusStopIntermediary> locations = JsonSerializer.Deserialize<List<BusStopIntermediary>>(json);
 
 					foreach (var location in locations)
 					{
 						if (!locationsFiltered.ContainsKey(location.ActoCode))
 						{
-							locationsFiltered.Add(location.ActoCode, location);
+							locationsFiltered.Add(location.ActoCode, new BusStop(location));
+						}
+						else
+						{
+							locationsFiltered[location.ActoCode].Merge(location);
 						}
 					}
+
 
 					if (ReadingBuses.Cache)
 					{
