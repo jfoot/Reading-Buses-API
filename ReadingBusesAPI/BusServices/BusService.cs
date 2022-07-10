@@ -22,11 +22,18 @@ namespace ReadingBusesAPI.BusServices
 	/// </summary>
 	public sealed class BusService
 	{
-		/// <value>Stores a list of bus stops acto-code/IDs the service visits.</value>
-		private List<string> _stops;
+		/// <value>
+		/// Stores a list of bus stops acto-code/IDs the service visits.
+		/// String is the acto code
+		/// Bool store is out an OutBound Service or not.
+		/// </value>
+		private List<(string, bool)> _stops;
 
-		/// <value>Stores a list of 'BusStops' objects the service visits.</value>
-		private BusStop[] _stopsObjects;
+		/// <value>Stores a list of 'BusStops' objects the service visits going outbound.</value>
+		private BusStop[] _stopsObjectsOutBound;
+
+		/// <value>Stores a list of 'BusStops' objects the service visits going inbound.</value>
+		private BusStop[] _stopsObjectsInBound;
 
 		/// <summary>
 		///     The default constructor, used only for JSON Parsing.
@@ -90,23 +97,28 @@ namespace ReadingBusesAPI.BusServices
 		public Company OperatorCode { get; internal set; }
 
 
+
 		/// <summary>
 		///     Gets a list of bus stops acto codes, if this is the first time it's asked for call upon the API
 		///     This is delayed so only to call the API when needed.
 		/// </summary>
 		/// <exception cref="ReadingBusesApiException">Thrown if you have an invalid or expired API key.</exception>
-		private async Task<List<string>> GetStops()
+		private async Task<List<(string, bool)>> GetStops()
 		{
 			if (_stops == null)
 			{
+
 				string json = await new WebClient().DownloadStringTaskAsync(
 					UrlConstructor.LinePatterns(this)).ConfigureAwait(false);
-				_stops = new List<string>();
+				_stops = new List<(string, bool)>();
 
 				try
 				{
-					_stops = JsonSerializer.Deserialize<List<BusStop>>(json)
-						.Select(p => p.ActoCode).ToList();
+					//Goes through the results, filters out anything which isn't from the same operator
+					//Then order it by the display order.
+					//Then map it into a tuple, of Acto-code along with if it is outbound or not.
+					_stops = JsonSerializer.Deserialize<List<StopPatteren>>(json)
+						.Where(b => b.OperatorCode == OperatorCode).OrderBy(b => b.Order).Select(b => (b.ActoCode, b.IsOutbound())).ToList();
 				}
 				catch (JsonException)
 				{
@@ -118,36 +130,96 @@ namespace ReadingBusesAPI.BusServices
 		}
 
 		/// <summary>
-		///     Gets an array of stops the bus service travels too as an array of ActoCode
+		///     Gets an array of acto-codes for the bus stops that the services visits.
+		///     The first set of results are the outbound, the final set are the inbound.
 		/// </summary>
 		/// <returns>An array of Acto-Codes for the stops visited by this services.</returns>
-		public async Task<string[]> GetLocationsActo() => (await GetStops().ConfigureAwait(false)).ToArray();
+		public async Task<string[]> GetLocationsActo()
+		{
+			List<string> outbound = (await GetLocationsActo(Direction.Outbound)).ToList();
+			List<string> inbound = (await GetLocationsActo(Direction.Inbound)).ToList();
+			//Adds the inbound onto the end of the outbound.      
+			outbound.AddRange(inbound);
+
+			return outbound.ToArray();
+		}
+
+		/// <summary>
+		///  Gets an array of acto-codes for the bus stops that the services visits.
+		/// </summary>
+		/// <param name="outBound">Do you want outbound acto-codes or inbound.</param>
+		/// <returns></returns>
+		public async Task<string[]> GetLocationsActo(Direction direction)
+		{
+			List<(string, bool)> locations = (await GetStops().ConfigureAwait(false));
+			//Filter out for only stops in the direction of travel requested and get the string into an array.
+			return locations.Where(location => location.Item2 == direction.Equals(Direction.Outbound)).Select(id => id.Item1).ToArray();
+		}
+
+
+		/// <summary>
+		///     Gets an array of 'BusStop' objects the bus service travels too as an array of BusStop objects.
+		///     If the API is invalid and links to a Bus Stop not in the list of locations it will simply be ignored.
+		///     Ordered on all the outbound stops first and then all the inbound stops.
+		/// </summary>
+		/// <returns>An array of BusStop objects for the stops visited by this service.</returns>
+		public async Task<BusStop[]> GetLocations()
+		{
+			List<BusStop> outbound = (await GetLocations(Direction.Outbound)).ToList();
+			List<BusStop> inbound = (await GetLocations(Direction.Inbound)).ToList();
+			//Adds the inbound stops onto the outbound.
+			outbound.AddRange(inbound);
+			//Converts to an array and returns results.
+			return outbound.ToArray();
+		}
 
 		/// <summary>
 		///     Gets an array of 'BusStop' objects the bus service travels too as an array of BusStop objects.
 		///     If the API is invalid and links to a Bus Stop not in the list of locations it will simply be ignored.
 		/// </summary>
-		/// <returns>An array of BusStop objects for the stops visited by this service.</returns>
-		public async Task<BusStop[]> GetLocations()
+		/// <param name="outBound">do you want outbound or inbound stops only?</param>
+		/// <returns>returns back all the bus stop objects visited by the service, for the direction of travel specified.</returns>
+		public async Task<BusStop[]> GetLocations(Direction direction)
 		{
-			if (_stopsObjects == null)
+			if (direction.Equals(Direction.Outbound))
 			{
-				List<string> actoCodes = await GetStops().ConfigureAwait(false);
+				if (_stopsObjectsOutBound == null)
+					_stopsObjectsOutBound = await GetBusStops(direction);
 
-				BusStop[] temp = new BusStop[actoCodes.Count];
-				for (int i = 0; i < temp.Length; i++)
+				return _stopsObjectsOutBound;
+			}
+			else
+			{
+				if (_stopsObjectsInBound == null)
+					_stopsObjectsInBound = await GetBusStops(direction);
+
+				return _stopsObjectsInBound;
+			}
+		}
+
+
+		/// <summary>
+		/// Gets the bus stop object associated with the acto-code for the bus stop.
+		/// </summary>
+		/// <param name="outBound">do you want out bound or inbound stops.</param>
+		/// <returns>An array of Bus Stop objects that the service visits.</returns>
+		private async Task<BusStop[]> GetBusStops(Direction direction)
+		{
+			string[] actoCodes = await GetLocationsActo(direction);
+
+			BusStop[] temp = new BusStop[actoCodes.Length];
+			for (int i = 0; i < temp.Length; i++)
+			{
+				if (ReadingBuses.GetInstance().IsLocation(actoCodes[i]))
 				{
-					if (ReadingBuses.GetInstance().IsLocation(actoCodes[i]))
-					{
-						temp[i] = ReadingBuses.GetInstance().GetLocation(actoCodes[i]);
-					}
+					temp[i] = ReadingBuses.GetInstance().GetLocation(actoCodes[i]);
 				}
-
-				_stopsObjects = temp;
 			}
 
-			return _stopsObjects;
+			return temp;
 		}
+
+
 
 		/// <summary>
 		///     Gets the Live GPS positions for all Vehicles operating on this service.

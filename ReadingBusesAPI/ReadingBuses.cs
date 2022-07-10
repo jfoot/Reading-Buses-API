@@ -226,6 +226,10 @@ namespace ReadingBusesAPI
 		/// to get any future instances afterwards.
 		public static async Task<ReadingBuses> Initialise(string apiKey)
 		{
+			if (apiKey.Trim().Length == 0)
+				throw new ReadingBusesApiExceptionBadQuery("Please enter a valid Reading Buses API Key");
+
+
 			if (_instance == null)
 			{
 				_instance = new ReadingBuses(apiKey);
