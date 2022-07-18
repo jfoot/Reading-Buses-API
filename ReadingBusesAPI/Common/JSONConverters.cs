@@ -67,6 +67,11 @@ namespace ReadingBusesAPI.Common
 			return services;
 		}
 
+		/// <summary>
+		/// COnverts a Company Enum into a string value.
+		/// </summary>
+		/// <param name="value">Company Enum value</param>
+		/// <param name="writer">Writes it to a JSON writter.</param>
 		private void EnumToString(Company value, Utf8JsonWriter writer)
 		{
 			switch (value)

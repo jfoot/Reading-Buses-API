@@ -67,6 +67,9 @@ namespace ReadingBusesAPI
 		/// <value>Keeps track of if cache data is being used or not</value>
 		internal static bool Cache { get; private set; } = true;
 
+		/// <value>Keeps track of if archieved timetable cache data is being used or not</value>
+		internal static bool ArchiveCache { get; private set; } = true;
+
 		/// <value>Keeps track of if warnings are being outputted to console or not.</value>
 		internal static bool Warning { get; private set; } = true;
 
@@ -100,15 +103,6 @@ namespace ReadingBusesAPI
 				//Ordering here is important, must get services before locations.
 				_services = await new Services().FindServices(); 
 				_locations = await new Locations().FindLocations();
-
-
-				//Task<List<BusService>> servicesTask = new Services().FindServices();
-				//Task<Dictionary<string, BusStop>> locationsTask = new Locations().FindLocations();
-
-
-				//await Task.WhenAll(servicesTask, locationsTask).ConfigureAwait(false);
-				//_services = servicesTask.Result;
-				//_locations = locationsTask.Result;
 			}
 			catch (AggregateException ex)
 			{
@@ -144,6 +138,28 @@ namespace ReadingBusesAPI
 			{
 				throw new ReadingBusesApiExceptionMalformedQuery(
 					"Cache Storage Setting can not be changed once ReadingBuses Object is initialized.");
+			}
+		}
+
+
+		/// <summary>
+		///     Sets if you want to cache historical/archive timetable and location data into local files or always get new data from the API, which will take longer.
+		/// </summary>
+		/// <param name="value">True or False for if you want to get Cache or live data.</param>
+		/// <exception cref="ReadingBusesApiExceptionMalformedQuery">
+		///     Thrown if you attempt to change the cache options after the library has
+		///     been instantiated
+		/// </exception>
+		public static void SetArchiveCache(bool value)
+		{
+			if (_instance == null)
+			{
+				ArchiveCache = value;
+			}
+			else
+			{
+				throw new ReadingBusesApiExceptionMalformedQuery(
+					"Archive Cache Storage Setting can not be changed once ReadingBuses Object is initialized.");
 			}
 		}
 
@@ -187,6 +203,12 @@ namespace ReadingBusesAPI
 		///     need to force new data early.
 		/// </summary>
 		public static void InvalidateCache() => Directory.Delete("cache", true);
+
+		/// <summary>
+		///     Deletes any Cache data stored, Cache data is deleted automatically after a number of days, use this only if you
+		///     need to force new data early.
+		/// </summary>
+		public static void InvalidateArchiveCache() => Directory.Delete("cache-archive", true);
 
 		/// <summary>
 		///     Internal method for printing warning messages to the console screen. Only done so in debug.
