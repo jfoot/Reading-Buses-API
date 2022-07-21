@@ -3,11 +3,15 @@ using ReadingBusesAPI.BusServices;
 using ReadingBusesAPI.BusStops;
 
 Console.WriteLine("Starting...");
-ReadingBuses.SetCache(true);
+ReadingBuses.SetCache(false);
 
 ReadingBuses controller = await ReadingBuses.Initialise("");
 
 BusService service = controller.GetService("22", ReadingBusesAPI.Common.Company.ReadingBuses);
+
+
+var temp = await service.GetArchivedTimeTable(DateTime.Now.AddDays(-5));
+
 
 BusStop[] stops = await service.GetLocations();
 

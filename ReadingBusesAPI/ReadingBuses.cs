@@ -94,11 +94,8 @@ namespace ReadingBusesAPI
 		{
 			try
 			{
-				if (!Directory.Exists("cache"))
-				{
-					Directory.CreateDirectory("cache");
-					DirectoryInfo ch = new DirectoryInfo("cache") {Attributes = FileAttributes.Hidden};
-				}
+				//Creates the folders to store cache infromation if needed.
+				CacheWritter.CreateCacheDirectory();
 
 				//Ordering here is important, must get services before locations.
 				_services = await new Services().FindServices(); 
@@ -202,13 +199,12 @@ namespace ReadingBusesAPI
 		///     Deletes any Cache data stored, Cache data is deleted automatically after a number of days, use this only if you
 		///     need to force new data early.
 		/// </summary>
-		public static void InvalidateCache() => Directory.Delete("cache", true);
+		public static void InvalidateCache() => Directory.Delete(CacheWritter.CACHE_FOLDER, true);
 
 		/// <summary>
-		///     Deletes any Cache data stored, Cache data is deleted automatically after a number of days, use this only if you
-		///     need to force new data early.
+		///     Deletes any archieved Cache data stored.
 		/// </summary>
-		public static void InvalidateArchiveCache() => Directory.Delete("cache-archive", true);
+		public static void InvalidateArchiveCache() => Directory.Delete(CacheWritter.ARCHIVED_CACHE_FOLDER, true);
 
 		/// <summary>
 		///     Internal method for printing warning messages to the console screen. Only done so in debug.

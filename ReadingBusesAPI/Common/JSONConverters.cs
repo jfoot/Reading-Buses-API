@@ -97,6 +97,9 @@ namespace ReadingBusesAPI.Common
 
 			foreach (var service in value)
 			{
+				if (service == null)
+					continue;
+
 				writer.WriteStartObject();
 				writer.WriteString(ServiceId, service.ServiceId);
 				EnumToString(service.OperatorCode, writer);

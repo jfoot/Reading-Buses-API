@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ReadingBusesAPI.BusServices;
 using ReadingBusesAPI.BusStops;
@@ -23,9 +24,12 @@ namespace ReadingBusesAPI.TimeTable
 	public class BusTimeTable : TimeTableRecord
 	{
 		/// <summary>
-		///     Default constructor to prevent creating an object directly outside the API.
+		///     The default constructor, used only for JSON Parsing.
+		///     Will be made internal when System.Text.Json add support for internal constructors in a future update.
 		/// </summary>
-		internal BusTimeTable()
+		[JsonConstructor]
+		[Obsolete("Do not use, will be made internal when system.text.json supports parsing in future updates.")]
+		public BusTimeTable()
 		{
 		}
 

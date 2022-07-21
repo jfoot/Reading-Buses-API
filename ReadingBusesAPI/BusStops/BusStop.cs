@@ -41,7 +41,8 @@ namespace ReadingBusesAPI.BusStops
 			Latitude = intermediary.Latitude;
 			Longitude = intermediary.Longitude;
 			Bearing = intermediary.Bearing;
-			ServiceObjects.Add(intermediary.GetService());
+			if(intermediary.GetService() != null)
+				ServiceObjects.Add(intermediary.GetService());
 		}
 
 
@@ -86,7 +87,6 @@ namespace ReadingBusesAPI.BusStops
 
 		/// <value>A reference to the bus services at this stop.</value>
 		[JsonInclude]
-
 		[JsonConverter(typeof(ParseServiceObjects))]
 		public List<BusService> ServiceObjects { get; internal set; } = new List<BusService>();
 

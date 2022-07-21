@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.Json;
@@ -23,9 +24,12 @@ namespace ReadingBusesAPI.TimeTable
 	public class ArchivedBusTimeTable : TimeTableRecord
 	{
 		/// <summary>
-		///     Default constructor to prevent creating an object directly outside the API.
+		///     The default constructor, used only for JSON Parsing.
+		///     Will be made internal when System.Text.Json add support for internal constructors in a future update.
 		/// </summary>
-		internal ArchivedBusTimeTable()
+		[JsonConstructor]
+		[Obsolete("Do not use, will be made internal when system.text.json supports parsing in future updates.")]
+		public ArchivedBusTimeTable()
 		{
 		}
 
@@ -104,21 +108,11 @@ namespace ReadingBusesAPI.TimeTable
 					"You must provide a date and a service and/or location for a valid query.");
 			}
 
-			string json = await new WebClient().DownloadStringTaskAsync(
-				UrlConstructor.TrackingHistory(service, location, date, vehicle)).ConfigureAwait(false);
 
-			try
-			{
-				var timeTable = JsonSerializer.Deserialize<List<ArchivedBusTimeTable>>(json);
-				return timeTable.ToArray();
-			}
-			catch (JsonException)
-			{
-				ErrorManager.TryErrorMessageRetrieval(json);
-			}
+			string cacheLocation = CacheWritter.TrackingHistory(service, location, date, vehicle);
+			string liveURL = UrlConstructor.TrackingHistory(service, location, date, vehicle);
 
-			//Should never reach this stage.
-			throw new ReadingBusesApiExceptionCritical();
+			return await CacheWritter.ReadOrCreateCache<ArchivedBusTimeTable[]>(cacheLocation, liveURL, ReadingBuses.ArchiveCache);
 		}
 
 

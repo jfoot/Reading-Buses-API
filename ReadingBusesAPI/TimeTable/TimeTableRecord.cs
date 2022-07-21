@@ -17,9 +17,12 @@ namespace ReadingBusesAPI.TimeTable
 	public abstract class TimeTableRecord
 	{
 		/// <summary>
-		///     Default constructor, to block creating objects directly.
+		///     The default constructor, used only for JSON Parsing.
+		///     Will be made internal when System.Text.Json add support for internal constructors in a future update.
 		/// </summary>
-		protected internal TimeTableRecord()
+		[JsonConstructor]
+		[Obsolete("Do not use, will be made internal when system.text.json supports parsing in future updates.")]
+		public TimeTableRecord()
 		{
 		}
 

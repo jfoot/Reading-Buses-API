@@ -4,6 +4,12 @@
 
 using System;
 using System.IO;
+using System.Net;
+using System.Text.Json;
+using System.Threading.Tasks;
+using ReadingBusesAPI.BusServices;
+using ReadingBusesAPI.BusStops;
+using ReadingBusesAPI.ErrorManagement;
 
 namespace ReadingBusesAPI.Common
 {
@@ -13,22 +19,68 @@ namespace ReadingBusesAPI.Common
 	/// </summary>
 	internal class CacheWritter
 	{
-		/// <summary>
-		/// Saves a cache file to local disk, and hides the folder so the user cannot see it.
-		/// </summary>
-		/// <param name="fileLoc">The location for the cache file.</param>
-		/// <param name="fileName">The name of the file</param>
-		/// <param name="content">The contents of the file.</param>
-		public static void WriteToCache(string fileLoc, string fileName, string content)
+
+		public static readonly string CACHE_FOLDER = "cache";
+		public static readonly string ARCHIVED_CACHE_FOLDER = "cache-archive";
+
+
+		public static async Task<T> ReadOrCreateCache<T>(string cacheLocation, string liveURL, bool useCache)
 		{
-			//Checks that the directory exists or not, if not make it.
-			if (!Directory.Exists(fileLoc))
+			if (useCache && File.Exists(cacheLocation))
 			{
-				Directory.CreateDirectory(fileLoc);
-				_ = new DirectoryInfo(fileLoc) { Attributes = FileAttributes.Hidden };
+				string jsonCache = File.ReadAllText(cacheLocation);
+
+				try
+				{
+					return JsonSerializer.Deserialize<T>(jsonCache);
+				}
+				catch (JsonException)
+				{
+					File.Delete(cacheLocation);
+					ReadingBuses.PrintWarning($"Cache read failed - Fetching from Live. : {liveURL}");
+					return await ReadOrCreateCache<T>(cacheLocation, liveURL, false);
+				}
 			}
-			//Then actually save the file.
-			File.WriteAllText(fileLoc + "/" + fileName, content);
+			else
+			{
+				string json = await new WebClient().DownloadStringTaskAsync(liveURL).ConfigureAwait(false);
+
+				try
+				{
+					var result = JsonSerializer.Deserialize<T>(json);
+					File.WriteAllText(cacheLocation, json);
+					return result;
+				}
+				catch (JsonException)
+				{
+					ErrorManager.TryErrorMessageRetrieval(json);
+					return default(T);
+				}
+			}
+		}
+
+
+
+		public static void CreateCacheDirectory()
+		{
+			if (!Directory.Exists(CACHE_FOLDER))
+			{
+				Directory.CreateDirectory(CACHE_FOLDER);
+				new DirectoryInfo(CACHE_FOLDER) { Attributes = FileAttributes.Hidden };
+			}
+
+			if (!Directory.Exists(ARCHIVED_CACHE_FOLDER))
+			{
+				Directory.CreateDirectory(ARCHIVED_CACHE_FOLDER);
+				new DirectoryInfo(ARCHIVED_CACHE_FOLDER) { Attributes = FileAttributes.Hidden };
+			}
+		}
+
+
+
+		public static string TrackingHistory(BusService service, BusStop location, DateTime date, string vehicle)
+		{
+			return $"{ARCHIVED_CACHE_FOLDER}/{service?.ServiceId}_{location?.ActoCode}_{date.ToShortDateString().Replace('/','-')}_{vehicle}.json";
 		}
 	}
 }
