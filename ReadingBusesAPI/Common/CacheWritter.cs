@@ -80,7 +80,12 @@ namespace ReadingBusesAPI.Common
 
 		public static string TrackingHistory(BusService service, BusStop location, DateTime date, string vehicle)
 		{
-			return $"{ARCHIVED_CACHE_FOLDER}/{service?.ServiceId}_{location?.ActoCode}_{date.ToShortDateString().Replace('/','-')}_{vehicle}.json";
+			return $"{ARCHIVED_CACHE_FOLDER}/TH_{service?.ServiceId}_{location?.ActoCode}_{date.ToShortDateString().Replace('/','-')}_{vehicle}.json";
+		}
+
+		public static string TimetabledJourneys(BusService service, BusStop location, DateTime date)
+		{
+			return $"{ARCHIVED_CACHE_FOLDER}/TJ_{service?.ServiceId}_{location?.ActoCode}_{date.ToShortDateString().Replace('/', '-')}.json";
 		}
 	}
 }

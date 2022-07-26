@@ -136,7 +136,7 @@ namespace ReadingBusesAPI.BusStops
 		/// </exception>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-		public Task<BusTimeTable[]> GetTimeTable(DateTime date)
+		public Task<Journey[]> GetTimeTable(DateTime date)
 		{
 			return BusTimeTable.GetTimeTable(null, date, this);
 		}
@@ -156,7 +156,7 @@ namespace ReadingBusesAPI.BusStops
 		/// </exception>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-		public Task<BusTimeTable[]> GetTimeTable(DateTime date, BusService service)
+		public Task<Journey[]> GetTimeTable(DateTime date, BusService service)
 		{
 			return BusTimeTable.GetTimeTable(service, date, this);
 		}
@@ -168,7 +168,7 @@ namespace ReadingBusesAPI.BusStops
 		/// </summary>
 		/// <param name="date">The date you want time table data for. This should be a date in the past.</param>
 		/// <returns></returns>
-		public Task<ArchivedBusTimeTable[]> GetArchivedTimeTable(DateTime date)
+		public Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date)
 		{
 			return ArchivedBusTimeTable.GetTimeTable(null, date, this, null);
 		}
@@ -184,7 +184,7 @@ namespace ReadingBusesAPI.BusStops
 		///     data for all services at this stop.
 		/// </param>
 		/// <returns></returns>
-		public Task<ArchivedBusTimeTable[]> GetArchivedTimeTable(DateTime date, BusService service)
+		public Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date, BusService service)
 		{
 			return ArchivedBusTimeTable.GetTimeTable(service, date, this, null);
 		}

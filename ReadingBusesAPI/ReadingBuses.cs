@@ -471,7 +471,7 @@ namespace ReadingBusesAPI
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
 #pragma warning disable CA1822 // Mark members as static
-		public Task<ArchivedBusTimeTable[]> GetVehicleTrackingHistory(DateTime date, string vehicle)
+		public Task<HistoricJourney[]> GetVehicleTrackingHistory(DateTime date, string vehicle)
 #pragma warning restore CA1822 // Mark members as static
 		{
 			return ArchivedBusTimeTable.GetTimeTable(null, date, null, vehicle);

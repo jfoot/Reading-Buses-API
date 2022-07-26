@@ -144,6 +144,84 @@ namespace ReadingBusesAPI.Common
 		}
 	}
 
+	/// <summary>
+	///		Converts a datetime value between its JSON repersentation and the object.
+	/// </summary>
+	public class DateTimeOffsetConverter : JsonConverter<DateTime>
+	{
+		public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		{
+			return DateTime.Parse(reader.GetString());
+		}
+
+		public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+		{
+			writer.WriteStringValue(value.ToString());
+		}
+	}
+
+	/// <summary>
+	///		Converts a datetime value between its JSON repersentation and the object.
+	/// </summary>
+	public class ParseBoolConverter : JsonConverter<bool>
+	{
+		public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		{
+			return reader.GetInt32() == 1;
+		}
+
+		public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
+		{
+			writer.WriteNumberValue(value ? 1 : 0);
+		}
+	}
+
+
+
+	/// <summary>
+	///     Converts a string short code for an Operator into an Operator Enum and back again for the JSON converter.
+	/// </summary>
+	internal class ParseOperatorTimetableConverter : JsonConverter<Company>
+	{
+		public override Company Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		{
+			switch (reader.GetString())
+			{
+				case "Reading Buses":
+					return Company.ReadingBuses;
+				case "Newbury & District":
+					return Company.NewburyAndDistrict;
+				case "Thames Valley Buses":
+					return Company.ThamesValley;
+				default:
+					return Company.Other;
+			}
+		}
+
+		public override void Write(Utf8JsonWriter writer, Company value, JsonSerializerOptions options)
+		{
+			switch (value)
+			{
+				case Company.ReadingBuses:
+					writer.WriteStringValue("Reading Buses");
+					return;
+				case Company.ThamesValley:
+					writer.WriteStringValue("Thames Valley Buses");
+					return;
+				case Company.NewburyAndDistrict:
+					writer.WriteStringValue("Newbury & District");
+					return;
+				default:
+					writer.WriteStringValue("OTH");
+					return;
+			}
+
+			throw new JsonException("Cannot marshal type Operators");
+		}
+	}
+
+
+
 
 	/// <summary>
 	///     Converts a string into a long and back again for the JSON converter.
