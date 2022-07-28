@@ -161,8 +161,8 @@ namespace ReadingBusesAPI.Common
 
 			return ReadingBusesApi + "vehicle-position-history?api_token=" + ReadingBuses.ApiKey +
 			       "&date=" + dateStartTime.ToString("yyyy-MM-dd") + "&vehicle=" + vehicle + "&from=" +
-			       dateStartTime.TimeOfDay +
-			       "&to=" + AddTimeSpan(dateStartTime, timeSpan).TimeOfDay;
+			       dateStartTime.ToString("HH:mm:ss") +
+			       "&to=" + AddTimeSpan(dateStartTime, timeSpan).ToString("HH:mm:ss");
 		}
 
 

@@ -225,7 +225,7 @@ namespace ReadingBusesAPI.BusServices
 		///     Gets the Live GPS positions for all Vehicles operating on this service.
 		/// </summary>
 		/// <returns>An array of GPS data points for all vehicles currently operating on this service.</returns>
-		public async Task<LivePosition[]> GetLivePositions() =>
+		public async Task<VehiclePosition[]> GetLivePositions() =>
 			(await ReadingBuses.GetInstance().GpsController.GetLiveVehiclePositions().ConfigureAwait(false)).Where(o =>
 				string.Equals(o.ServiceId, ServiceId, StringComparison.CurrentCultureIgnoreCase)).ToArray();
 

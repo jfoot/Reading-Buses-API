@@ -87,5 +87,10 @@ namespace ReadingBusesAPI.Common
 		{
 			return $"{ARCHIVED_CACHE_FOLDER}/TJ_{service?.ServiceId}_{location?.ActoCode}_{date.ToShortDateString().Replace('/', '-')}.json";
 		}
+
+		internal static string VehiclePositionHistory(DateTime dateStartTime, TimeSpan timeSpan, string vehicle)
+		{
+			return $"{ARCHIVED_CACHE_FOLDER}/VPH_{vehicle}_{dateStartTime.ToShortDateString().Replace('/', '-')}_{dateStartTime.ToLongTimeString().Replace(':', '-')}_{timeSpan.TotalSeconds}.json";
+		}
 	}
 }

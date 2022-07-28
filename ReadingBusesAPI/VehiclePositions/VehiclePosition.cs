@@ -9,37 +9,46 @@ using ReadingBusesAPI.Common;
 namespace ReadingBusesAPI.VehiclePositions
 {
 	/// <summary>
-	///     Stores information about previous/ archived GPS data on vehicles.
+	///     Stores information about GPS data on a vehicle.
 	/// </summary>
-	public class ArchivedPositions
+	public class VehiclePosition
 	{
 		/// <summary>
-		///     The default constructor, which sets the 'LastRetrieval' to current time.
+		///     The default constructor, used only for JSON Parsing.
+		///     Will be made internal when System.Text.Json add support for internal constructors in a future update.
 		/// </summary>
-		internal ArchivedPositions()
+		[JsonConstructor]
+		[Obsolete("Do not use, will be made internal when system.text.json supports parsing in future updates.")]
+		public VehiclePosition()
 		{
 		}
 
 
 		/// <value>Holds the operators enum value.</value>
 		[JsonPropertyName("operator")]
+		[JsonInclude]
 		[JsonConverter(typeof(ParseOperatorConverter))]
-		public Company OperatorCode { get; internal set; }
+		public Company Company { get; internal set; }
 
 		/// <value>Holds the reference/identifier for the vehicle</value>
 		[JsonPropertyName("vehicle")]
+		[JsonInclude]
 		public string Vehicle { get; internal set; }
 
 		/// <value>Holds the time it was last seen/ new data was retrieved.</value>
 		[JsonPropertyName("observed")]
-		public DateTimeOffset Observed { get; internal set; }
+		[JsonInclude]
+		[JsonConverter(typeof(DateTimeOffsetConverter))]
+		public DateTime Observed { get; internal set; }
 
 		/// <value>Latitude position of the bus</value>
 		[JsonPropertyName("latitude")]
+		[JsonInclude]
 		public string Latitude { get; internal set; }
 
 		/// <value>longitude position of the bus</value>
 		[JsonPropertyName("longitude")]
+		[JsonInclude]
 		public string Longitude { get; internal set; }
 
 
@@ -48,5 +57,6 @@ namespace ReadingBusesAPI.VehiclePositions
 		/// </summary>
 		/// <returns>A Point Object for the position of the bus.</returns>
 		public Point GetPoint() => new Point(double.Parse(Longitude), double.Parse(Latitude));
+
 	}
 }

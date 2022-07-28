@@ -8,7 +8,7 @@ Console.WriteLine("Starting...");
 ReadingBuses.SetCache(false);
 ReadingBuses.SetArchiveCache(false);
 
-ReadingBuses controller = await ReadingBuses.Initialise("");
+ReadingBuses controller = await ReadingBuses.Initialise("5pm6jpbQg3UxRf0veLQMeiK1RV1vCuSg6UOOl6EQBGslnzrFcN3U7nGxJWVS");
 
 BusService service = controller.GetService("17", ReadingBusesAPI.Common.Company.ReadingBuses);
 
@@ -16,8 +16,11 @@ Journey[] temp = await service.GetTimeTable(DateTime.Now.AddDays(-5));
 
 HistoricJourney[] temp2 = await service.GetArchivedTimeTable(DateTime.Now.AddDays(-5));
 
-LivePosition[] s = await service.GetLivePositions();
+VehiclePosition[] s = await service.GetLivePositions();
 
+VehiclePosition[] s2 = await controller.GpsController.GetLiveVehiclePositions();
+
+VehiclePosition[] s3 = await controller.GpsController.GetArchivedVehiclePositions(DateTime.Now.AddDays(-5), new TimeSpan(5,0,0));
 
 BusStop[] stops = await service.GetLocations();
 
