@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ReadingBusesAPI.BusServices;
@@ -116,7 +117,7 @@ namespace ReadingBusesAPI.BusStops
 		/// <returns>A list of BusService Objects for services which visit this bus stop.</returns>
 		public BusService[] GetServices(Company busOperator)
 		{
-			return ServiceObjects.ToArray();
+			return ServiceObjects.Where(ser => ser.OperatorCode.Equals(busOperator)).ToArray();
 		}
 
 		/// <summary>

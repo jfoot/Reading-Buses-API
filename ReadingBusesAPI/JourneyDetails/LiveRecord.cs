@@ -40,7 +40,7 @@ namespace ReadingBusesAPI.JourneyDetails
 		/// <value>Holds the estimated/ expected arrival time of the bus, if Null no estimated time exists yet.</value>
 		public DateTime? ExpectedArrival { get; internal set; }
 
-		/// <value>Holds the estimated/ expected arrival time of the bus, if Null no estimated time exists yet.</value>
+		/// <value>Holds the estimated/ expected arrival time of the bus, if Null no scheduled time exists.</value>
 		public DateTime? ScheduledArrival { get; internal set; }
 
 		/// <value>Holds the operator of the service.</value>

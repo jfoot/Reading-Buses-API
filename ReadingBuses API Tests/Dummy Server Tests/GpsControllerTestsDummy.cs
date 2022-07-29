@@ -45,7 +45,7 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 		[Test]
 		public async Task GetArchivedVehiclePositionsAsync()
 		{
-			ArchivedPositions[] positions = await ReadingBuses.GetInstance().GpsController
+			VehiclePosition[] positions = await ReadingBuses.GetInstance().GpsController
 				.GetArchivedVehiclePositions(DateTime.Now.AddDays(-1), new TimeSpan(3, 0, 0));
 			if (positions.Length != 0)
 			{
@@ -66,10 +66,6 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 		{
 			Assert.ThrowsAsync<ReadingBusesApiExceptionMalformedQuery>(async () =>
 				await ReadingBuses.GetInstance().GpsController
-					.GetArchivedVehiclePositions(DateTime.Now.AddDays(-1), null));
-
-			Assert.ThrowsAsync<ReadingBusesApiExceptionMalformedQuery>(async () =>
-				await ReadingBuses.GetInstance().GpsController
 					.GetArchivedVehiclePositions(DateTime.Now.AddDays(10), new TimeSpan(5, 0, 0)));
 		}
 
@@ -80,7 +76,7 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 		[Test]
 		public async Task GetLiveVehiclePositionsAsync()
 		{
-			LivePosition[] positions = await ReadingBuses.GetInstance().GpsController.GetLiveVehiclePositions();
+			LiveVehiclePosition[] positions = await ReadingBuses.GetInstance().GpsController.GetLiveVehiclePositions();
 			if (positions.Length == 0)
 			{
 				Assert.Fail("No live vehicles found.");

@@ -55,7 +55,7 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 		[Test]
 		public async Task CheckGetArchivedTimeTableAsync()
 		{
-			ArchivedBusTimeTable[] timeTable = await _testService.GetArchivedTimeTable(DateTime.Now.AddDays(-1));
+			HistoricJourney[] timeTable = await _testService.GetArchivedTimeTable(DateTime.Now.AddDays(-1));
 
 
 			if (timeTable.Length == 0)
@@ -79,41 +79,7 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 		}
 
 
-		/// <summary>
-		///     Check that an array of archived time table records is returned and grouped correctly.
-		/// </summary>
-		[Test]
-		public async Task CheckGetArchivedTimeTableGroupedAsync()
-		{
-			IGrouping<string, ArchivedBusTimeTable>[] timeTableGroup =
-				await _testService.GetGroupedArchivedTimeTable(DateTime.Now.AddDays(-1));
 
-			if (timeTableGroup.Length == 0)
-			{
-				Assert.Fail("No time table records were returned.");
-			}
-
-			foreach (var group in timeTableGroup)
-			{
-				if (@group.Any(x => x.JourneyCode != @group.First().JourneyCode))
-				{
-					Assert.Fail("Not all elements in group have same journey code.");
-				}
-			}
-
-			Assert.Pass();
-		}
-
-
-		/// <summary>
-		///     Check that an error is thrown when trying to get future data.
-		/// </summary>
-		[Test]
-		public void CheckGetArchivedTimeTableGroupedErrorAsync()
-		{
-			Assert.ThrowsAsync<ReadingBusesApiExceptionMalformedQuery>(async () =>
-				await _testService.GetGroupedArchivedTimeTable(DateTime.Now.AddDays(10)));
-		}
 
 
 		/// <summary>
@@ -122,7 +88,7 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 		[Test]
 		public async Task CheckGetLivePositionsAsync()
 		{
-			LivePosition[] livePositions = await _testService.GetLivePositions();
+			LiveVehiclePosition[] livePositions = await _testService.GetLivePositions();
 
 
 			if (livePositions.Length != 0)
@@ -190,7 +156,7 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 		[Test]
 		public async Task CheckGetTimeTableAsync()
 		{
-			BusTimeTable[] timeTable = await _testService.GetTimeTable(DateTime.Now.AddDays(-1));
+			Journey[] timeTable = await _testService.GetTimeTable(DateTime.Now.AddDays(-1));
 
 
 			if (timeTable.Length == 0)
@@ -199,7 +165,7 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 			}
 
 
-			BusTimeTable[] timeTableFuture = await _testService.GetTimeTable(DateTime.Now.AddDays(10));
+			Journey[] timeTableFuture = await _testService.GetTimeTable(DateTime.Now.AddDays(10));
 
 
 			if (timeTableFuture.Length == 0)
@@ -210,31 +176,6 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 			Assert.Pass();
 		}
 
-
-		/// <summary>
-		///     Check that an array of time table records is returned and grouped correctly.
-		/// </summary>
-		[Test]
-		public async Task CheckGetTimeTableGroupedAsync()
-		{
-			IGrouping<string, BusTimeTable>[] timeTableGroup =
-				await _testService.GetGroupedTimeTable(DateTime.Now.AddDays(-1));
-
-			if (timeTableGroup.Length == 0)
-			{
-				Assert.Fail("No time table records were returned.");
-			}
-
-			foreach (var group in timeTableGroup)
-			{
-				if (@group.Any(x => x.JourneyCode != @group.First().JourneyCode))
-				{
-					Assert.Fail("Not all elements in group have same journey code.");
-				}
-			}
-
-			Assert.Pass();
-		}
 
 		/// <summary>
 		///     Check the second constructor

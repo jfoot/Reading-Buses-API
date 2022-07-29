@@ -28,6 +28,7 @@ Supports : List of Bus Stops, Live Vehicle Positions, Live Journey Details, Stop
     <Company>Jonathan Foot</Company>
     <Product>Reading Buses API</Product>
     <ApplicationIcon>LogoHighRes.ico</ApplicationIcon>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
