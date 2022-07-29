@@ -2,7 +2,8 @@
 // Licensed under the GNU Affero General Public License, Version 3.0 
 // See the LICENSE file in the project root for more information.
 
-using Newtonsoft.Json;
+
+using System.Text.Json;
 
 namespace ReadingBusesAPI.ErrorManagement
 {
@@ -19,13 +20,17 @@ namespace ReadingBusesAPI.ErrorManagement
 		/// <param name="json">Data returned from the API.</param>
 		internal static void TryErrorMessageRetrieval(string json)
 		{
+			if (json.StartsWith("<!DOCTYPE html>"))
+				throw new ReadingBusesApiExceptionBadQuery("Querry Failed, please ensure you have provided a valid Reading Buses API Key.");
+
+
 			ErrorFormat error;
 			try
 			{
 				//If it can deserializeObject the object then the API has proved an error message.
-				error = JsonConvert.DeserializeObject<ErrorFormat>(json);
+				error = JsonSerializer.Deserialize<ErrorFormat>(json);
 			}
-			catch (JsonSerializationException ex)
+			catch (JsonException ex)
 			{
 				//Else it failed to extract an error message and so throw a generic critical error.
 				ReadingBuses.PrintFullErrorLogs(ex.Message);

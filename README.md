@@ -2,11 +2,11 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/654ef87688234627bd523c1db8318090)](https://www.codacy.com/manual/jfoot/Reading-Buses-API?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jfoot/Reading-Buses-API&amp;utm_campaign=Badge_Grade)
 [![https://img.shields.io/badge/Documentation-View-blue](https://img.shields.io/badge/Documentation-View-blue)](https://jonathanfoot.com/Projects/RBAPI/docs/)
 # Reading Buses API
-A C#, .net Standard Library for the [Reading Buses API](http://rtl2.ods-live.co.uk/cms/apiservice), available to use in your C# console, UWP, WPF or Win Form Applications.
+A C#, .net Standard Library for the new [Reading Buses API](https://reading-opendata.r2p.com/api-service), available to use in your C# console, UWP, WPF or Win Form Applications.
 
-The library supports the List of Bus Stops, Live Vehicle Positions, Stop Predictions, List of Services, Line Patterns, Timetabled Journeys, Tracking History and the Vehicle Position History API..
+The library supports the List of Bus Stops, Live Vehicle Positions, Live Journey Details, Stop Predictions, List of Lines, Line Patterns, Timetabled Journeys, Tracking History and the Vehicle Position History API..
 
-Get your own API Keys from: http://rtl2.ods-live.co.uk/cms/apiservice
+Get your own API Keys from: https://reading-opendata.r2p.com/api-service
 
 ## Examples
 Examples code can be found on the [Examples Repository here](https://github.com/jfoot/Reading-Buses-API-Examples/blob/master/ReadingBusesNewAPIWithLibrary/Program.cs)

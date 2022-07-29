@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Xml.Linq;
 using ReadingBusesAPI.BusServices;
+using ReadingBusesAPI.BusStops;
 using ReadingBusesAPI.Common;
 using ReadingBusesAPI.ErrorManagement;
 
@@ -28,13 +29,19 @@ namespace ReadingBusesAPI.JourneyDetails
 		public string ServiceNumber { get; internal set; }
 
 		/// <value>Holds the destination for the bus.</value>
-		public string Destination { get; internal set; }
+		public string DestinationName { get; internal set; }
 
-		/// <value>Holds scheduled arrival time of the bus at the location.</value>
-		public DateTime SchArrival { get; internal set; }
+		/// <value>Holds scheduled departure time of the bus at the location.</value>
+		public DateTime ScheduledDeparture { get; internal set; }
+
+		/// <value>Holds the estimated/ expected departure time of the bus, if Null no estimated time exists yet.</value>
+		public DateTime? ExpectedDeparture { get; internal set; }
 
 		/// <value>Holds the estimated/ expected arrival time of the bus, if Null no estimated time exists yet.</value>
-		public DateTime? ExptArrival { get; internal set; }
+		public DateTime? ExpectedArrival { get; internal set; }
+
+		/// <value>Holds the estimated/ expected arrival time of the bus, if Null no scheduled time exists.</value>
+		public DateTime? ScheduledArrival { get; internal set; }
 
 		/// <value>Holds the operator of the service.</value>
 		public Company OperatorCode { get; internal set; }
@@ -42,11 +49,36 @@ namespace ReadingBusesAPI.JourneyDetails
 		/// <value>Holds the Vehicles reference ID or number to identify it.</value>
 		public string VehicleRef { get; internal set; }
 
-		/// <value>
-		///     Holds the 'Via' message, which explains where the bus is traveling past on route. Can be null or a place holder
-		///     value if none exists.
-		/// </value>
-		public string ViaMessage { get; internal set; }
+		/// <value>The acto-code for the destination stop.</value>
+		internal string _destination;
+
+		/// <value>The acto-code for the origin stop.</value>
+		internal string _origin;
+
+
+		/// <summary>
+		/// Gets the origin bus stop object. Null if unknown.
+		/// </summary>
+		/// <returns>Bus Stop for where this vehicle originated from.</returns>
+		public BusStop GetOriginStop()
+		{
+			if (ReadingBuses.GetInstance().IsLocation(_origin))
+				return ReadingBuses.GetInstance().GetLocation(_origin);
+
+			return null;
+		}
+
+		/// <summary>
+		/// Gets the destination bus stop object. Null if unknown.
+		/// </summary>
+		/// <returns>Bus Stop for where this vehicle is destinating.</returns>
+		public BusStop GetDestinationStop()
+		{
+			if (ReadingBuses.GetInstance().IsLocation(_destination))
+				return ReadingBuses.GetInstance().GetLocation(_destination);
+
+			return null;
+		}
 
 
 		/// <summary>
@@ -68,7 +100,7 @@ namespace ReadingBusesAPI.JourneyDetails
 		/// <returns>The number of min until the bus is due to arrive in string format.</returns>
 		public string DisplayTime()
 		{
-			return ((ExptArrival ?? SchArrival) - DateTime.Now).TotalMinutes.ToString("0") + " mins";
+			return ((ExpectedDeparture ?? ScheduledDeparture) - DateTime.Now).TotalMinutes.ToString("0") + " mins";
 		}
 
 		/// <summary>
@@ -77,7 +109,7 @@ namespace ReadingBusesAPI.JourneyDetails
 		/// <returns>The number of min till the bus is due to arrive.</returns>
 		public double ArrivalMin()
 		{
-			return ((ExptArrival ?? SchArrival) - DateTime.Now).TotalMinutes;
+			return ((ExpectedDeparture ?? ScheduledDeparture) - DateTime.Now).TotalMinutes;
 		}
 
 		/// <summary>
@@ -100,13 +132,15 @@ namespace ReadingBusesAPI.JourneyDetails
 				var arrivals = doc.Descendants(ns + "MonitoredStopVisit").Select(x => new LiveRecord()
 				{
 					ServiceNumber = (string)x.Descendants(ns + "LineRef").FirstOrDefault(),
-					Destination = (string)x.Descendants(ns + "DestinationName").FirstOrDefault(),
-					SchArrival = (DateTime)x.Descendants(ns + "AimedArrivalTime").FirstOrDefault(),
-					ExptArrival = (DateTime?)x.Descendants(ns + "ExpectedArrivalTime").FirstOrDefault(),
-					OperatorCode =
-						ReadingBuses.GetOperatorE((string)x.Descendants(ns + "OperatorRef").FirstOrDefault()),
+					DestinationName = (string)x.Descendants(ns + "DestinationName").FirstOrDefault(),
+					ScheduledDeparture = (DateTime)x.Descendants(ns + "AimedDepartureTime").FirstOrDefault(),
+					ExpectedDeparture = (DateTime?)x.Descendants(ns + "ExpectedDepartureTime").FirstOrDefault(),
+					ScheduledArrival = (DateTime?)x.Descendants(ns + "AimedArrivalTime").FirstOrDefault(),
+					ExpectedArrival = (DateTime?)x.Descendants(ns + "ExpectedArrivalTime").FirstOrDefault(),
+					OperatorCode = ReadingBuses.GetOperatorE((string)x.Descendants(ns + "OperatorRef").FirstOrDefault()),
 					VehicleRef = (string)x.Descendants(ns + "VehicleRef").FirstOrDefault(),
-					ViaMessage = (string)x.Descendants(ns + "Via").FirstOrDefault()
+					_destination = (string)x.Descendants(ns + "DestinationRef").FirstOrDefault(),
+					_origin = (string)x.Descendants(ns + "DestinationRef").FirstOrDefault()
 				}).ToList();
 				return arrivals.ToArray();
 			}
@@ -118,8 +152,9 @@ namespace ReadingBusesAPI.JourneyDetails
 			{
 				throw new ReadingBusesApiExceptionBadQuery(ex.Message);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				ReadingBuses.PrintFullErrorLogs(ex.Message);
 				throw new ReadingBusesApiExceptionCritical();
 			}
 		}

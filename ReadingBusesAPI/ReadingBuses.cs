@@ -54,7 +54,7 @@ namespace ReadingBusesAPI
 		/// <summary>
 		///     Create a new Reading Buses library object, this is the main control.
 		/// </summary>
-		/// <param name="apiKey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
+		/// <param name="apiKey">The Reading Buses API Key, get your own from https://reading-opendata.r2p.com/ </param>
 		private ReadingBuses(string apiKey)
 		{
 			ApiKey = apiKey;
@@ -66,6 +66,9 @@ namespace ReadingBusesAPI
 
 		/// <value>Keeps track of if cache data is being used or not</value>
 		internal static bool Cache { get; private set; } = true;
+
+		/// <value>Keeps track of if archieved timetable cache data is being used or not</value>
+		internal static bool ArchiveCache { get; private set; } = true;
 
 		/// <value>Keeps track of if warnings are being outputted to console or not.</value>
 		internal static bool Warning { get; private set; } = true;
@@ -91,19 +94,12 @@ namespace ReadingBusesAPI
 		{
 			try
 			{
-				if (!Directory.Exists("cache"))
-				{
-					Directory.CreateDirectory("cache");
-					DirectoryInfo ch = new DirectoryInfo("cache") {Attributes = FileAttributes.Hidden};
-				}
+				//Creates the folders to store cache infromation if needed.
+				CacheWritter.CreateCacheDirectory();
 
-				Task<List<BusService>> servicesTask = new Services().FindServices();
-				Task<Dictionary<string, BusStop>> locationsTask = new Locations().FindLocations();
-
-
-				await Task.WhenAll(servicesTask, locationsTask).ConfigureAwait(false);
-				_services = servicesTask.Result;
-				_locations = locationsTask.Result;
+				//Ordering here is important, must get services before locations.
+				_services = await new Services().FindServices(); 
+				_locations = await new Locations().FindLocations();
 			}
 			catch (AggregateException ex)
 			{
@@ -139,6 +135,28 @@ namespace ReadingBusesAPI
 			{
 				throw new ReadingBusesApiExceptionMalformedQuery(
 					"Cache Storage Setting can not be changed once ReadingBuses Object is initialized.");
+			}
+		}
+
+
+		/// <summary>
+		///     Sets if you want to cache historical/archive timetable and location data into local files or always get new data from the API, which will take longer.
+		/// </summary>
+		/// <param name="value">True or False for if you want to get Cache or live data.</param>
+		/// <exception cref="ReadingBusesApiExceptionMalformedQuery">
+		///     Thrown if you attempt to change the cache options after the library has
+		///     been instantiated
+		/// </exception>
+		public static void SetArchiveCache(bool value)
+		{
+			if (_instance == null)
+			{
+				ArchiveCache = value;
+			}
+			else
+			{
+				throw new ReadingBusesApiExceptionMalformedQuery(
+					"Archive Cache Storage Setting can not be changed once ReadingBuses Object is initialized.");
 			}
 		}
 
@@ -181,7 +199,12 @@ namespace ReadingBusesAPI
 		///     Deletes any Cache data stored, Cache data is deleted automatically after a number of days, use this only if you
 		///     need to force new data early.
 		/// </summary>
-		public static void InvalidateCache() => Directory.Delete("cache", true);
+		public static void InvalidateCache() => Directory.Delete(CacheWritter.CACHE_FOLDER, true);
+
+		/// <summary>
+		///     Deletes any archieved Cache data stored.
+		/// </summary>
+		public static void InvalidateArchiveCache() => Directory.Delete(CacheWritter.ARCHIVED_CACHE_FOLDER, true);
 
 		/// <summary>
 		///     Internal method for printing warning messages to the console screen. Only done so in debug.
@@ -213,7 +236,7 @@ namespace ReadingBusesAPI
 		/// <summary>
 		///     Used to initially initialise the ReadingBuses Object, it is recommended you do this in your programs start up.
 		/// </summary>
-		/// <param name="apiKey">The Reading Buses API Key, get your own from http://rtl2.ods-live.co.uk/cms/apiservice </param>
+		/// <param name="apiKey">The Reading Buses API Key, get your own from https://reading-opendata.r2p.com/ </param>
 		/// <returns>An instance of the library controller. This same instance can be got by calling the "GetInstance" method.</returns>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Can throw an exception if you pass an invalid or expired API Key.</exception>
 		/// See
@@ -221,6 +244,10 @@ namespace ReadingBusesAPI
 		/// to get any future instances afterwards.
 		public static async Task<ReadingBuses> Initialise(string apiKey)
 		{
+			if (apiKey.Trim().Length == 0)
+				throw new ReadingBusesApiExceptionBadQuery("Please enter a valid Reading Buses API Key");
+
+
 			if (_instance == null)
 			{
 				_instance = new ReadingBuses(apiKey);
@@ -263,17 +290,17 @@ namespace ReadingBusesAPI
 		/// <returns>The Enum equivalent of the bus operator short code.</returns>
 		internal static Company GetOperatorE(string operatorCodeS)
 		{
-			if (operatorCodeS.Equals("RGB", StringComparison.OrdinalIgnoreCase))
+			if (operatorCodeS.Equals("RBUS", StringComparison.OrdinalIgnoreCase))
 			{
 				return Company.ReadingBuses;
 			}
 
-			if (operatorCodeS.Equals("KC", StringComparison.OrdinalIgnoreCase))
+			if (operatorCodeS.Equals("CTNY", StringComparison.OrdinalIgnoreCase))
 			{
-				return Company.Kennections;
+				return Company.ThamesValley;
 			}
 
-			if (operatorCodeS.Equals("N&D", StringComparison.OrdinalIgnoreCase))
+			if (operatorCodeS.Equals("NADS", StringComparison.OrdinalIgnoreCase))
 			{
 				return Company.NewburyAndDistrict;
 			}
@@ -444,7 +471,7 @@ namespace ReadingBusesAPI
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
 #pragma warning disable CA1822 // Mark members as static
-		public Task<ArchivedBusTimeTable[]> GetVehicleTrackingHistory(DateTime date, string vehicle)
+		public Task<HistoricJourney[]> GetVehicleTrackingHistory(DateTime date, string vehicle)
 #pragma warning restore CA1822 // Mark members as static
 		{
 			return ArchivedBusTimeTable.GetTimeTable(null, date, null, vehicle);

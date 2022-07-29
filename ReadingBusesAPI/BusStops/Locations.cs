@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using ReadingBusesAPI.Common;
 using ReadingBusesAPI.ErrorManagement;
 
@@ -37,24 +37,28 @@ namespace ReadingBusesAPI.BusStops
 
 				try
 				{
-					List<BusStop> locations = JsonConvert.DeserializeObject<List<BusStop>>(json);
+					List<BusStopIntermediary> locations = JsonSerializer.Deserialize<List<BusStopIntermediary>>(json);
 
 					foreach (var location in locations)
 					{
 						if (!locationsFiltered.ContainsKey(location.ActoCode))
 						{
-							locationsFiltered.Add(location.ActoCode, location);
+							locationsFiltered.Add(location.ActoCode, new BusStop(location));
+						}
+						else
+						{
+							locationsFiltered[location.ActoCode].Merge(location);
 						}
 					}
+
 
 					if (ReadingBuses.Cache)
 					{
 						File.WriteAllText(CacheLocation,
-							JsonConvert.SerializeObject(locationsFiltered,
-								Formatting.Indented)); // Save the JSON file for later use.  
+						JsonSerializer.Serialize(locationsFiltered, new JsonSerializerOptions { WriteIndented = true })); // Save the JSON file for later use.  
 					}
 				}
-				catch (JsonSerializationException)
+				catch (JsonException)
 				{
 					ErrorManager.TryErrorMessageRetrieval(json);
 				}
@@ -74,10 +78,10 @@ namespace ReadingBusesAPI.BusStops
 
 				try
 				{
-					return JsonConvert.DeserializeObject<Dictionary<string, BusStop>>(
+					return JsonSerializer.Deserialize<Dictionary<string, BusStop>>(
 						File.ReadAllText(CacheLocation));
 				}
-				catch (JsonSerializationException)
+				catch (JsonException)
 				{
 					File.Delete(CacheLocation);
 					ReadingBuses.PrintWarning(

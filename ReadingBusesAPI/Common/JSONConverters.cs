@@ -3,95 +3,245 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using ReadingBusesAPI.BusServices;
 
 namespace ReadingBusesAPI.Common
 {
+
 	/// <summary>
 	///     Converts a string short code for an Operator into an Operator Enum and back again for the JSON converter.
 	/// </summary>
-	internal class ParseOperatorConverter : JsonConverter
+	internal class ParseServiceObjects : JsonConverter<List<BusService>>
 	{
-		public static readonly ParseOperatorConverter Singleton = new ParseOperatorConverter();
-		public override bool CanConvert(Type t) => t == typeof(Company) || t == typeof(Company?);
 
-		public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+		private readonly static string ServiceId = "ServiceID";
+		private readonly static string ServiceOperator = "ServiceOperator";
+
+
+		public override List<BusService> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
-			if (reader.TokenType == JsonToken.Null)
+			List<BusService> services = new List<BusService>();
+
+			BusService temp;
+			bool iDNext = true;
+			string serviceID = "";
+			string busOperator = "";
+
+			while (reader.Read())
 			{
-				return null;
+				switch (reader.TokenType)
+				{
+					case JsonTokenType.StartObject:
+						temp = null;
+						break;
+					case JsonTokenType.EndObject:
+						if(!ReadingBuses.GetInstance().IsService(serviceID, ReadingBuses.GetOperatorE(busOperator)))
+						{
+							ReadingBuses.PrintWarning("Service not found - " + serviceID + " " + busOperator);
+							break;
+						}
+						services.Add(ReadingBuses.GetInstance().GetService(serviceID, ReadingBuses.GetOperatorE(busOperator)));
+						break;
+					case JsonTokenType.String:
+						if (iDNext)
+						{
+							serviceID = reader.GetString();
+						}
+						else
+						{
+							busOperator = reader.GetString();
+						}
+						break;
+					case JsonTokenType.PropertyName:
+						iDNext = reader.GetString().Equals(ServiceId);
+						break;
+					case JsonTokenType.EndArray:
+						return services;
+					default:
+						break;
+				}
 			}
-
-			var value = serializer.Deserialize<string>(reader);
-
-			return ReadingBuses.GetOperatorE(value);
+			return services;
 		}
 
-		public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+		/// <summary>
+		/// COnverts a Company Enum into a string value.
+		/// </summary>
+		/// <param name="value">Company Enum value</param>
+		/// <param name="writer">Writes it to a JSON writter.</param>
+		private void EnumToString(Company value, Utf8JsonWriter writer)
 		{
-			if (untypedValue == null)
-			{
-				serializer.Serialize(writer, null);
-				return;
-			}
-
-			var value = (Company)untypedValue;
-
 			switch (value)
 			{
 				case Company.ReadingBuses:
-					serializer.Serialize(writer, "RGB");
+					writer.WriteString(ServiceOperator, "RBUS");
 					return;
-				case Company.Kennections:
-					serializer.Serialize(writer, "KC");
+				case Company.ThamesValley:
+					writer.WriteString(ServiceOperator, "CTNY");
 					return;
 				case Company.NewburyAndDistrict:
-					serializer.Serialize(writer, "N&D");
+					writer.WriteString(ServiceOperator, "NADS");
 					return;
 				default:
-					serializer.Serialize(writer, "OTH");
+					writer.WriteString(ServiceOperator, "OTH");
+					return;
+			}
+		}
+
+		public override void Write(Utf8JsonWriter writer, List<BusService> value, JsonSerializerOptions options)
+		{
+			writer.WriteStartArray();
+
+			foreach (var service in value)
+			{
+				if (service == null)
+					continue;
+
+				writer.WriteStartObject();
+				writer.WriteString(ServiceId, service.ServiceId);
+				EnumToString(service.OperatorCode, writer);
+				writer.WriteEndObject();
+			}
+
+			writer.WriteEndArray();
+		}
+	}
+
+
+
+	/// <summary>
+	///     Converts a string short code for an Operator into an Operator Enum and back again for the JSON converter.
+	/// </summary>
+	internal class ParseOperatorConverter : JsonConverter<Company>
+	{
+		public override Company Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		{
+			return ReadingBuses.GetOperatorE(reader.GetString());
+		}
+
+		public override void Write(Utf8JsonWriter writer, Company value, JsonSerializerOptions options)
+		{
+			switch (value)
+			{
+				case Company.ReadingBuses:
+					writer.WriteStringValue("RBUS");
+					return;
+				case Company.ThamesValley:
+					writer.WriteStringValue("CTNY");
+					return;
+				case Company.NewburyAndDistrict:
+					writer.WriteStringValue("NADS");
+					return;
+				default:
+					writer.WriteStringValue("OTH");
 					return;
 			}
 
-			throw new JsonSerializationException("Cannot marshal type Operators");
+			throw new JsonException("Cannot marshal type Operators");
 		}
 	}
+
+	/// <summary>
+	///		Converts a datetime value between its JSON repersentation and the object.
+	/// </summary>
+	public class DateTimeOffsetConverter : JsonConverter<DateTime>
+	{
+		public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		{
+			return DateTime.Parse(reader.GetString());
+		}
+
+		public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+		{
+			writer.WriteStringValue(value.ToString());
+		}
+	}
+
+	/// <summary>
+	///		Converts a datetime value between its JSON repersentation and the object.
+	/// </summary>
+	public class ParseBoolConverter : JsonConverter<bool>
+	{
+		public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		{
+			return reader.GetInt32() == 1;
+		}
+
+		public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
+		{
+			writer.WriteNumberValue(value ? 1 : 0);
+		}
+	}
+
+
+
+	/// <summary>
+	///     Converts a string short code for an Operator into an Operator Enum and back again for the JSON converter.
+	/// </summary>
+	internal class ParseOperatorTimetableConverter : JsonConverter<Company>
+	{
+		public override Company Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		{
+			switch (reader.GetString())
+			{
+				case "Reading Buses":
+					return Company.ReadingBuses;
+				case "Newbury & District":
+					return Company.NewburyAndDistrict;
+				case "Thames Valley Buses":
+					return Company.ThamesValley;
+				default:
+					return Company.Other;
+			}
+		}
+
+		public override void Write(Utf8JsonWriter writer, Company value, JsonSerializerOptions options)
+		{
+			switch (value)
+			{
+				case Company.ReadingBuses:
+					writer.WriteStringValue("Reading Buses");
+					return;
+				case Company.ThamesValley:
+					writer.WriteStringValue("Thames Valley Buses");
+					return;
+				case Company.NewburyAndDistrict:
+					writer.WriteStringValue("Newbury & District");
+					return;
+				default:
+					writer.WriteStringValue("OTH");
+					return;
+			}
+
+			throw new JsonException("Cannot marshal type Operators");
+		}
+	}
+
+
 
 
 	/// <summary>
 	///     Converts a string into a long and back again for the JSON converter.
 	/// </summary>
-	internal class ParseStringConverter : JsonConverter
+	internal class ParseStringConverter : JsonConverter<long>
 	{
-		public static readonly ParseStringConverter Singleton = new ParseStringConverter();
-		public override bool CanConvert(Type t) => t == typeof(long) || t == typeof(long?);
-
-		public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+		public override long Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
-			if (reader.TokenType == JsonToken.Null)
+			if (reader.TokenType == JsonTokenType.String)
 			{
-				return null;
+				if (long.TryParse(reader.GetString(), out long number))
+					return number;
 			}
 
-			var value = serializer.Deserialize<string>(reader);
-			if (long.TryParse(value, out var l))
-			{
-				return l;
-			}
-
-			throw new JsonSerializationException("Cannot unmarshal type long");
+			throw new JsonException("Cannot unmarshal type long");
 		}
 
-		public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+		public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options)
 		{
-			if (untypedValue == null)
-			{
-				serializer.Serialize(writer, null);
-				return;
-			}
-
-			var value = (long)untypedValue;
-			serializer.Serialize(writer, value.ToString());
+			writer.WriteStringValue(value.ToString());
 		}
 	}
 }

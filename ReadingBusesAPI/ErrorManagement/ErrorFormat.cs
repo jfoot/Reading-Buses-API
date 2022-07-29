@@ -2,7 +2,7 @@
 // Licensed under the GNU Affero General Public License, Version 3.0 
 // See the LICENSE file in the project root for more information.
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using ReadingBusesAPI.Common;
 
 namespace ReadingBusesAPI.ErrorManagement
@@ -13,16 +13,16 @@ namespace ReadingBusesAPI.ErrorManagement
 	internal sealed class ErrorFormat
 	{
 		/// <value>The status of the request, always false for failed.</value>
-		[JsonProperty("status")]
+		[JsonPropertyName("status")]
 		public bool Status { get; set; }
 
 		/// <value>The status code of the error</value>
-		[JsonProperty("code", NullValueHandling = NullValueHandling.Ignore)]
+		[JsonPropertyName("code")]
 		[JsonConverter(typeof(ParseStringConverter))]
 		public long? Code { get; set; }
 
 		/// <value>The error message/ reason.</value>
-		[JsonProperty("message")]
+		[JsonPropertyName("message")]
 		public string Message { get; set; }
 	}
 }

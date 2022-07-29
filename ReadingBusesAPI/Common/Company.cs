@@ -15,14 +15,16 @@ namespace ReadingBusesAPI.Common
 		ReadingBuses,
 
 		/// <summary>
-		///     For Kennections services
-		/// </summary>
-		Kennections,
-
-		/// <summary>
 		///     For Newbury And District services
 		/// </summary>
 		NewburyAndDistrict,
+
+
+		/// <summary>
+		/// Thames Valley Buses (formely known as Courtney Buses) 
+		/// </summary>
+		ThamesValley,
+
 
 		/// <summary>
 		///     For any other operator which is new in the API and has not yet been officially supported in this library.

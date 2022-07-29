@@ -58,10 +58,6 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		{
 			Assert.ThrowsAsync<ReadingBusesApiExceptionMalformedQuery>(async () =>
 				await ReadingBuses.GetInstance().GpsController
-					.GetArchivedVehiclePositions(DateTime.Now.AddDays(-1), null));
-
-			Assert.ThrowsAsync<ReadingBusesApiExceptionMalformedQuery>(async () =>
-				await ReadingBuses.GetInstance().GpsController
 					.GetArchivedVehiclePositions(DateTime.Now.AddDays(10), new TimeSpan(5, 0, 0)));
 		}
 
@@ -72,7 +68,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		[Test]
 		public async Task GetLiveVehiclePositionsAsync()
 		{
-			LivePosition[] positions = await ReadingBuses.GetInstance().GpsController.GetLiveVehiclePositions();
+			LiveVehiclePosition[] positions = await ReadingBuses.GetInstance().GpsController.GetLiveVehiclePositions();
 			if (positions.Length != 0)
 			{
 				Assert.Pass();

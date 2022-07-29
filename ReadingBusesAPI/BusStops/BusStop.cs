@@ -4,8 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using ReadingBusesAPI.BusServices;
 using ReadingBusesAPI.Common;
 using ReadingBusesAPI.ErrorManagement;
@@ -19,12 +20,32 @@ namespace ReadingBusesAPI.BusStops
 	/// </summary>
 	public sealed class BusStop
 	{
+
 		/// <summary>
-		///     The default constructor used for parsing data automatically.
+		///     The default constructor, used only for JSON Parsing.
+		///     Will be made internal when System.Text.Json add support for internal constructors in a future update.
 		/// </summary>
-		internal BusStop()
+		[JsonConstructor]
+		[Obsolete("Do not use, will be made internal when system.text.json supports parsing in future updates.")]
+		public BusStop()
 		{
 		}
+
+		/// <summary>
+		/// Constructs a BusStop object from an intermediary bus stop object.
+		/// </summary>
+		/// <param name="intermediary">Intermediary bus stop.</param>
+		internal BusStop(BusStopIntermediary intermediary)
+		{
+			ActoCode = intermediary.ActoCode;
+			CommonName = intermediary.CommonName;
+			Latitude = intermediary.Latitude;
+			Longitude = intermediary.Longitude;
+			Bearing = intermediary.Bearing;
+			if(intermediary.GetService() != null)
+				ServiceObjects.Add(intermediary.GetService());
+		}
+
 
 		/// <summary>
 		///     Used to create a snub/ fake object for passing to function calls, if all you need to pass is an acto-code to the
@@ -41,35 +62,44 @@ namespace ReadingBusesAPI.BusStops
 		}
 
 		/// <value>The unique identifier for a bus stop.</value>
-		[JsonProperty("location_code")]
+		[JsonPropertyName("location_code")]
+		[JsonInclude]
 		public string ActoCode { get; internal set; }
 
 		/// <value>The public, easy to understand stop name.</value>
-		[JsonProperty("description")]
+		[JsonPropertyName("description")]
+		[JsonInclude]
 		public string CommonName { get; internal set; }
 
 		/// <value>The latitude of the bus stop</value>
-		[JsonProperty("latitude")]
+		[JsonPropertyName("latitude")]
+		[JsonInclude]
 		public string Latitude { get; internal set; }
 
 		/// <value>The longitude of the bus stop</value>
-		[JsonProperty("longitude")]
+		[JsonPropertyName("longitude")]
+		[JsonInclude]
 		public string Longitude { get; internal set; }
 
 		/// <value>The bearing of the bus stop</value>
-		[JsonProperty("bearing")]
+		[JsonPropertyName("bearing")]
+		[JsonInclude]
 		public string Bearing { get; internal set; }
 
-		/// <value>The services that travel to this stop, separated by '/'</value>
-		/// See
-		/// <see cref="BusStop.GetServices(Operators)" />
-		/// to get a list of Service Objects.
-		[JsonProperty("routes")]
-		public string ServicesString { get; internal set; }
+		/// <value>A reference to the bus services at this stop.</value>
+		[JsonInclude]
+		[JsonConverter(typeof(ParseServiceObjects))]
+		public List<BusService> ServiceObjects { get; internal set; } = new List<BusService>();
 
-		/// <value>The Brand/Group of buses that most frequently visit this stop. Such as Purple, for the Purple 17s.</value>
-		[JsonProperty("group_name")]
-		public string GroupName { get; internal set; }
+		/// <summary>
+		/// Combines two bus stops together that are the same, but report different services that stop at the them.
+		/// </summary>
+		/// <param name="otherStop">The other stop to merge with this one.</param>
+		internal void Merge(BusStopIntermediary otherStop)
+		{
+			ServiceObjects.Add(otherStop.GetService());
+		}
+
 
 		/// <summary>
 		///     Gets live data from a bus stop.
@@ -87,15 +117,7 @@ namespace ReadingBusesAPI.BusStops
 		/// <returns>A list of BusService Objects for services which visit this bus stop.</returns>
 		public BusService[] GetServices(Company busOperator)
 		{
-			string[] services = ServicesString.Split('/');
-			List<BusService> serviceObjects = new List<BusService>();
-
-			foreach (var service in services)
-			{
-				serviceObjects.Add(ReadingBuses.GetInstance().GetService(service, busOperator));
-			}
-
-			return serviceObjects.ToArray();
+			return ServiceObjects.Where(ser => ser.OperatorCode.Equals(busOperator)).ToArray();
 		}
 
 		/// <summary>
@@ -115,7 +137,7 @@ namespace ReadingBusesAPI.BusStops
 		/// </exception>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-		public Task<BusTimeTable[]> GetTimeTable(DateTime date)
+		public Task<Journey[]> GetTimeTable(DateTime date)
 		{
 			return BusTimeTable.GetTimeTable(null, date, this);
 		}
@@ -135,7 +157,7 @@ namespace ReadingBusesAPI.BusStops
 		/// </exception>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-		public Task<BusTimeTable[]> GetTimeTable(DateTime date, BusService service)
+		public Task<Journey[]> GetTimeTable(DateTime date, BusService service)
 		{
 			return BusTimeTable.GetTimeTable(service, date, this);
 		}
@@ -147,7 +169,7 @@ namespace ReadingBusesAPI.BusStops
 		/// </summary>
 		/// <param name="date">The date you want time table data for. This should be a date in the past.</param>
 		/// <returns></returns>
-		public Task<ArchivedBusTimeTable[]> GetArchivedTimeTable(DateTime date)
+		public Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date)
 		{
 			return ArchivedBusTimeTable.GetTimeTable(null, date, this, null);
 		}
@@ -163,7 +185,7 @@ namespace ReadingBusesAPI.BusStops
 		///     data for all services at this stop.
 		/// </param>
 		/// <returns></returns>
-		public Task<ArchivedBusTimeTable[]> GetArchivedTimeTable(DateTime date, BusService service)
+		public Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date, BusService service)
 		{
 			return ArchivedBusTimeTable.GetTimeTable(service, date, this, null);
 		}

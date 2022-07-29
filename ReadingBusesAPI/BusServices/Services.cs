@@ -9,7 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
 using ReadingBusesAPI.Common;
 using ReadingBusesAPI.ErrorManagement;
 
@@ -40,17 +40,17 @@ namespace ReadingBusesAPI.BusServices
 
 				try
 				{
-					newServicesData = JsonConvert.DeserializeObject<List<BusService>>(json)
+					newServicesData = JsonSerializer.Deserialize<List<BusService>>(json)
 						.OrderBy(p => Convert.ToInt32(Regex.Replace(p.ServiceId, "[^0-9.]", ""))).ToList();
 
 					// Save the JSON file for later use. 
 					if (ReadingBuses.Cache)
 					{
 						File.WriteAllText(CacheLocation,
-							JsonConvert.SerializeObject(newServicesData, Formatting.Indented));
+							JsonSerializer.Serialize(newServicesData, new JsonSerializerOptions { WriteIndented = true }));
 					}
 				}
-				catch (JsonSerializationException)
+				catch (JsonException)
 				{
 					ErrorManager.TryErrorMessageRetrieval(json);
 				}
@@ -70,10 +70,10 @@ namespace ReadingBusesAPI.BusServices
 
 				try
 				{
-					return JsonConvert.DeserializeObject<List<BusService>>(
+					return JsonSerializer.Deserialize<List<BusService>>(
 						File.ReadAllText(CacheLocation));
 				}
-				catch (JsonSerializationException)
+				catch (JsonException)
 				{
 					File.Delete(CacheLocation);
 					ReadingBuses.PrintWarning(

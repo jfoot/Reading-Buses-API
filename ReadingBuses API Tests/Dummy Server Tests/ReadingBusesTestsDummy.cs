@@ -61,7 +61,7 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 		[TestCase("712")]
 		public async Task GetHistoricGpsDataAsync(string vehicleId)
 		{
-			ArchivedBusTimeTable[] temp = await ReadingBuses.GetInstance()
+			HistoricJourney[] temp = await ReadingBuses.GetInstance()
 				.GetVehicleTrackingHistory(DateTime.Now.AddDays(-1), vehicleId);
 			if (temp.Length != 0)
 			{

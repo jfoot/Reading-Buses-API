@@ -6,41 +6,29 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>ReadingBusesAPI</PackageId>
-    <Version>2.1.0</Version>
-    <AssemblyVersion>2.1.0.0</AssemblyVersion>
-    <FileVersion>2.1.0.0</FileVersion>
+    <Version>3.0.0</Version>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <FileVersion>3.0.0.0</FileVersion>
     <NeutralLanguage>en-GB</NeutralLanguage>
-    <PackageReleaseNotes>* Converted to .Net Standard for widder usage across .net applications!
-* Altered Naming of some Namespaces to enforce proper conventions.
-* Added new get all services by operator type.
-* Added Support for the Timetable Journeys API.
-* Added Support for the Tracking History API.
-* Added Support for the Vehicle Position History API.
-* Added Support for the Timetabled Journeys API.
-* Added Support for the Live Vehicle Position API.
-* Added Support for multiple different operator types.
-* Added proper Exception Handling and improved information provided about the cause of the error.
-* Deprecated printing functions
-* Improved Asynchronous Activities for better performance
-* Added in unit tests for improved quality.
-* Created new documentation and updated examples
-* Fixed bug caused when two services had the same ID from different operators.
-* Implemented namespaces for better separation of classes.
-* General code clean up for ease of use and performance.</PackageReleaseNotes>
+    <PackageReleaseNotes>* Added support for the new Reading Buses API from R2P group.
+* Added ability to request inbound, outbound or both line patterns for a service.
+* Removed Json.NET (Newtsonsoft) in favour of system.text.json library.
+* </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/jfoot/Reading-Buses-API</RepositoryUrl>
     <PackageIcon>LogoHighRes.jpg</PackageIcon>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>Reading Buses Open Data API</PackageTags>
     <PackageProjectUrl>https://github.com/jfoot/Reading-Buses-API</PackageProjectUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <Description>A C#, .net Standard Library for the Reading Buses API (http://rtl2.ods-live.co.uk/cms/apiservice), available to use in your C# console, UWP, WPF or Win Form Applications.
+    <Description>A C# .NET Standard Library for the Reading Buses API (https://reading-opendata.r2p.com/), available to use in your C# console, UWP, WPF or Win Form Applications.
 
-Supports : List of Bus Stops, Live Vehicle Positions, Stop Predictions, List of Services, Line Patterns, Timetabled Journeys, Tracking History and the Vehicle Position History API.</Description>
-    <Copyright>Jonathan Foot © 2020</Copyright>
+Supports : List of Bus Stops, Live Vehicle Positions, Live Journey Details, Stop Predictions, List of Lines, Line Patterns, Timetabled Journeys, Tracking History and the Vehicle Position History API.</Description>
+    <Copyright>Jonathan Foot © 2022</Copyright>
     <Authors>Jonathan Foot</Authors>
     <Company>Jonathan Foot</Company>
     <Product>Reading Buses API</Product>
     <ApplicationIcon>LogoHighRes.ico</ApplicationIcon>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -63,11 +51,7 @@ Supports : List of Bus Stops, Live Vehicle Positions, Stop Predictions, List of 
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.Text.Json" Version="6.0.5" />
   </ItemGroup>
 
 </Project>

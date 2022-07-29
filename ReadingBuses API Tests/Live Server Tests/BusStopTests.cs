@@ -83,7 +83,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		{
 			BusStop stop = ReadingBuses.GetInstance().GetLocation("039025980002");
 
-			ArchivedBusTimeTable[] timeTableRecords =
+			HistoricJourney[] timeTableRecords =
 				await stop.GetArchivedTimeTable(DateTime.Now.AddDays(-1), new BusService("17"));
 
 			foreach (var record in timeTableRecords)
@@ -201,7 +201,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		{
 			BusStop stop = ReadingBuses.GetInstance().GetLocation("039025980002");
 
-			BusTimeTable[] timeTableRecords = await stop.GetTimeTable(DateTime.Now, new BusService("17"));
+			Journey[] timeTableRecords = await stop.GetTimeTable(DateTime.Now, new BusService("17"));
 
 			foreach (var record in timeTableRecords)
 			{
