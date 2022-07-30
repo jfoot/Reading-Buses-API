@@ -45,7 +45,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 			BusService service = new BusService("22");
 
 			Assert.AreEqual("22", service.ServiceId);
-			Assert.AreEqual(Company.Other, service.OperatorCode);
+			Assert.AreEqual(Company.Other, service.Company);
 		}
 
 
@@ -190,7 +190,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 			BusService service = new BusService("22", Company.ReadingBuses);
 
 			Assert.AreEqual("22", service.ServiceId);
-			Assert.AreEqual(Company.ReadingBuses, service.OperatorCode);
+			Assert.AreEqual(Company.ReadingBuses, service.Company);
 		}
 	}
 }

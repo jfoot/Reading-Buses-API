@@ -102,7 +102,7 @@ namespace ReadingBusesAPI.Common
 
 				writer.WriteStartObject();
 				writer.WriteString(ServiceId, service.ServiceId);
-				EnumToString(service.OperatorCode, writer);
+				EnumToString(service.Company, writer);
 				writer.WriteEndObject();
 			}
 

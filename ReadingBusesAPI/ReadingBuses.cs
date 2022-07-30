@@ -67,7 +67,7 @@ namespace ReadingBusesAPI
 		/// <value>Keeps track of if cache data is being used or not</value>
 		internal static bool Cache { get; private set; } = true;
 
-		/// <value>Keeps track of if archieved timetable cache data is being used or not</value>
+		/// <value>Keeps track of if archived timetable & GPS cache data is being used or not</value>
 		internal static bool ArchiveCache { get; private set; } = true;
 
 		/// <value>Keeps track of if warnings are being outputted to console or not.</value>
@@ -94,7 +94,7 @@ namespace ReadingBusesAPI
 		{
 			try
 			{
-				//Creates the folders to store cache infromation if needed.
+				//Creates the folders to store cache information if needed.
 				CacheWriter.CreateCacheDirectory();
 
 				//Ordering here is important, must get services before locations.
@@ -118,9 +118,10 @@ namespace ReadingBusesAPI
 		}
 
 		/// <summary>
-		///     Sets if you want to cache data into local files or always get new data from the API, which will take longer.
+		///     Sets if you want to cache services and stop data into local files or always get new data from the API, which will take longer.
+		///		This cache data will be kept for a specific cache length before being regenerated. 
 		/// </summary>
-		/// <param name="value">True or False for if you want to get Cache or live data.</param>
+		/// <param name="value">True (default) or False for if you want to get Cache or live data.</param>
 		/// <exception cref="ReadingBusesApiExceptionMalformedQuery">
 		///     Thrown if you attempt to change the cache options after the library has
 		///     been instantiated
@@ -141,8 +142,9 @@ namespace ReadingBusesAPI
 
 		/// <summary>
 		///     Sets if you want to cache historical/archive timetable and location data into local files or always get new data from the API, which will take longer.
+		///		This data would never change as is historical, recommended to keep true (default), unless space is an issue.
 		/// </summary>
-		/// <param name="value">True or False for if you want to get Cache or live data.</param>
+		/// <param name="value">True (default) or False for if you want to get Cache or live data.</param>
 		/// <exception cref="ReadingBusesApiExceptionMalformedQuery">
 		///     Thrown if you attempt to change the cache options after the library has
 		///     been instantiated
@@ -202,7 +204,8 @@ namespace ReadingBusesAPI
 		public static void InvalidateCache() => Directory.Delete(CacheWriter.CACHE_FOLDER, true);
 
 		/// <summary>
-		///     Deletes any archieved Cache data stored.
+		///     Deletes any archived Cache data stored. This is Historical timetable, journey and gps tracking data.
+		///		Any data which would not change if re-requested.
 		/// </summary>
 		public static void InvalidateArchiveCache() => Directory.Delete(CacheWriter.ARCHIVED_CACHE_FOLDER, true);
 

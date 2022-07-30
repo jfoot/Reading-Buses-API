@@ -9,6 +9,9 @@ using System.Text.Json.Serialization;
 
 namespace ReadingBusesAPI.TimeTable
 {
+	/// <summary>
+	///		Represents a single instance of a bus visiting at a specific bus stop in the past. 
+	/// </summary>
 	public class HistoricVisit : Visit
 	{
 		/// <summary>

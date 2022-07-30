@@ -101,10 +101,10 @@ namespace ReadingBusesAPI.JourneyDetails
 		/// Gets live journey tracking information for this vehicle.
 		/// </summary>
 		/// <returns>The live journey tracing information for this vehicle.</returns>
-		/// <remarks></remarks>
 		public async Task<HistoricJourney[]> GetLiveJourneyData()
 		{
-			return await LiveJourneyDetailsApi.GetLiveJourney(null, new Regex("[^0-9]").Replace(VehicleRef, ""));
+			return (await LiveJourneyDetailsApi.GetLiveJourney(null, new Regex("[^0-9]").Replace(VehicleRef, "")))
+				.Where(journey => journey.Company.Equals(OperatorCode)).ToArray();
 		}
 		
 

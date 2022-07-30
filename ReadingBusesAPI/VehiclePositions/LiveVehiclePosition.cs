@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ReadingBusesAPI.BusServices;
@@ -50,7 +51,8 @@ namespace ReadingBusesAPI.VehiclePositions
 		/// <returns>The live journey tracing information for this vehicle.</returns>
 		public async Task<HistoricJourney[]> GetLiveJourneyData()
 		{
-			return await LiveJourneyDetailsApi.GetLiveJourney(null, Vehicle);
+			return (await LiveJourneyDetailsApi.GetLiveJourney(null, Vehicle))
+				.Where(veh => veh.Company.Equals(Company)).ToArray();
 		}
 
 	}

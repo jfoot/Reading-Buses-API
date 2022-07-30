@@ -20,47 +20,6 @@ namespace ReadingBusesAPI.BusStops
 	/// </summary>
 	public sealed class BusStop
 	{
-
-		/// <summary>
-		///     The default constructor, used only for JSON Parsing.
-		///     Will be made internal when System.Text.Json add support for internal constructors in a future update.
-		/// </summary>
-		[JsonConstructor]
-		[Obsolete("Do not use, will be made internal when system.text.json supports parsing in future updates.")]
-		public BusStop()
-		{
-		}
-
-		/// <summary>
-		/// Constructs a BusStop object from an intermediary bus stop object.
-		/// </summary>
-		/// <param name="intermediary">Intermediary bus stop.</param>
-		internal BusStop(BusStopIntermediary intermediary)
-		{
-			ActoCode = intermediary.ActoCode;
-			CommonName = intermediary.CommonName;
-			Latitude = intermediary.Latitude;
-			Longitude = intermediary.Longitude;
-			Bearing = intermediary.Bearing;
-			if(intermediary.GetService() != null)
-				ServiceObjects.Add(intermediary.GetService());
-		}
-
-
-		/// <summary>
-		///     Used to create a snub/ fake object for passing to function calls, if all you need to pass is an acto-code to the
-		///     function.
-		/// </summary>
-		/// <param name="actoCode">ID of the bus stop.</param>
-		/// <remarks>
-		///     Unless you are doing something very strange, you probably should not need to use this, it is more for testing
-		///     purposes.
-		/// </remarks>
-		public BusStop(string actoCode)
-		{
-			ActoCode = actoCode;
-		}
-
 		/// <value>The unique identifier for a bus stop.</value>
 		[JsonPropertyName("location_code")]
 		[JsonInclude]
@@ -95,6 +54,46 @@ namespace ReadingBusesAPI.BusStops
 		[JsonInclude]
 		[JsonConverter(typeof(ParseServiceObjects))]
 		public List<BusService> ServiceObjects { get; internal set; } = new List<BusService>();
+
+
+		/// <summary>
+		///     The default constructor, used only for JSON Parsing.
+		///     Will be made internal when System.Text.Json add support for internal constructors in a future update.
+		/// </summary>
+		[JsonConstructor]
+		[Obsolete("Do not use, will be made internal when system.text.json supports parsing in future updates.")]
+		public BusStop()
+		{
+		}
+
+		/// <summary>
+		/// Constructs a BusStop object from an intermediary bus stop object.
+		/// </summary>
+		/// <param name="intermediary">Intermediary bus stop.</param>
+		internal BusStop(BusStopIntermediary intermediary)
+		{
+			ActoCode = intermediary.ActoCode;
+			CommonName = intermediary.CommonName;
+			Latitude = intermediary.Latitude;
+			Longitude = intermediary.Longitude;
+			Bearing = intermediary.Bearing;
+			if (intermediary.GetService() != null)
+				ServiceObjects.Add(intermediary.GetService());
+		}
+
+		/// <summary>
+		///     Used to create a snub/ fake object for passing to function calls, if all you need to pass is an acto-code to the
+		///     function.
+		/// </summary>
+		/// <param name="actoCode">ID of the bus stop.</param>
+		/// <remarks>
+		///     Unless you are doing something very strange, you probably should not need to use this, it is more for testing
+		///     purposes.
+		/// </remarks>
+		public BusStop(string actoCode)
+		{
+			ActoCode = actoCode;
+		}
 
 		/// <summary>
 		/// Combines two bus stops together that are the same, but report different services that stop at the them.

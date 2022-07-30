@@ -158,7 +158,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 
 			foreach (var service in services)
 			{
-				if (!service.OperatorCode.Equals(Company.ReadingBuses))
+				if (!service.Company.Equals(Company.ReadingBuses))
 				{
 					Assert.Fail("Not all services matched the specified operator.");
 				}

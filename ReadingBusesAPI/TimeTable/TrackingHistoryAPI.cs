@@ -50,7 +50,7 @@ namespace ReadingBusesAPI.TimeTable
 			string cacheLocation = CacheWriter.TrackingHistory(service, location, date, vehicle);
 			string liveURL = UrlConstructor.TrackingHistory(service, location, date, vehicle);
 
-			return await CacheWriter.ReadOrCreateCache<HistoricJourney[]>(cacheLocation, liveURL, ReadingBuses.ArchiveCache);
+			return (await CacheWriter.ReadOrCreateCache<HistoricJourney[]>(cacheLocation, liveURL, ReadingBuses.ArchiveCache));
 		}
 	}
 }

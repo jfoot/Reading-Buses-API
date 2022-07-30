@@ -58,7 +58,7 @@ namespace ReadingBusesAPI.BusServices
 		public BusService(string serviceNumber)
 		{
 			ServiceId = serviceNumber;
-			OperatorCode = Company.Other;
+			Company = Company.Other;
 		}
 
 		/// <summary>
@@ -74,7 +74,7 @@ namespace ReadingBusesAPI.BusServices
 		public BusService(string serviceNumber, Company operators)
 		{
 			ServiceId = serviceNumber;
-			OperatorCode = operators;
+			Company = operators;
 		}
 
 		/// <value>
@@ -91,11 +91,11 @@ namespace ReadingBusesAPI.BusServices
 		public string BrandName { get; internal set; }
 
 
-		/// <value>The operator enum value.</value>
+		/// <value>The operator of the service enum value.</value>
 		[JsonPropertyName("operator_code")]
 		[JsonConverter(typeof(ParseOperatorConverter))]
 		[JsonInclude]
-		public Company OperatorCode { get; internal set; }
+		public Company Company { get; internal set; }
 
 
 
@@ -119,7 +119,7 @@ namespace ReadingBusesAPI.BusServices
 					//Then order it by the display order.
 					//Then map it into a tuple, of Acto-code along with if it is outbound or not.
 					_stops = JsonSerializer.Deserialize<List<StopPattern>>(json)
-						.Where(b => b.OperatorCode == OperatorCode).OrderBy(b => b.Order).Select(b => (b.ActoCode, b.IsOutbound())).ToList();
+						.Where(b => b.OperatorCode.Equals(Company)).OrderBy(b => b.Order).Select(b => (b.ActoCode, b.IsOutbound())).ToList();
 				}
 				catch (JsonException)
 				{
@@ -220,7 +220,7 @@ namespace ReadingBusesAPI.BusServices
 		/// <returns>An array of GPS data points for all vehicles currently operating on this service.</returns>
 		public async Task<LiveVehiclePosition[]> GetLivePositions() =>
 			(await ReadingBuses.GetInstance().GpsController.GetLiveVehiclePositions().ConfigureAwait(false)).Where(o =>
-				string.Equals(o.ServiceId, ServiceId, StringComparison.CurrentCultureIgnoreCase)).ToArray();
+				string.Equals(o.ServiceId, ServiceId, StringComparison.CurrentCultureIgnoreCase) && o.Company.Equals(Company)).ToArray();
 
 
 		/// <summary>
@@ -229,7 +229,8 @@ namespace ReadingBusesAPI.BusServices
 		/// <returns>The live journey tracing information for this service.</returns>
 		public async Task<HistoricJourney[]> GetLiveJourneyData()
 		{
-			return await LiveJourneyDetailsApi.GetLiveJourney(this, null);
+			return (await LiveJourneyDetailsApi.GetLiveJourney(this, null))
+				.Where(ser => ser.Company.Equals(Company)).ToArray();
 		}
 
 
@@ -245,9 +246,10 @@ namespace ReadingBusesAPI.BusServices
 		/// </exception>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-		public Task<Journey[]> GetTimeTable(DateTime date)
+		public async Task<Journey[]> GetTimeTable(DateTime date)
 		{
-			return ScheduledJourneysApi.GetTimeTable(this, date, null);
+			return (await ScheduledJourneysApi.GetTimeTable(this, date, null))
+				.Where(ser => ser.Company.Equals(Company)).ToArray();
 		}
 
 
@@ -265,9 +267,10 @@ namespace ReadingBusesAPI.BusServices
 		/// </exception>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-		public Task<Journey[]> GetTimeTable(DateTime date, BusStop location)
+		public async Task<Journey[]> GetTimeTable(DateTime date, BusStop location)
 		{
-			return ScheduledJourneysApi.GetTimeTable(this, date, location);
+			return (await ScheduledJourneysApi.GetTimeTable(this, date, location))
+				.Where(ser => ser.Company.Equals(Company)).ToArray();
 		}
 
 
@@ -288,9 +291,10 @@ namespace ReadingBusesAPI.BusServices
 		/// </exception>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-		public Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date)
+		public async Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date)
 		{
-			return TrackingHistoryApi.GetTimeTable(this, date, null, null);
+			return (await TrackingHistoryApi.GetTimeTable(this, date, null, null))
+				.Where(ser => ser.Company.Equals(Company)).ToArray();
 		}
 
 
@@ -310,9 +314,10 @@ namespace ReadingBusesAPI.BusServices
 		/// </exception>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-		public Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date, BusStop location)
+		public async Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date, BusStop location)
 		{
-			return TrackingHistoryApi.GetTimeTable(this, date, location, null);
+			return (await TrackingHistoryApi.GetTimeTable(this, date, location, null))
+				.Where(ser => ser.Company.Equals(Company)).ToArray();
 		}
 
 		#endregion
