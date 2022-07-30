@@ -78,7 +78,7 @@ BusStop[] Locations = Controller.GetLocations();
 ```
 ***To get location based on Acto-Code (Bus Stop ID)***
 ```c#
-BusStop stop = Controller.GetLocation("33245365434");
+BusStop stop = Controller.GetLocation("039028150002");
 ```
 
 ***To get live stop departure information***

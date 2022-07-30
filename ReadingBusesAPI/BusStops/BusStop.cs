@@ -121,7 +121,7 @@ namespace ReadingBusesAPI.BusStops
 		/// <returns>A list of BusService Objects for services which visit this bus stop.</returns>
 		public BusService[] GetServices(Company busOperator)
 		{
-			return ServiceObjects.Where(ser => ser.OperatorCode.Equals(busOperator)).ToArray();
+			return ServiceObjects.Where(ser => ser.Company.Equals(busOperator)).ToArray();
 		}
 
 		/// <summary>
@@ -189,9 +189,37 @@ namespace ReadingBusesAPI.BusStops
 		///     data for all services at this stop.
 		/// </param>
 		/// <returns></returns>
-		public Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date, BusService service)
+		public async Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date, BusService service)
 		{
-			return TrackingHistoryApi.GetTimeTable(service, date, this, null);
+			return (await TrackingHistoryApi.GetTimeTable(service, date, this, null))
+				.Where(ser => ser.GetService().Equals(service)).ToArray();
+		}
+
+
+
+		/// <summary>
+		/// States if two objects are the same as each other or not.
+		/// </summary>
+		/// <param name="obj">Other bus stop object.</param>
+		/// <returns>True if acto codes match.</returns>
+		public override bool Equals(object obj)
+		{
+			var item = obj as BusStop;
+			if (item == null)
+			{
+				return false;
+			}
+
+			return ActoCode.Equals(item.ActoCode);
+		}
+
+		/// <summary>
+		/// Hashcode of the object is based on the acto code as this uniquely identifies the stop. 
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode()
+		{
+			return ActoCode.GetHashCode();
 		}
 	}
 }

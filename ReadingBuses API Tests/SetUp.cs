@@ -20,6 +20,7 @@ namespace ReadingBuses_API_Tests
 		{
 			//Do not use any cached data always get fresh data.
 			ReadingBuses.SetCache(false);
+			ReadingBuses.SetArchiveCache(false);
 			//Output any errors to logs for debugging them.
 			ReadingBuses.SetFullError(true);
 			//Output any warnings to logs for debugging them if needed.

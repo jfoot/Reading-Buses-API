@@ -382,7 +382,7 @@ namespace ReadingBusesAPI
 		/// <param name="operatorCode">The operator/ company to filter by.</param>
 		/// <returns>An array of Bus Services which are of the brand name specified.</returns>
 		public BusService[] GetServices(Company operatorCode) => _services
-			.Where(o => o.OperatorCode == operatorCode).ToArray();
+			.Where(o => o.Company == operatorCode).ToArray();
 
 
 		/// <summary>
@@ -431,7 +431,7 @@ namespace ReadingBusesAPI
 			{
 				return _services.Single(o =>
 					string.Equals(o.ServiceId, serviceNumber, StringComparison.CurrentCultureIgnoreCase) &&
-					o.OperatorCode.Equals(operators));
+					o.Company.Equals(operators));
 			}
 
 			throw new ReadingBusesApiExceptionMalformedQuery(
@@ -456,7 +456,7 @@ namespace ReadingBusesAPI
 		/// <returns>True or False for if a service is the API feed or not.</returns>
 		public bool IsService(string serviceNumber, Company operators) => _services.Any(o =>
 			string.Equals(o.ServiceId, serviceNumber, StringComparison.CurrentCultureIgnoreCase) &&
-			o.OperatorCode.Equals(operators));
+			o.Company.Equals(operators));
 
 
 		/// <summary>

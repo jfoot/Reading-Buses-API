@@ -321,5 +321,30 @@ namespace ReadingBusesAPI.BusServices
 		}
 
 		#endregion
+
+		/// <summary>
+		/// States if two objects are the same as each other or not.
+		/// </summary>
+		/// <param name="obj">Other bus service object.</param>
+		/// <returns>True if service id and bus operator match.</returns>
+		public override bool Equals(object obj)
+		{
+			var item = obj as BusService;
+			if (item == null)
+			{
+				return false;
+			}
+
+			return ServiceId.Equals(item.ServiceId) && Company.Equals(item.Company);
+		}
+
+		/// <summary>
+		/// Hashcode of the object is based on the service id and the operating company as this uniquely identifies the service. 
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode()
+		{
+			return ServiceId.GetHashCode() + Company.GetHashCode();
+		}
 	}
 }
