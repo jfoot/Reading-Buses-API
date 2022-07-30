@@ -5,11 +5,14 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using ReadingBusesAPI.BusServices;
 using ReadingBusesAPI.BusStops;
 using ReadingBusesAPI.Common;
 using ReadingBusesAPI.ErrorManagement;
+using ReadingBusesAPI.TimeTable;
 
 namespace ReadingBusesAPI.JourneyDetails
 {
@@ -32,7 +35,7 @@ namespace ReadingBusesAPI.JourneyDetails
 		public string DestinationName { get; internal set; }
 
 		/// <value>Holds scheduled departure time of the bus at the location.</value>
-		public DateTime ScheduledDeparture { get; internal set; }
+		public DateTime? ScheduledDeparture { get; internal set; }
 
 		/// <value>Holds the estimated/ expected departure time of the bus, if Null no estimated time exists yet.</value>
 		public DateTime? ExpectedDeparture { get; internal set; }
@@ -71,7 +74,7 @@ namespace ReadingBusesAPI.JourneyDetails
 		/// <summary>
 		/// Gets the destination bus stop object. Null if unknown.
 		/// </summary>
-		/// <returns>Bus Stop for where this vehicle is destinating.</returns>
+		/// <returns>Bus Stop for where this vehicle is destining.</returns>
 		public BusStop GetDestinationStop()
 		{
 			if (ReadingBuses.GetInstance().IsLocation(_destination))
@@ -95,12 +98,28 @@ namespace ReadingBusesAPI.JourneyDetails
 		}
 
 		/// <summary>
+		/// Gets live journey tracking information for this vehicle.
+		/// </summary>
+		/// <returns>The live journey tracing information for this vehicle.</returns>
+		public async Task<HistoricJourney[]> GetLiveJourneyData()
+		{
+			return (await LiveJourneyDetailsApi.GetLiveJourney(null, new Regex("[^0-9]").Replace(VehicleRef, "")))
+				.Where(journey => journey.Company.Equals(OperatorCode)).ToArray();
+		}
+		
+
+		/// <summary>
 		///     Returns the number of min till bus is due in a min format.
 		/// </summary>
 		/// <returns>The number of min until the bus is due to arrive in string format.</returns>
 		public string DisplayTime()
 		{
-			return ((ExpectedDeparture ?? ScheduledDeparture) - DateTime.Now).TotalMinutes.ToString("0") + " mins";
+			if (ScheduledDeparture != null) 
+				return ((ExpectedDeparture ?? (DateTime)ScheduledDeparture) - DateTime.Now).TotalMinutes.ToString("0") + " mins";
+			if(ScheduledArrival != null) 
+				return ((ExpectedArrival ?? (DateTime)ScheduledArrival) - DateTime.Now).TotalMinutes.ToString("0") + " mins";
+
+			return "";
 		}
 
 		/// <summary>
@@ -109,7 +128,11 @@ namespace ReadingBusesAPI.JourneyDetails
 		/// <returns>The number of min till the bus is due to arrive.</returns>
 		public double ArrivalMin()
 		{
-			return ((ExpectedDeparture ?? ScheduledDeparture) - DateTime.Now).TotalMinutes;
+			if (ScheduledDeparture != null)
+					return ((ExpectedDeparture ?? (DateTime)ScheduledDeparture) - DateTime.Now).TotalMinutes;
+			if (ScheduledArrival != null)
+				return ((ExpectedArrival ?? (DateTime)ScheduledArrival) - DateTime.Now).TotalMinutes;
+			return 0;
 		}
 
 		/// <summary>
@@ -127,13 +150,14 @@ namespace ReadingBusesAPI.JourneyDetails
 		{
 			try
 			{
+				var d = UrlConstructor.StopPredictions(actoCode);
 				XDocument doc = XDocument.Load(UrlConstructor.StopPredictions(actoCode));
 				XNamespace ns = doc.Root.GetDefaultNamespace();
 				var arrivals = doc.Descendants(ns + "MonitoredStopVisit").Select(x => new LiveRecord()
 				{
 					ServiceNumber = (string)x.Descendants(ns + "LineRef").FirstOrDefault(),
 					DestinationName = (string)x.Descendants(ns + "DestinationName").FirstOrDefault(),
-					ScheduledDeparture = (DateTime)x.Descendants(ns + "AimedDepartureTime").FirstOrDefault(),
+					ScheduledDeparture = (DateTime?)x.Descendants(ns + "AimedDepartureTime").FirstOrDefault(),
 					ExpectedDeparture = (DateTime?)x.Descendants(ns + "ExpectedDepartureTime").FirstOrDefault(),
 					ScheduledArrival = (DateTime?)x.Descendants(ns + "AimedArrivalTime").FirstOrDefault(),
 					ExpectedArrival = (DateTime?)x.Descendants(ns + "ExpectedArrivalTime").FirstOrDefault(),

@@ -20,47 +20,6 @@ namespace ReadingBusesAPI.BusStops
 	/// </summary>
 	public sealed class BusStop
 	{
-
-		/// <summary>
-		///     The default constructor, used only for JSON Parsing.
-		///     Will be made internal when System.Text.Json add support for internal constructors in a future update.
-		/// </summary>
-		[JsonConstructor]
-		[Obsolete("Do not use, will be made internal when system.text.json supports parsing in future updates.")]
-		public BusStop()
-		{
-		}
-
-		/// <summary>
-		/// Constructs a BusStop object from an intermediary bus stop object.
-		/// </summary>
-		/// <param name="intermediary">Intermediary bus stop.</param>
-		internal BusStop(BusStopIntermediary intermediary)
-		{
-			ActoCode = intermediary.ActoCode;
-			CommonName = intermediary.CommonName;
-			Latitude = intermediary.Latitude;
-			Longitude = intermediary.Longitude;
-			Bearing = intermediary.Bearing;
-			if(intermediary.GetService() != null)
-				ServiceObjects.Add(intermediary.GetService());
-		}
-
-
-		/// <summary>
-		///     Used to create a snub/ fake object for passing to function calls, if all you need to pass is an acto-code to the
-		///     function.
-		/// </summary>
-		/// <param name="actoCode">ID of the bus stop.</param>
-		/// <remarks>
-		///     Unless you are doing something very strange, you probably should not need to use this, it is more for testing
-		///     purposes.
-		/// </remarks>
-		public BusStop(string actoCode)
-		{
-			ActoCode = actoCode;
-		}
-
 		/// <value>The unique identifier for a bus stop.</value>
 		[JsonPropertyName("location_code")]
 		[JsonInclude]
@@ -86,10 +45,55 @@ namespace ReadingBusesAPI.BusStops
 		[JsonInclude]
 		public string Bearing { get; internal set; }
 
+		/// <value>The bus stop bay number, may be null if not applicable.</value>
+		[JsonPropertyName("bay_no")]
+		[JsonInclude]
+		public string BayNumber { get; internal set; }
+
 		/// <value>A reference to the bus services at this stop.</value>
 		[JsonInclude]
 		[JsonConverter(typeof(ParseServiceObjects))]
 		public List<BusService> ServiceObjects { get; internal set; } = new List<BusService>();
+
+
+		/// <summary>
+		///     The default constructor, used only for JSON Parsing.
+		///     Will be made internal when System.Text.Json add support for internal constructors in a future update.
+		/// </summary>
+		[JsonConstructor]
+		[Obsolete("Do not use, will be made internal when system.text.json supports parsing in future updates.")]
+		public BusStop()
+		{
+		}
+
+		/// <summary>
+		/// Constructs a BusStop object from an intermediary bus stop object.
+		/// </summary>
+		/// <param name="intermediary">Intermediary bus stop.</param>
+		internal BusStop(BusStopIntermediary intermediary)
+		{
+			ActoCode = intermediary.ActoCode;
+			CommonName = intermediary.CommonName;
+			Latitude = intermediary.Latitude;
+			Longitude = intermediary.Longitude;
+			Bearing = intermediary.Bearing;
+			if (intermediary.GetService() != null)
+				ServiceObjects.Add(intermediary.GetService());
+		}
+
+		/// <summary>
+		///     Used to create a snub/ fake object for passing to function calls, if all you need to pass is an acto-code to the
+		///     function.
+		/// </summary>
+		/// <param name="actoCode">ID of the bus stop.</param>
+		/// <remarks>
+		///     Unless you are doing something very strange, you probably should not need to use this, it is more for testing
+		///     purposes.
+		/// </remarks>
+		public BusStop(string actoCode)
+		{
+			ActoCode = actoCode;
+		}
 
 		/// <summary>
 		/// Combines two bus stops together that are the same, but report different services that stop at the them.
@@ -117,7 +121,7 @@ namespace ReadingBusesAPI.BusStops
 		/// <returns>A list of BusService Objects for services which visit this bus stop.</returns>
 		public BusService[] GetServices(Company busOperator)
 		{
-			return ServiceObjects.Where(ser => ser.OperatorCode.Equals(busOperator)).ToArray();
+			return ServiceObjects.Where(ser => ser.Company.Equals(busOperator)).ToArray();
 		}
 
 		/// <summary>
@@ -139,7 +143,7 @@ namespace ReadingBusesAPI.BusStops
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
 		public Task<Journey[]> GetTimeTable(DateTime date)
 		{
-			return BusTimeTable.GetTimeTable(null, date, this);
+			return ScheduledJourneysApi.GetTimeTable(null, date, this);
 		}
 
 
@@ -159,7 +163,7 @@ namespace ReadingBusesAPI.BusStops
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
 		public Task<Journey[]> GetTimeTable(DateTime date, BusService service)
 		{
-			return BusTimeTable.GetTimeTable(service, date, this);
+			return ScheduledJourneysApi.GetTimeTable(service, date, this);
 		}
 
 
@@ -171,7 +175,7 @@ namespace ReadingBusesAPI.BusStops
 		/// <returns></returns>
 		public Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date)
 		{
-			return ArchivedBusTimeTable.GetTimeTable(null, date, this, null);
+			return TrackingHistoryApi.GetTimeTable(null, date, this, null);
 		}
 
 
@@ -185,9 +189,37 @@ namespace ReadingBusesAPI.BusStops
 		///     data for all services at this stop.
 		/// </param>
 		/// <returns></returns>
-		public Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date, BusService service)
+		public async Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date, BusService service)
 		{
-			return ArchivedBusTimeTable.GetTimeTable(service, date, this, null);
+			return (await TrackingHistoryApi.GetTimeTable(service, date, this, null))
+				.Where(ser => ser.GetService().Equals(service)).ToArray();
+		}
+
+
+
+		/// <summary>
+		/// States if two objects are the same as each other or not.
+		/// </summary>
+		/// <param name="obj">Other bus stop object.</param>
+		/// <returns>True if acto codes match.</returns>
+		public override bool Equals(object obj)
+		{
+			var item = obj as BusStop;
+			if (item == null)
+			{
+				return false;
+			}
+
+			return ActoCode.Equals(item.ActoCode);
+		}
+
+		/// <summary>
+		/// Hashcode of the object is based on the acto code as this uniquely identifies the stop. 
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode()
+		{
+			return ActoCode.GetHashCode();
 		}
 	}
 }

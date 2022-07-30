@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using ReadingBusesAPI.BusStops;
 using ReadingBusesAPI.Common;
 using ReadingBusesAPI.ErrorManagement;
+using ReadingBusesAPI.JourneyDetails;
 using ReadingBusesAPI.TimeTable;
 using ReadingBusesAPI.VehiclePositions;
 
@@ -57,7 +58,7 @@ namespace ReadingBusesAPI.BusServices
 		public BusService(string serviceNumber)
 		{
 			ServiceId = serviceNumber;
-			OperatorCode = Company.Other;
+			Company = Company.Other;
 		}
 
 		/// <summary>
@@ -73,7 +74,7 @@ namespace ReadingBusesAPI.BusServices
 		public BusService(string serviceNumber, Company operators)
 		{
 			ServiceId = serviceNumber;
-			OperatorCode = operators;
+			Company = operators;
 		}
 
 		/// <value>
@@ -90,11 +91,11 @@ namespace ReadingBusesAPI.BusServices
 		public string BrandName { get; internal set; }
 
 
-		/// <value>The operator enum value.</value>
+		/// <value>The operator of the service enum value.</value>
 		[JsonPropertyName("operator_code")]
 		[JsonConverter(typeof(ParseOperatorConverter))]
 		[JsonInclude]
-		public Company OperatorCode { get; internal set; }
+		public Company Company { get; internal set; }
 
 
 
@@ -117,8 +118,8 @@ namespace ReadingBusesAPI.BusServices
 					//Goes through the results, filters out anything which isn't from the same operator
 					//Then order it by the display order.
 					//Then map it into a tuple, of Acto-code along with if it is outbound or not.
-					_stops = JsonSerializer.Deserialize<List<StopPatteren>>(json)
-						.Where(b => b.OperatorCode == OperatorCode).OrderBy(b => b.Order).Select(b => (b.ActoCode, b.IsOutbound())).ToList();
+					_stops = JsonSerializer.Deserialize<List<StopPattern>>(json)
+						.Where(b => b.OperatorCode.Equals(Company)).OrderBy(b => b.Order).Select(b => (b.ActoCode, b.IsOutbound())).ToList();
 				}
 				catch (JsonException)
 				{
@@ -147,7 +148,7 @@ namespace ReadingBusesAPI.BusServices
 		/// <summary>
 		///  Gets an array of acto-codes for the bus stops that the services visits.
 		/// </summary>
-		/// <param name="outBound">Do you want outbound acto-codes or inbound.</param>
+		/// <param name="direction">Do you want outbound acto-codes or inbound.</param>
 		/// <returns></returns>
 		public async Task<string[]> GetLocationsActo(Direction direction)
 		{
@@ -177,31 +178,23 @@ namespace ReadingBusesAPI.BusServices
 		///     Gets an array of 'BusStop' objects the bus service travels too as an array of BusStop objects.
 		///     If the API is invalid and links to a Bus Stop not in the list of locations it will simply be ignored.
 		/// </summary>
-		/// <param name="outBound">do you want outbound or inbound stops only?</param>
+		/// <param name="direction">The direction for stops, outbound or inbound</param>
 		/// <returns>returns back all the bus stop objects visited by the service, for the direction of travel specified.</returns>
 		public async Task<BusStop[]> GetLocations(Direction direction)
 		{
 			if (direction.Equals(Direction.Outbound))
 			{
-				if (_stopsObjectsOutBound == null)
-					_stopsObjectsOutBound = await GetBusStops(direction);
-
-				return _stopsObjectsOutBound;
+				return _stopsObjectsOutBound ?? (_stopsObjectsOutBound = await GetBusStops(direction));
 			}
-			else
-			{
-				if (_stopsObjectsInBound == null)
-					_stopsObjectsInBound = await GetBusStops(direction);
 
-				return _stopsObjectsInBound;
-			}
+			return _stopsObjectsInBound ?? (_stopsObjectsInBound = await GetBusStops(direction));
 		}
 
 
 		/// <summary>
 		/// Gets the bus stop object associated with the acto-code for the bus stop.
 		/// </summary>
-		/// <param name="outBound">do you want out bound or inbound stops.</param>
+		/// <param name="direction">do you want out bound or inbound stops.</param>
 		/// <returns>An array of Bus Stop objects that the service visits.</returns>
 		private async Task<BusStop[]> GetBusStops(Direction direction)
 		{
@@ -227,7 +220,18 @@ namespace ReadingBusesAPI.BusServices
 		/// <returns>An array of GPS data points for all vehicles currently operating on this service.</returns>
 		public async Task<LiveVehiclePosition[]> GetLivePositions() =>
 			(await ReadingBuses.GetInstance().GpsController.GetLiveVehiclePositions().ConfigureAwait(false)).Where(o =>
-				string.Equals(o.ServiceId, ServiceId, StringComparison.CurrentCultureIgnoreCase)).ToArray();
+				string.Equals(o.ServiceId, ServiceId, StringComparison.CurrentCultureIgnoreCase) && o.Company.Equals(Company)).ToArray();
+
+
+		/// <summary>
+		/// Gets live journey tracking information for this service.
+		/// </summary>
+		/// <returns>The live journey tracing information for this service.</returns>
+		public async Task<HistoricJourney[]> GetLiveJourneyData()
+		{
+			return (await LiveJourneyDetailsApi.GetLiveJourney(this, null))
+				.Where(ser => ser.Company.Equals(Company)).ToArray();
+		}
 
 
 		#region BusTimeTable
@@ -242,9 +246,10 @@ namespace ReadingBusesAPI.BusServices
 		/// </exception>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-		public Task<Journey[]> GetTimeTable(DateTime date)
+		public async Task<Journey[]> GetTimeTable(DateTime date)
 		{
-			return BusTimeTable.GetTimeTable(this, date, null);
+			return (await ScheduledJourneysApi.GetTimeTable(this, date, null))
+				.Where(ser => ser.Company.Equals(Company)).ToArray();
 		}
 
 
@@ -262,9 +267,10 @@ namespace ReadingBusesAPI.BusServices
 		/// </exception>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-		public Task<Journey[]> GetTimeTable(DateTime date, BusStop location)
+		public async Task<Journey[]> GetTimeTable(DateTime date, BusStop location)
 		{
-			return BusTimeTable.GetTimeTable(this, date, location);
+			return (await ScheduledJourneysApi.GetTimeTable(this, date, location))
+				.Where(ser => ser.Company.Equals(Company)).ToArray();
 		}
 
 
@@ -285,9 +291,10 @@ namespace ReadingBusesAPI.BusServices
 		/// </exception>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-		public Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date)
+		public async Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date)
 		{
-			return ArchivedBusTimeTable.GetTimeTable(this, date, null, null);
+			return (await TrackingHistoryApi.GetTimeTable(this, date, null, null))
+				.Where(ser => ser.Company.Equals(Company)).ToArray();
 		}
 
 
@@ -307,11 +314,37 @@ namespace ReadingBusesAPI.BusServices
 		/// </exception>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-		public Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date, BusStop location)
+		public async Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date, BusStop location)
 		{
-			return ArchivedBusTimeTable.GetTimeTable(this, date, location, null);
+			return (await TrackingHistoryApi.GetTimeTable(this, date, location, null))
+				.Where(ser => ser.Company.Equals(Company)).ToArray();
 		}
 
 		#endregion
+
+		/// <summary>
+		/// States if two objects are the same as each other or not.
+		/// </summary>
+		/// <param name="obj">Other bus service object.</param>
+		/// <returns>True if service id and bus operator match.</returns>
+		public override bool Equals(object obj)
+		{
+			var item = obj as BusService;
+			if (item == null)
+			{
+				return false;
+			}
+
+			return ServiceId.Equals(item.ServiceId) && Company.Equals(item.Company);
+		}
+
+		/// <summary>
+		/// Hashcode of the object is based on the service id and the operating company as this uniquely identifies the service. 
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode()
+		{
+			return ServiceId.GetHashCode() + Company.GetHashCode();
+		}
 	}
 }

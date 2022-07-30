@@ -10,10 +10,15 @@
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
     <FileVersion>3.0.0.0</FileVersion>
     <NeutralLanguage>en-GB</NeutralLanguage>
-    <PackageReleaseNotes>* Added support for the new Reading Buses API from R2P group.
-* Added ability to request inbound, outbound or both line patterns for a service.
-* Removed Json.NET (Newtsonsoft) in favour of system.text.json library.
-* </PackageReleaseNotes>
+    <PackageReleaseNotes>* Replacing Newtonsoft.JSON library with the system.text.json library.
+* Improved what is cached to include historical GPS data, historical journey information and historical timetables, as this data will never change.
+* Added support for "Live Journey Details" API feed.
+* Removed Courtney Buses for Thames Valley Buses
+* Can now query by direction of stops in the line pattern API, such as outbound or inbound.
+* ArchivedBusTimetable has loosely become HistoricalJourney
+* BusTimetable has loosely become Joruney
+* ArchivedPosition has loosely become VehiclePosition
+* LivePosition has loosely become LiveVehiclePosition</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/jfoot/Reading-Buses-API</RepositoryUrl>
     <PackageIcon>LogoHighRes.jpg</PackageIcon>
     <RepositoryType>GitHub</RepositoryType>
@@ -22,7 +27,11 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Description>A C# .NET Standard Library for the Reading Buses API (https://reading-opendata.r2p.com/), available to use in your C# console, UWP, WPF or Win Form Applications.
 
-Supports : List of Bus Stops, Live Vehicle Positions, Live Journey Details, Stop Predictions, List of Lines, Line Patterns, Timetabled Journeys, Tracking History and the Vehicle Position History API.</Description>
+This includes bus services operated by Reading Buses and subsidiaries such as, Thames Valley Buses and Newbury &amp; District Buses.
+
+The library supports the List of Bus Stops, Live Vehicle Positions, Live Journey Details, Stop Predictions, List of Lines, Line Patterns, Timetabled Journeys, Tracking History and the Vehicle Position History API..
+
+Get your own API Keys from: https://reading-opendata.r2p.com/api-service</Description>
     <Copyright>Jonathan Foot © 2022</Copyright>
     <Authors>Jonathan Foot</Authors>
     <Company>Jonathan Foot</Company>

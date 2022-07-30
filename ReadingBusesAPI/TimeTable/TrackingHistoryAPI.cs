@@ -12,9 +12,9 @@ using ReadingBusesAPI.ErrorManagement;
 namespace ReadingBusesAPI.TimeTable
 {
 	/// <summary>
-
+	///		Contains the logic to call upon the Tracking History API.
 	/// </summary>
-	internal class ArchivedBusTimeTable
+	internal static class TrackingHistoryApi
 	{
 	
 		/// <summary>
@@ -31,9 +31,6 @@ namespace ReadingBusesAPI.TimeTable
 		/// </exception>
 		/// <exception cref="ReadingBusesApiExceptionBadQuery">Thrown if the API responds with an error message.</exception>
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
-		/// See also
-		/// <see cref="BusTimeTable.GetTimeTable(BusService , DateTime ,BusStop)" />
-		/// to get future time table data instead.
 		internal static async Task<HistoricJourney[]> GetTimeTable(BusService service, DateTime date,
 			BusStop location, string vehicle)
 		{
@@ -50,10 +47,10 @@ namespace ReadingBusesAPI.TimeTable
 			}
 
 
-			string cacheLocation = CacheWritter.TrackingHistory(service, location, date, vehicle);
+			string cacheLocation = CacheWriter.TrackingHistory(service, location, date, vehicle);
 			string liveURL = UrlConstructor.TrackingHistory(service, location, date, vehicle);
 
-			return await CacheWritter.ReadOrCreateCache<HistoricJourney[]>(cacheLocation, liveURL, ReadingBuses.ArchiveCache);
+			return (await CacheWriter.ReadOrCreateCache<HistoricJourney[]>(cacheLocation, liveURL, ReadingBuses.ArchiveCache));
 		}
 	}
 }

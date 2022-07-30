@@ -8,6 +8,9 @@ using System.Text.Json.Serialization;
 
 namespace ReadingBusesAPI.TimeTable
 {
+	/// <summary>
+	/// A historical journey, one that has happened in the past.
+	/// </summary>
 	public class HistoricJourney : Journey
 	{
 		/// <summary>
@@ -21,7 +24,7 @@ namespace ReadingBusesAPI.TimeTable
 		}
 
 
-		/// <value>The vehcile code/id of the bus that operated on this journey.</value>
+		/// <value>The vehicle code/id of the bus that operated on this journey.</value>
 		[JsonPropertyName("VehicleCode")]
 		[JsonInclude]
 		public string VehicleCode { get; internal set; }

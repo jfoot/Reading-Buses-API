@@ -84,7 +84,7 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 			BusStop stop = ReadingBuses.GetInstance().GetLocation("039025980002");
 
 			HistoricJourney[] timeTableRecords =
-				await stop.GetArchivedTimeTable(DateTime.Now.AddDays(-1), new BusService("17"));
+				await stop.GetArchivedTimeTable(DateTime.Now.AddDays(-1), new BusService("17", Company.ReadingBuses));
 
 			foreach (var record in timeTableRecords)
 			{
@@ -114,7 +114,7 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 		public async Task GetLiveDataAsync(string actoCode)
 		{
 			BusStop stop = ReadingBuses.GetInstance().GetLocation(actoCode);
-
+			 
 			if ((await stop.GetLiveData()).Length != 0)
 			{
 				Assert.Pass();
@@ -157,7 +157,7 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 
 			foreach (var service in services)
 			{
-				if (!service.OperatorCode.Equals(Company.ReadingBuses))
+				if (!service.Company.Equals(Company.ReadingBuses))
 				{
 					Assert.Fail("Not all services matched the specified operator.");
 				}

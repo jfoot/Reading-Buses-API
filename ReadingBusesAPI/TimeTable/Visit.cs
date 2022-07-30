@@ -9,6 +9,9 @@ using ReadingBusesAPI.Common;
 
 namespace ReadingBusesAPI.TimeTable
 {
+	/// <summary>
+	///		Represents a single instance of a bus visiting at a specific bus stop. 
+	/// </summary>
 	public class Visit
 	{
 		/// <summary>
@@ -36,7 +39,7 @@ namespace ReadingBusesAPI.TimeTable
 		[JsonInclude]
 		public string LocationName { get; internal set; }
 
-		/// <value>The Scheduled Arrivial time of the bus at the stop.</value>
+		/// <value>The Scheduled Arrival time of the bus at the stop.</value>
 		[JsonPropertyName("ScheduledArrivalTime")]
 		[JsonConverter(typeof(DateTimeOffsetConverter))]
 		[JsonInclude]
@@ -48,7 +51,7 @@ namespace ReadingBusesAPI.TimeTable
 		[JsonInclude]
 		public DateTime ScheduledDeparture { get; internal set; }
 
-		/// <value>Is this visit at a timming point stop or not.</value>
+		/// <value>Is this visit at a timing point stop or not.</value>
 		[JsonPropertyName("TimingPoint")]
 		[JsonConverter(typeof(ParseBoolConverter))]
 		[JsonInclude]

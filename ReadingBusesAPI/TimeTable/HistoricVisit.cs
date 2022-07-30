@@ -9,6 +9,9 @@ using System.Text.Json.Serialization;
 
 namespace ReadingBusesAPI.TimeTable
 {
+	/// <summary>
+	///		Represents a single instance of a bus visiting at a specific bus stop in the past. 
+	/// </summary>
 	public class HistoricVisit : Visit
 	{
 		/// <summary>
@@ -22,7 +25,7 @@ namespace ReadingBusesAPI.TimeTable
 		}
 
 		/// <value>
-		/// Unsure what these values repersent, if you know, please let me know.
+		/// Unsure what these values represent, if you know, please let me know.
 		/// The Siri Schema states the following classifiers should be present: "onTime" | "early" | "delayed" | "cancelled" | "arrived" | "departed" | "missed" | "noReport" | "notExpected"
 		/// </value>
 		[JsonPropertyName("ArrivalStatus")]
@@ -30,7 +33,7 @@ namespace ReadingBusesAPI.TimeTable
 		public string ArrivalStatus { get; internal set; }
 
 		/// <value>
-		/// Unsure what these values repersent, if you know, please let me know.
+		/// Unsure what these values represent, if you know, please let me know.
 		/// The Siri Schema states the following classifiers should be present: "onTime" | "early" | "delayed" | "cancelled" | "arrived" | "departed" | "missed" | "noReport" | "notExpected"
 		/// </value>
 		[JsonPropertyName("DepartureStatus")]
@@ -38,7 +41,7 @@ namespace ReadingBusesAPI.TimeTable
 		public string DepartureStatus { get; internal set; }
 
 
-		/// <value>The Actual Arrivial time of the bus at the stop.</value>
+		/// <value>The Actual Arrival time of the bus at the stop.</value>
 		[JsonPropertyName("ArrivalTime")]
 		[JsonConverter(typeof(DateTimeOffsetConverter))]
 		[JsonInclude]

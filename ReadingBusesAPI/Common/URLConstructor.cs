@@ -14,7 +14,7 @@ namespace ReadingBusesAPI.Common
 		private const string ReadingBusesApi = "https://reading-opendata.r2p.com/api/v1/";
 
 		/// <value>URL for the Reading buses Open Data API server.</value>
-		private const string DummyApi = "https://reading-opendata.r2p.com/api/v1/";
+		private const string DummyApi = "https://filestore.jonathanfoot.com/Reading-Buses-API/";
 
 
 		/// <summary>
@@ -25,7 +25,7 @@ namespace ReadingBusesAPI.Common
 		{
 			if (ReadingBuses.Debugging)
 			{
-				return DummyApi + "busstops.html";
+				return DummyApi + "busstops.json";
 			}
 
 			return ReadingBusesApi + "busstops?api_token=" + ReadingBuses.ApiKey;
@@ -39,7 +39,7 @@ namespace ReadingBusesAPI.Common
 		{
 			if (ReadingBuses.Debugging)
 			{
-				return DummyApi + "vehicle-positions.html";
+				return DummyApi + "vehicle-positions.json";
 			}
 
 			return ReadingBusesApi + "vehicle-positions?api_token=" + ReadingBuses.ApiKey;
@@ -49,9 +49,20 @@ namespace ReadingBusesAPI.Common
 		/// <summary>
 		///     Returns back the URL needed for a get request to the 'Live Journey Details' API.
 		/// </summary>
+		/// <param name="service">The bus service</param>
+		/// <param name="vehicle">The vehicle ID</param>
 		/// <returns>Returns back the URL needed for a get request to the 'Live Journey Details' API.</returns>
-		public static string LiveJourneyDetails() =>
-			throw new NotImplementedException("This API feed is not yet implemented");
+		public static string LiveJourneyDetails(BusService service, string vehicle)
+		{
+			if (ReadingBuses.Debugging)
+			{
+				return DummyApi + "live-journeys.json";
+			}
+
+			return ReadingBusesApi + "live-journeys?api_token=" + ReadingBuses.ApiKey + "&vehicle=" + vehicle +
+			       "&line=" + service?.ServiceId;
+		}
+		
 
 
 		/// <summary>
@@ -63,7 +74,7 @@ namespace ReadingBusesAPI.Common
 		{
 			if (ReadingBuses.Debugging)
 			{
-				return DummyApi + "stopPredictions.xml";
+				return DummyApi + "stop-prediction.xml";
 			}
 
 			return ReadingBusesApi + "siri-sm?api_token=" + ReadingBuses.ApiKey +
@@ -78,7 +89,7 @@ namespace ReadingBusesAPI.Common
 		{
 			if (ReadingBuses.Debugging)
 			{
-				return DummyApi + "lines.html";
+				return DummyApi + "lines.json";
 			}
 
 			return ReadingBusesApi + "lines?api_token=" + ReadingBuses.ApiKey;
@@ -93,7 +104,7 @@ namespace ReadingBusesAPI.Common
 		{
 			if (ReadingBuses.Debugging)
 			{
-				return DummyApi + "line-patterns.html";
+				return DummyApi + "line-patterns.json";
 			}
 
 			return ReadingBusesApi + "line-patterns?api_token=" + ReadingBuses.ApiKey + "&line=" + service.ServiceId;
@@ -110,7 +121,7 @@ namespace ReadingBusesAPI.Common
 		{
 			if (ReadingBuses.Debugging)
 			{
-				return DummyApi + "scheduled-journeys.html";
+				return DummyApi + "scheduled-journeys.json";
 			}
 
 			return ReadingBusesApi + "scheduled-journeys?api_token=" + ReadingBuses.ApiKey +
@@ -132,7 +143,7 @@ namespace ReadingBusesAPI.Common
 		{
 			if (ReadingBuses.Debugging)
 			{
-				return DummyApi + "tracking-history.html";
+				return DummyApi + "tracking-history.json";
 			}
 
 			return ReadingBusesApi + "tracking-history?api_token=" +
@@ -156,7 +167,7 @@ namespace ReadingBusesAPI.Common
 		{
 			if (ReadingBuses.Debugging)
 			{
-				return DummyApi + "vehicle-position-history.html";
+				return DummyApi + "vehicle-position-history.json";
 			}
 
 			return ReadingBusesApi + "vehicle-position-history?api_token=" + ReadingBuses.ApiKey +

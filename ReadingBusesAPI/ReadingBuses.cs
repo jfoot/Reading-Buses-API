@@ -67,7 +67,7 @@ namespace ReadingBusesAPI
 		/// <value>Keeps track of if cache data is being used or not</value>
 		internal static bool Cache { get; private set; } = true;
 
-		/// <value>Keeps track of if archieved timetable cache data is being used or not</value>
+		/// <value>Keeps track of if archived timetable & GPS cache data is being used or not</value>
 		internal static bool ArchiveCache { get; private set; } = true;
 
 		/// <value>Keeps track of if warnings are being outputted to console or not.</value>
@@ -94,8 +94,8 @@ namespace ReadingBusesAPI
 		{
 			try
 			{
-				//Creates the folders to store cache infromation if needed.
-				CacheWritter.CreateCacheDirectory();
+				//Creates the folders to store cache information if needed.
+				CacheWriter.CreateCacheDirectory();
 
 				//Ordering here is important, must get services before locations.
 				_services = await new Services().FindServices(); 
@@ -118,9 +118,10 @@ namespace ReadingBusesAPI
 		}
 
 		/// <summary>
-		///     Sets if you want to cache data into local files or always get new data from the API, which will take longer.
+		///     Sets if you want to cache services and stop data into local files or always get new data from the API, which will take longer.
+		///		This cache data will be kept for a specific cache length before being regenerated. 
 		/// </summary>
-		/// <param name="value">True or False for if you want to get Cache or live data.</param>
+		/// <param name="value">True (default) or False for if you want to get Cache or live data.</param>
 		/// <exception cref="ReadingBusesApiExceptionMalformedQuery">
 		///     Thrown if you attempt to change the cache options after the library has
 		///     been instantiated
@@ -141,8 +142,9 @@ namespace ReadingBusesAPI
 
 		/// <summary>
 		///     Sets if you want to cache historical/archive timetable and location data into local files or always get new data from the API, which will take longer.
+		///		This data would never change as is historical, recommended to keep true (default), unless space is an issue.
 		/// </summary>
-		/// <param name="value">True or False for if you want to get Cache or live data.</param>
+		/// <param name="value">True (default) or False for if you want to get Cache or live data.</param>
 		/// <exception cref="ReadingBusesApiExceptionMalformedQuery">
 		///     Thrown if you attempt to change the cache options after the library has
 		///     been instantiated
@@ -199,12 +201,13 @@ namespace ReadingBusesAPI
 		///     Deletes any Cache data stored, Cache data is deleted automatically after a number of days, use this only if you
 		///     need to force new data early.
 		/// </summary>
-		public static void InvalidateCache() => Directory.Delete(CacheWritter.CACHE_FOLDER, true);
+		public static void InvalidateCache() => Directory.Delete(CacheWriter.CACHE_FOLDER, true);
 
 		/// <summary>
-		///     Deletes any archieved Cache data stored.
+		///     Deletes any archived Cache data stored. This is Historical timetable, journey and gps tracking data.
+		///		Any data which would not change if re-requested.
 		/// </summary>
-		public static void InvalidateArchiveCache() => Directory.Delete(CacheWritter.ARCHIVED_CACHE_FOLDER, true);
+		public static void InvalidateArchiveCache() => Directory.Delete(CacheWriter.ARCHIVED_CACHE_FOLDER, true);
 
 		/// <summary>
 		///     Internal method for printing warning messages to the console screen. Only done so in debug.
@@ -379,7 +382,7 @@ namespace ReadingBusesAPI
 		/// <param name="operatorCode">The operator/ company to filter by.</param>
 		/// <returns>An array of Bus Services which are of the brand name specified.</returns>
 		public BusService[] GetServices(Company operatorCode) => _services
-			.Where(o => o.OperatorCode == operatorCode).ToArray();
+			.Where(o => o.Company == operatorCode).ToArray();
 
 
 		/// <summary>
@@ -428,7 +431,7 @@ namespace ReadingBusesAPI
 			{
 				return _services.Single(o =>
 					string.Equals(o.ServiceId, serviceNumber, StringComparison.CurrentCultureIgnoreCase) &&
-					o.OperatorCode.Equals(operators));
+					o.Company.Equals(operators));
 			}
 
 			throw new ReadingBusesApiExceptionMalformedQuery(
@@ -453,7 +456,7 @@ namespace ReadingBusesAPI
 		/// <returns>True or False for if a service is the API feed or not.</returns>
 		public bool IsService(string serviceNumber, Company operators) => _services.Any(o =>
 			string.Equals(o.ServiceId, serviceNumber, StringComparison.CurrentCultureIgnoreCase) &&
-			o.OperatorCode.Equals(operators));
+			o.Company.Equals(operators));
 
 
 		/// <summary>
@@ -474,7 +477,7 @@ namespace ReadingBusesAPI
 		public Task<HistoricJourney[]> GetVehicleTrackingHistory(DateTime date, string vehicle)
 #pragma warning restore CA1822 // Mark members as static
 		{
-			return ArchivedBusTimeTable.GetTimeTable(null, date, null, vehicle);
+			return TrackingHistoryApi.GetTimeTable(null, date, null, vehicle);
 		}
 
 		#endregion

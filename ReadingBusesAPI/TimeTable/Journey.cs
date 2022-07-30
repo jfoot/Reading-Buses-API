@@ -10,6 +10,10 @@ using ReadingBusesAPI.Common;
 
 namespace ReadingBusesAPI.TimeTable
 {
+	/// <summary>
+	///		Represents a journey, which is a grouping of Visit objects, or a specific service doing one single direction of the route.
+	///		A timetable for a service is made up of multiple journeys. 
+	/// </summary>
 	public class Journey
 	{
 		/// <summary>
@@ -21,8 +25,7 @@ namespace ReadingBusesAPI.TimeTable
 		public Journey()
 		{
 		}
-
-
+		
 		/// <value>The unique identifier for a journey.</value>
 		[JsonPropertyName("Id")]
 		[JsonInclude]
@@ -73,9 +76,9 @@ namespace ReadingBusesAPI.TimeTable
 
 
 		/// <summary>
-		/// Gets a reference to the service that is assoicated with this journey.
+		/// Gets a reference to the service that is associated with this journey.
 		/// </summary>
-		/// <returns>Returns a Bus Service object for the assoicated service. Null if unknown within the API.</returns>
+		/// <returns>Returns a Bus Service object for the associated service. Null if unknown within the API.</returns>
 		public BusService GetService()
 		{
 			if(ReadingBuses.GetInstance().IsService(ServiceId,Company))

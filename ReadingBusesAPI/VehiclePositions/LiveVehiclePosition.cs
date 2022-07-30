@@ -3,11 +3,18 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Linq;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using ReadingBusesAPI.BusServices;
+using ReadingBusesAPI.JourneyDetails;
+using ReadingBusesAPI.TimeTable;
 
 namespace ReadingBusesAPI.VehiclePositions
 {
+	/// <summary>
+	///		A live GPS vehicle position record.
+	/// </summary>
 	public class LiveVehiclePosition : VehiclePosition
 	{
 		/// <summary>
@@ -27,9 +34,9 @@ namespace ReadingBusesAPI.VehiclePositions
 
 
 		/// <summary>
-		/// Gets a reference to the service that is assoicated with this vehicle.
+		/// Gets a reference to the service that is associated with this vehicle.
 		/// </summary>
-		/// <returns>Returns a Bus Service object for the assoicated service. Null if unknown within the API.</returns>
+		/// <returns>Returns a Bus Service object for the associated service. Null if unknown within the API.</returns>
 		public BusService GetService()
 		{
 			if (ReadingBuses.GetInstance().IsService(ServiceId, Company))
@@ -37,5 +44,16 @@ namespace ReadingBusesAPI.VehiclePositions
 
 			return null;
 		}
+
+		/// <summary>
+		/// Gets live journey tracking information for this vehicle.
+		/// </summary>
+		/// <returns>The live journey tracing information for this vehicle.</returns>
+		public async Task<HistoricJourney[]> GetLiveJourneyData()
+		{
+			return (await LiveJourneyDetailsApi.GetLiveJourney(null, Vehicle))
+				.Where(veh => veh.Company.Equals(Company)).ToArray();
+		}
+
 	}
 }

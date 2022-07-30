@@ -13,9 +13,9 @@ using ReadingBusesAPI.ErrorManagement;
 namespace ReadingBusesAPI.TimeTable
 {
 	/// <summary>
-
+	///		Contains the logic to call upon the Scheduled Journeys API.
 	/// </summary>
-	internal class BusTimeTable 
+	internal static class ScheduledJourneysApi 
 	{
 
 		/// <summary>
@@ -41,10 +41,10 @@ namespace ReadingBusesAPI.TimeTable
 			}
 
 
-			string cacheLocation = CacheWritter.TimetabledJourneys(service, location, date);
+			string cacheLocation = CacheWriter.TimetabledJourneys(service, location, date);
 			string liveURL = UrlConstructor.TimetabledJourneys(service, location, date);
 
-			return await CacheWritter.ReadOrCreateCache<Journey[]>(cacheLocation, liveURL, ReadingBuses.ArchiveCache);
+			return await CacheWriter.ReadOrCreateCache<Journey[]>(cacheLocation, liveURL, ReadingBuses.ArchiveCache);
 		}
 	}
 }
