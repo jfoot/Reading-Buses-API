@@ -9,7 +9,7 @@ using ReadingBusesAPI.Common;
 namespace ReadingBusesAPI.VehiclePositions
 {
 	/// <summary>
-	///     Stores information about GPS data on a vehicle.
+	///     Stores information about historical GPS data on a vehicle.
 	/// </summary>
 	public class VehiclePosition
 	{

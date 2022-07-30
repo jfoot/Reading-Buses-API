@@ -17,7 +17,7 @@ namespace ReadingBusesAPI.Common
 	/// <summary>
 	/// Used to write a cache files to the disk.
 	/// </summary>
-	internal class CacheWritter
+	internal static class CacheWriter
 	{
 
 		public static readonly string CACHE_FOLDER = "cache";

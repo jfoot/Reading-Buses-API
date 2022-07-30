@@ -110,9 +110,9 @@ namespace ReadingBusesAPI.VehiclePositions
 			}
 
 			string liveURL = UrlConstructor.VehiclePositionHistory(dateStartTime, timeSpan, vehicle);
-			string cacheLocation = CacheWritter.VehiclePositionHistory(dateStartTime, timeSpan, vehicle);
+			string cacheLocation = CacheWriter.VehiclePositionHistory(dateStartTime, timeSpan, vehicle);
 			
-			return await CacheWritter.ReadOrCreateCache<VehiclePosition[]>(cacheLocation, liveURL, ReadingBuses.ArchiveCache);
+			return await CacheWriter.ReadOrCreateCache<VehiclePosition[]>(cacheLocation, liveURL, ReadingBuses.ArchiveCache);
 		}
 
 

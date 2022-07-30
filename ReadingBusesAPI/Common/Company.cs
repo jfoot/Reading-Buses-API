@@ -21,7 +21,7 @@ namespace ReadingBusesAPI.Common
 
 
 		/// <summary>
-		/// Thames Valley Buses (formely known as Courtney Buses) 
+		/// Thames Valley Buses (formerly known as Courtney Buses) 
 		/// </summary>
 		ThamesValley,
 

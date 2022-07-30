@@ -49,9 +49,20 @@ namespace ReadingBusesAPI.Common
 		/// <summary>
 		///     Returns back the URL needed for a get request to the 'Live Journey Details' API.
 		/// </summary>
+		/// <param name="service">The bus service</param>
+		/// <param name="vehicle">The vehicle ID</param>
 		/// <returns>Returns back the URL needed for a get request to the 'Live Journey Details' API.</returns>
-		public static string LiveJourneyDetails() =>
-			throw new NotImplementedException("This API feed is not yet implemented");
+		public static string LiveJourneyDetails(BusService service, string vehicle)
+		{
+			if (ReadingBuses.Debugging)
+			{
+				return DummyApi + "live-journey.html";
+			}
+
+			return ReadingBusesApi + "live-journeys?api_token=" + ReadingBuses.ApiKey + "&vehicle=" + vehicle +
+			       "&line=" + service?.ServiceId;
+		}
+		
 
 
 		/// <summary>

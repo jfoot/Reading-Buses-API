@@ -21,7 +21,7 @@ namespace ReadingBusesAPI.ErrorManagement
 		internal static void TryErrorMessageRetrieval(string json)
 		{
 			if (json.StartsWith("<!DOCTYPE html>"))
-				throw new ReadingBusesApiExceptionBadQuery("Querry Failed, please ensure you have provided a valid Reading Buses API Key.");
+				throw new ReadingBusesApiExceptionBadQuery("Query Failed, please ensure you have provided a valid Reading Buses API Key.");
 
 
 			ErrorFormat error;

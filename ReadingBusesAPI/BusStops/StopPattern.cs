@@ -7,7 +7,7 @@ using ReadingBusesAPI.Common;
 
 namespace ReadingBusesAPI.BusStops
 {
-	internal class StopPatteren
+	internal class StopPattern
 	{
 		/// <value>The unique identifier for a bus stop.</value>
 		[JsonPropertyName("location_code")]
@@ -38,7 +38,7 @@ namespace ReadingBusesAPI.BusStops
 		public int _direction { get; internal set; }
 
 		/// <summary>
-		/// Is an outbound stop patteren.
+		/// Is an outbound stop pattern.
 		/// </summary>
 		/// <returns>True if outbound, false if inbound.</returns>
 		public bool IsOutbound()

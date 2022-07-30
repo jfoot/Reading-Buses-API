@@ -86,6 +86,11 @@ namespace ReadingBusesAPI.BusStops
 		[JsonInclude]
 		public string Bearing { get; internal set; }
 
+		/// <value>The bus stop bay number, may be null if not applicable.</value>
+		[JsonPropertyName("bay_no")]
+		[JsonInclude]
+		public string BayNumber { get; internal set; }
+
 		/// <value>A reference to the bus services at this stop.</value>
 		[JsonInclude]
 		[JsonConverter(typeof(ParseServiceObjects))]
@@ -139,7 +144,7 @@ namespace ReadingBusesAPI.BusStops
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
 		public Task<Journey[]> GetTimeTable(DateTime date)
 		{
-			return BusTimeTable.GetTimeTable(null, date, this);
+			return ScheduledJourneysApi.GetTimeTable(null, date, this);
 		}
 
 
@@ -159,7 +164,7 @@ namespace ReadingBusesAPI.BusStops
 		/// <exception cref="ReadingBusesApiExceptionCritical">Thrown if the API fails, but provides no reason.</exception>
 		public Task<Journey[]> GetTimeTable(DateTime date, BusService service)
 		{
-			return BusTimeTable.GetTimeTable(service, date, this);
+			return ScheduledJourneysApi.GetTimeTable(service, date, this);
 		}
 
 
@@ -171,7 +176,7 @@ namespace ReadingBusesAPI.BusStops
 		/// <returns></returns>
 		public Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date)
 		{
-			return ArchivedBusTimeTable.GetTimeTable(null, date, this, null);
+			return TrackingHistoryApi.GetTimeTable(null, date, this, null);
 		}
 
 
@@ -187,7 +192,7 @@ namespace ReadingBusesAPI.BusStops
 		/// <returns></returns>
 		public Task<HistoricJourney[]> GetArchivedTimeTable(DateTime date, BusService service)
 		{
-			return ArchivedBusTimeTable.GetTimeTable(service, date, this, null);
+			return TrackingHistoryApi.GetTimeTable(service, date, this, null);
 		}
 	}
 }

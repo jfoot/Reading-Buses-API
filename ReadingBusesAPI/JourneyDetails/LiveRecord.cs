@@ -5,11 +5,14 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using ReadingBusesAPI.BusServices;
 using ReadingBusesAPI.BusStops;
 using ReadingBusesAPI.Common;
 using ReadingBusesAPI.ErrorManagement;
+using ReadingBusesAPI.TimeTable;
 
 namespace ReadingBusesAPI.JourneyDetails
 {
@@ -71,7 +74,7 @@ namespace ReadingBusesAPI.JourneyDetails
 		/// <summary>
 		/// Gets the destination bus stop object. Null if unknown.
 		/// </summary>
-		/// <returns>Bus Stop for where this vehicle is destinating.</returns>
+		/// <returns>Bus Stop for where this vehicle is destining.</returns>
 		public BusStop GetDestinationStop()
 		{
 			if (ReadingBuses.GetInstance().IsLocation(_destination))
@@ -93,6 +96,17 @@ namespace ReadingBusesAPI.JourneyDetails
 		{
 			return ReadingBuses.GetInstance().GetService(ServiceNumber, OperatorCode);
 		}
+
+		/// <summary>
+		/// Gets live journey tracking information for this vehicle.
+		/// </summary>
+		/// <returns>The live journey tracing information for this vehicle.</returns>
+		/// <remarks></remarks>
+		public async Task<HistoricJourney[]> GetLiveJourneyData()
+		{
+			return await LiveJourneyDetailsApi.GetLiveJourney(null, new Regex("[^0-9]").Replace(VehicleRef, ""));
+		}
+		
 
 		/// <summary>
 		///     Returns the number of min till bus is due in a min format.
