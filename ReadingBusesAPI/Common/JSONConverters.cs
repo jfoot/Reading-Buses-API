@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ReadingBusesAPI.BusServices;
@@ -16,16 +17,19 @@ namespace ReadingBusesAPI.Common
 	/// </summary>
 	internal class ParseServiceObjects : JsonConverter<List<BusService>>
 	{
-
-		private readonly static string ServiceId = "ServiceID";
-		private readonly static string ServiceOperator = "ServiceOperator";
+		/// <summary>
+		/// The service ID key word.
+		/// </summary>
+		private static readonly string ServiceId = "ServiceID";
+		/// <summary>
+		/// The Service operator key word.
+		/// </summary>
+		private static readonly string ServiceOperator = "ServiceOperator";
 
 
 		public override List<BusService> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
 			List<BusService> services = new List<BusService>();
-
-			BusService temp;
 			bool iDNext = true;
 			string serviceID = "";
 			string busOperator = "";
@@ -35,7 +39,6 @@ namespace ReadingBusesAPI.Common
 				switch (reader.TokenType)
 				{
 					case JsonTokenType.StartObject:
-						temp = null;
 						break;
 					case JsonTokenType.EndObject:
 						if(!ReadingBuses.GetInstance().IsService(serviceID, ReadingBuses.GetOperatorE(busOperator)))
@@ -60,18 +63,16 @@ namespace ReadingBusesAPI.Common
 						break;
 					case JsonTokenType.EndArray:
 						return services;
-					default:
-						break;
 				}
 			}
 			return services;
 		}
 
 		/// <summary>
-		/// COnverts a Company Enum into a string value.
+		/// Converts a Company Enum into a string value.
 		/// </summary>
 		/// <param name="value">Company Enum value</param>
-		/// <param name="writer">Writes it to a JSON writter.</param>
+		/// <param name="writer">Writes it to a JSON writer.</param>
 		private void EnumToString(Company value, Utf8JsonWriter writer)
 		{
 			switch (value)
@@ -139,13 +140,11 @@ namespace ReadingBusesAPI.Common
 					writer.WriteStringValue("OTH");
 					return;
 			}
-
-			throw new JsonException("Cannot marshal type Operators");
 		}
 	}
 
 	/// <summary>
-	///		Converts a datetime value between its JSON repersentation and the object.
+	///		Converts a datetime value between its JSON representation and the object.
 	/// </summary>
 	public class DateTimeOffsetConverter : JsonConverter<DateTime>
 	{
@@ -156,12 +155,12 @@ namespace ReadingBusesAPI.Common
 
 		public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
 		{
-			writer.WriteStringValue(value.ToString());
+			writer.WriteStringValue(value.ToString(CultureInfo.CurrentCulture));
 		}
 	}
 
 	/// <summary>
-	///		Converts a datetime value between its JSON repersentation and the object.
+	///		Converts a datetime value between its JSON representation and the object.
 	/// </summary>
 	public class ParseBoolConverter : JsonConverter<bool>
 	{
@@ -215,8 +214,6 @@ namespace ReadingBusesAPI.Common
 					writer.WriteStringValue("OTH");
 					return;
 			}
-
-			throw new JsonException("Cannot marshal type Operators");
 		}
 	}
 

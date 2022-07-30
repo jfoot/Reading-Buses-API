@@ -7,6 +7,9 @@ using ReadingBusesAPI.Common;
 
 namespace ReadingBusesAPI.BusStops
 {
+	/// <summary>
+	/// An intermediary class used for the "Line Pattern" API, to get the route of a service.
+	/// </summary>
 	internal class StopPattern
 	{
 		/// <value>The unique identifier for a bus stop.</value>

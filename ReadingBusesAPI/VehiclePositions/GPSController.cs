@@ -62,10 +62,8 @@ namespace ReadingBusesAPI.VehiclePositions
 		/// See
 		/// <see cref="GpsController.GetLiveVehiclePositions()" />
 		/// to get live data instead.
-#pragma warning disable CA1822 // Mark members as static
 		public async Task<VehiclePosition[]> GetArchivedVehiclePositions(DateTime dateStartTime, TimeSpan timeSpan)
 		{
-#pragma warning restore CA1822 // Mark members as static
 			return await GetArchivedVehiclePositions(dateStartTime, timeSpan, null).ConfigureAwait(false);
 		}
 
@@ -92,21 +90,12 @@ namespace ReadingBusesAPI.VehiclePositions
 		/// See
 		/// <see cref="GpsController.GetLiveVehiclePositions()" />
 		/// to get live data instead.
-#pragma warning disable CA1822 // Mark members as static
-		public async Task<VehiclePosition[]> GetArchivedVehiclePositions(DateTime dateStartTime, TimeSpan timeSpan,
-#pragma warning restore CA1822 // Mark members as static
-			string vehicle)
+		public async Task<VehiclePosition[]> GetArchivedVehiclePositions(DateTime dateStartTime, TimeSpan timeSpan, string vehicle)
 		{
 			if (dateStartTime == null || dateStartTime > DateTime.Now)
 			{
 				throw new ReadingBusesApiExceptionMalformedQuery(
 					"You can not get past data for a date in the future, if you want real time GPS data please us the 'GetLiveVehiclePositions' Function instead.");
-			}
-
-			if (timeSpan == null)
-			{
-				throw new ReadingBusesApiExceptionMalformedQuery(
-					"You must filter by timeSpan.");
 			}
 
 			string liveURL = UrlConstructor.VehiclePositionHistory(dateStartTime, timeSpan, vehicle);
