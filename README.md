@@ -1,7 +1,7 @@
 [![.NET Core](https://github.com/jfoot/Reading-Buses-API/workflows/.NET%20Core/badge.svg)](https://github.com/jfoot/Reading-Buses-API/actions)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/654ef87688234627bd523c1db8318090)](https://www.codacy.com/manual/jfoot/Reading-Buses-API?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jfoot/Reading-Buses-API&amp;utm_campaign=Badge_Grade)
 [![https://img.shields.io/badge/Documentation-View-blue](https://img.shields.io/badge/Documentation-View-blue)](https://jonathanfoot.com/Projects/RBAPI/docs/)
-# Reading Buses API
+# (New) Reading Buses API
 A C#, .net Standard Library for the new [Reading Buses API](https://reading-opendata.r2p.com/api-service), available to use in your C# console, UWP, WPF or Win Form Applications.
 
 This includes bus services operated by Reading Buses and subsidiaries such as, Thames Valley Buses and Newbury & District Buses.
