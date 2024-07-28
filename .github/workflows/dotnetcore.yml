@@ -13,7 +13,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.x
-        cache: true
     - name: Build with dotnet
       run: dotnet build --configuration Release
     - name: Test with dotnet
