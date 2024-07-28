@@ -31,6 +31,7 @@ Get your own API Keys from: https://reading-opendata.r2p.com/api-service</Descri
     <Product>Reading Buses API</Product>
     <ApplicationIcon>LogoHighRes.ico</ApplicationIcon>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Title>ReadingBusesAPI</Title>
   </PropertyGroup>
 
   <ItemGroup>
