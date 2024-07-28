@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using ReadingBusesAPI;
@@ -44,8 +43,8 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 		{
 			BusService service = new BusService("22");
 
-			Assert.AreEqual("22", service.ServiceId);
-			Assert.AreEqual(Company.Other, service.Company);
+			Assert.That(service.ServiceId, Is.EqualTo("22"));
+			Assert.That(service.Company, Is.EqualTo(Company.Other));
 		}
 
 
@@ -185,8 +184,8 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 		{
 			BusService service = new BusService("22", Company.ReadingBuses);
 
-			Assert.AreEqual("22", service.ServiceId);
-			Assert.AreEqual(Company.ReadingBuses, service.Company);
+			Assert.That(service.ServiceId, Is.EqualTo("22"));
+			Assert.That(service.Company, Is.EqualTo(Company.ReadingBuses));
 		}
 	}
 }

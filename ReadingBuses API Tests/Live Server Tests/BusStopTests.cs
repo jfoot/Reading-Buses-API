@@ -38,8 +38,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		{
 			const string actoCode = "039028160001";
 			BusStop stop = new BusStop(actoCode);
-
-			Assert.AreEqual(actoCode, stop.ActoCode);
+			Assert.That(stop.ActoCode, Is.EqualTo(actoCode));
 		}
 
 

@@ -35,7 +35,7 @@ namespace ReadingBusesAPI
 	///     directory the program is executed from.
 	///     This is a copy of the results from an API call, such as the bus services and bus stops, because it is unlikely for
 	///     this data to change regularly.
-	///     By default the cached data will be updated every 7 days, but you can request new data or disable cache if you wish.
+	///     By default, the cached data will be updated every 7 days, but you can request new data or disable cache if you wish.
 	///     Caching data is however faster
 	///     as you do not need to keep making API requests for data likely to be the same.
 	/// </remarks>
@@ -293,22 +293,17 @@ namespace ReadingBusesAPI
 		/// <returns>The Enum equivalent of the bus operator short code.</returns>
 		internal static Company GetOperatorE(string operatorCodeS)
 		{
-			if (operatorCodeS.Equals("RBUS", StringComparison.OrdinalIgnoreCase))
+			var operatorMap = new Dictionary<string, Company>(StringComparer.OrdinalIgnoreCase)
 			{
-				return Company.ReadingBuses;
-			}
+				{ "RBUS", Company.ReadingBuses },
+				{ "CTNY", Company.ThamesValley },
+				{ "THTR", Company.OxfordBusCompany },
+				{ "NADS", Company.NewburyAndDistrict },
+				{ "CSLB", Company.CarouselBuses },
+			};
 
-			if (operatorCodeS.Equals("CTNY", StringComparison.OrdinalIgnoreCase))
-			{
-				return Company.ThamesValley;
-			}
-
-			if (operatorCodeS.Equals("NADS", StringComparison.OrdinalIgnoreCase))
-			{
-				return Company.NewburyAndDistrict;
-			}
-
-			return Company.Other;
+			// Try to get the Company value from the dictionary based on the operator code
+			return operatorMap.TryGetValue(operatorCodeS, out var company) ? company : Company.Other;
 		}
 
 		#endregion
@@ -429,7 +424,7 @@ namespace ReadingBusesAPI
 		{
 			if (IsService(serviceNumber, operators))
 			{
-				return _services.Single(o =>
+				return _services.Find(o =>
 					string.Equals(o.ServiceId, serviceNumber, StringComparison.CurrentCultureIgnoreCase) &&
 					o.Company.Equals(operators));
 			}

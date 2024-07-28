@@ -34,8 +34,8 @@ namespace ReadingBuses_API_Tests.Dummy_Server_Tests
 		[Test]
 		public async Task CheckIsVehicle()
 		{
-			Assert.AreEqual(true, await ReadingBuses.GetInstance().GpsController.IsVehicle("1208"));
-			Assert.AreEqual(false, await ReadingBuses.GetInstance().GpsController.IsVehicle("999"));
+			Assert.That(await ReadingBuses.GetInstance().GpsController.IsVehicle("1208"), Is.True);
+			Assert.That(await ReadingBuses.GetInstance().GpsController.IsVehicle("999"), Is.False);
 		}
 
 

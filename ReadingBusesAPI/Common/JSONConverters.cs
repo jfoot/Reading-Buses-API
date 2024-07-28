@@ -86,6 +86,12 @@ namespace ReadingBusesAPI.Common
 				case Company.NewburyAndDistrict:
 					writer.WriteString(ServiceOperator, "NADS");
 					return;
+				case Company.OxfordBusCompany:
+					writer.WriteString(ServiceOperator, "THTR");
+					return;
+				case Company.CarouselBuses:
+					writer.WriteString(ServiceOperator, "CSLB");
+					return;
 				default:
 					writer.WriteString(ServiceOperator, "OTH");
 					return;
@@ -135,6 +141,12 @@ namespace ReadingBusesAPI.Common
 					return;
 				case Company.NewburyAndDistrict:
 					writer.WriteStringValue("NADS");
+					return;
+				case Company.OxfordBusCompany:
+					writer.WriteStringValue("THTR");
+					return;
+				case Company.CarouselBuses:
+					writer.WriteStringValue("CSLB");
 					return;
 				default:
 					writer.WriteStringValue("OTH");
@@ -192,6 +204,10 @@ namespace ReadingBusesAPI.Common
 					return Company.NewburyAndDistrict;
 				case "Thames Valley Buses":
 					return Company.ThamesValley;
+				case "Oxford Bus Company":
+					return Company.OxfordBusCompany;
+				case "Carousel Buses":
+					return Company.CarouselBuses;
 				default:
 					return Company.Other;
 			}
@@ -209,6 +225,12 @@ namespace ReadingBusesAPI.Common
 					return;
 				case Company.NewburyAndDistrict:
 					writer.WriteStringValue("Newbury & District");
+					return;
+				case Company.OxfordBusCompany:
+					writer.WriteStringValue("Oxford Bus Company");
+					return;
+				case Company.CarouselBuses:
+					writer.WriteStringValue("Carousel Buses");
 					return;
 				default:
 					writer.WriteStringValue("OTH");

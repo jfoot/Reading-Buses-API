@@ -21,10 +21,19 @@ namespace ReadingBusesAPI.Common
 
 
 		/// <summary>
-		/// Thames Valley Buses (formerly known as Courtney Buses) 
+		///		For Thames Valley Buses (formerly known as Courtney Buses) 
 		/// </summary>
 		ThamesValley,
+		
+		/// <summary>
+		///		For Oxford Bus Company and Thames Travel.
+		/// </summary>
+		OxfordBusCompany,
 
+		/// <summary>
+		///		For Carousel Buses.
+		/// </summary>
+		CarouselBuses,
 
 		/// <summary>
 		///     For any other operator which is new in the API and has not yet been officially supported in this library.

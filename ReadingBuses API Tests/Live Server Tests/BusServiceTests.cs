@@ -43,9 +43,9 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		public void CheckDefaultConstructor()
 		{
 			BusService service = new BusService("22");
+			Assert.That(service.ServiceId, Is.EqualTo("22"));
+			Assert.That(service.Company, Is.EqualTo(Company.Other));
 
-			Assert.AreEqual("22", service.ServiceId);
-			Assert.AreEqual(Company.Other, service.Company);
 		}
 
 
@@ -189,8 +189,8 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		{
 			BusService service = new BusService("22", Company.ReadingBuses);
 
-			Assert.AreEqual("22", service.ServiceId);
-			Assert.AreEqual(Company.ReadingBuses, service.Company);
+			Assert.That(service.ServiceId, Is.EqualTo("22"));
+			Assert.That(service.Company, Is.EqualTo(Company.ReadingBuses));
 		}
 	}
 }

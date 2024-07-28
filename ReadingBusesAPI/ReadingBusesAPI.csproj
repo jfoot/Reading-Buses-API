@@ -6,19 +6,12 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>ReadingBusesAPI</PackageId>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
     <FileVersion>3.0.0.0</FileVersion>
     <NeutralLanguage>en-GB</NeutralLanguage>
-    <PackageReleaseNotes>* Replacing Newtonsoft.JSON library with the system.text.json library.
-* Improved what is cached to include historical GPS data, historical journey information and historical timetables, as this data will never change.
-* Added support for "Live Journey Details" API feed.
-* Removed Courtney Buses for Thames Valley Buses
-* Can now query by direction of stops in the line pattern API, such as outbound or inbound.
-* ArchivedBusTimetable has loosely become HistoricalJourney
-* BusTimetable has loosely become Joruney
-* ArchivedPosition has loosely become VehiclePosition
-* LivePosition has loosely become LiveVehiclePosition</PackageReleaseNotes>
+    <PackageReleaseNotes>* Updated system.text.json to v8.0.4
+* Add support for Oxford Bus Company and Carousel Buses</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/jfoot/Reading-Buses-API</RepositoryUrl>
     <PackageIcon>LogoHighRes.jpg</PackageIcon>
     <RepositoryType>GitHub</RepositoryType>
@@ -27,12 +20,12 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Description>A C# .NET Standard Library for the Reading Buses API (https://reading-opendata.r2p.com/), available to use in your C# console, UWP, WPF or Win Form Applications.
 
-This includes bus services operated by Reading Buses and subsidiaries such as, Thames Valley Buses and Newbury &amp; District Buses.
+This includes bus services operated by Reading Buses and subsidiaries such as, Thames Valley Buses and Newbury &amp; District Buses, and other operators within Reading.
 
-The library supports the List of Bus Stops, Live Vehicle Positions, Live Journey Details, Stop Predictions, List of Lines, Line Patterns, Timetabled Journeys, Tracking History and the Vehicle Position History API..
+The library supports the List of Bus Stops, Live Vehicle Positions, Live Journey Details, Stop Predictions, List of Lines, Line Patterns, Timetabled Journeys, Tracking History and the Vehicle Position History API.
 
 Get your own API Keys from: https://reading-opendata.r2p.com/api-service</Description>
-    <Copyright>Jonathan Foot © 2022</Copyright>
+    <Copyright>Jonathan Foot © 2024</Copyright>
     <Authors>Jonathan Foot</Authors>
     <Company>Jonathan Foot</Company>
     <Product>Reading Buses API</Product>
@@ -60,7 +53,7 @@ Get your own API Keys from: https://reading-opendata.r2p.com/api-service</Descri
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="6.0.5" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
   </ItemGroup>
 
 </Project>

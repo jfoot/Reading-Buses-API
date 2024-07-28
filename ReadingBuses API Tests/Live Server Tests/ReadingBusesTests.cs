@@ -49,9 +49,10 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		[Test]
 		public void CheckLocationExists()
 		{
-			Assert.AreEqual(true, ReadingBuses.GetInstance().IsLocation("039028160001"));
-			Assert.AreEqual(false, ReadingBuses.GetInstance().IsLocation(""));
+			Assert.That(ReadingBuses.GetInstance().IsLocation("039028160001"), Is.True);
+			Assert.That(ReadingBuses.GetInstance().IsLocation(""), Is.False);
 		}
+		
 
 		/// <summary>
 		///     Check that the check location exists function is working correctly.
@@ -59,8 +60,9 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		[Test]
 		public void CheckServicesExists()
 		{
-			Assert.AreEqual(true, ReadingBuses.GetInstance().IsService("17"));
-			Assert.AreEqual(false, ReadingBuses.GetInstance().IsService(""));
+			Assert.That(ReadingBuses.GetInstance().IsService("17"), Is.True);
+			Assert.That(ReadingBuses.GetInstance().IsService(""), Is.False);
+
 		}
 
 		/// <summary>
@@ -99,7 +101,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		public void GetLocation(string actoCode)
 		{
 			BusStop stop = ReadingBuses.GetInstance().GetLocation(actoCode);
-			Assert.AreEqual(actoCode, stop.ActoCode);
+			Assert.That(stop.ActoCode, Is.EqualTo(actoCode));
 		}
 
 
@@ -140,7 +142,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		public void GetService(string serviceNumber)
 		{
 			BusService service = ReadingBuses.GetInstance().GetService(serviceNumber, Company.ReadingBuses);
-			Assert.AreEqual(serviceNumber, service.ServiceId);
+			Assert.That(service.ServiceId, Is.EqualTo(serviceNumber));
 		}
 
 
