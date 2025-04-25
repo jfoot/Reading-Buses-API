@@ -138,7 +138,7 @@ namespace ReadingBuses_API_Tests.Live_Server_Tests
 		[Test]
 		[TestCase("17")]
 		[TestCase("1")]
-		[TestCase("X4")]
+		[TestCase("4a")]
 		public void GetService(string serviceNumber)
 		{
 			BusService service = ReadingBuses.GetInstance().GetService(serviceNumber, Company.ReadingBuses);

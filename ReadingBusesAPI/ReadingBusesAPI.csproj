@@ -6,12 +6,11 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>ReadingBusesAPI</PackageId>
-    <Version>3.1.0</Version>
-    <AssemblyVersion>3.0.0.0</AssemblyVersion>
-    <FileVersion>3.0.0.0</FileVersion>
+    <Version>3.1.5</Version>
+    <AssemblyVersion>3.1.5.0</AssemblyVersion>
+    <FileVersion>3.1.5.0</FileVersion>
     <NeutralLanguage>en-GB</NeutralLanguage>
-    <PackageReleaseNotes>* Updated system.text.json to v8.0.4
-* Add support for Oxford Bus Company and Carousel Buses</PackageReleaseNotes>
+    <PackageReleaseNotes>* Updated libraries to remove security vulnerability</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/jfoot/Reading-Buses-API</RepositoryUrl>
     <PackageIcon>LogoHighRes.jpg</PackageIcon>
     <RepositoryType>GitHub</RepositoryType>
@@ -25,13 +24,14 @@ This includes bus services operated by Reading Buses and subsidiaries such as, T
 The library supports the List of Bus Stops, Live Vehicle Positions, Live Journey Details, Stop Predictions, List of Lines, Line Patterns, Timetabled Journeys, Tracking History and the Vehicle Position History API.
 
 Get your own API Keys from: https://reading-opendata.r2p.com/api-service</Description>
-    <Copyright>Jonathan Foot © 2024</Copyright>
+    <Copyright>Jonathan Foot © 2025</Copyright>
     <Authors>Jonathan Foot</Authors>
     <Company>Jonathan Foot</Company>
     <Product>Reading Buses API</Product>
     <ApplicationIcon>LogoHighRes.ico</ApplicationIcon>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Title>ReadingBusesAPI</Title>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,6 +39,10 @@ Get your own API Keys from: https://reading-opendata.r2p.com/api-service</Descri
     <None Include="..\LICENSE.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
     <None Include="LogoHighRes.jpg">
       <Pack>True</Pack>
@@ -54,7 +58,7 @@ Get your own API Keys from: https://reading-opendata.r2p.com/api-service</Descri
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Include="System.Text.Json" Version="9.0.4" />
   </ItemGroup>
 
 </Project>
